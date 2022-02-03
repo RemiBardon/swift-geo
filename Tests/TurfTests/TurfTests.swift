@@ -149,7 +149,7 @@ class TurfTests: XCTestCase {
 			topLat: -65,
 			leftLong: 145,
 			latDelta: 20,
-			longDelta: (-170 + 360) - 145
+			longDelta: (-170 + .fullRotation) - 145
 		)
 		// Pink: Around Null Island's antipode
 		try test(

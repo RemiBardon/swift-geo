@@ -30,7 +30,7 @@ import GeoModels
 public func minimumBBox(for coords: [Coordinate2D]) -> BoundingBox2D? {
 	guard let bbox = Turf.bbox(for: coords) else { return nil }
 	
-	if bbox.width > 180 {
+	if bbox.width > .halfRotation {
 		let offsetCoords = coords.map(\.withPositiveLongitude)
 		
 		return Turf.bbox(for: offsetCoords)

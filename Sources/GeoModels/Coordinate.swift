@@ -151,7 +151,19 @@ extension Coordinate {
 // TODO: Create custom struct that handles cycling in an interval
 public struct Latitude: Coordinate {
 	
+	public static var fullRotation: Latitude = 180
+	public static var halfRotation: Latitude = 90
+	
 	public var degrees: Double
+	
+	public var positive: Latitude {
+		if degrees < .zero {
+			// `degrees` is negative, so we end up with `180 - |degrees|`
+			return self + Self.fullRotation
+		} else {
+			return self
+		}
+	}
 	
 	public init(degrees: Double) {
 		self.degrees = degrees
@@ -161,7 +173,19 @@ public struct Latitude: Coordinate {
 
 public struct Longitude: Coordinate {
 	
+	public static var fullRotation: Longitude = 360
+	public static var halfRotation: Longitude = 180
+	
 	public var degrees: Double
+	
+	public var positive: Longitude {
+		if degrees < .zero {
+			// `degrees` is negative, so we end up with `360 - |degrees|`
+			return self + Self.fullRotation
+		} else {
+			return self
+		}
+	}
 	
 	public init(degrees: Double) {
 		self.degrees = degrees

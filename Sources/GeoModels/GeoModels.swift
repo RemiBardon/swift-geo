@@ -19,12 +19,7 @@ public struct Coordinate2D: Hashable {
 	public var y: Latitude { latitude }
 	
 	public var withPositiveLongitude: Coordinate2D {
-		if longitude < 0 {
-			// `longitude` is negative, so we end up with `360 - |longitude|`
-			return self.offsetBy(dLong: 360)
-		} else {
-			return self
-		}
+		Coordinate2D(latitude: latitude, longitude: longitude.positive)
 	}
 	
 	public init(
@@ -57,17 +52,18 @@ public struct Line2D: Hashable {
 	}
 	public var minimalLongitudeDelta: Longitude {
 		let delta = longitudeDelta
-		if delta > 180 {
-			return delta - 360
-		} else if delta <= -180 {
-			return delta + 360
+		
+		if delta > .halfRotation {
+			return delta - .fullRotation
+		} else if delta <= -.halfRotation {
+			return delta + .fullRotation
 		} else {
 			return delta
 		}
 	}
 	
 	public var crosses180thMeridian: Bool {
-		abs(longitudeDelta) > 180
+		abs(longitudeDelta) > .fullRotation
 	}
 	
 	public init(start: Coordinate2D, end: Coordinate2D) {
@@ -97,16 +93,18 @@ public struct BoundingBox2D: Hashable {
 	}
 	public var eastLongitude: Longitude {
 		let longitude = westLongitude + width
-		if longitude > 180 {
-			return longitude - 360
+		
+		if longitude > .halfRotation {
+			return longitude - .fullRotation
 		} else {
 			return longitude
 		}
 	}
 	public var centerLongitude: Longitude {
 		let longitude = westLongitude + (width / 2.0)
-		if longitude > 180 {
-			return longitude - 360
+		
+		if longitude > .halfRotation {
+			return longitude - .fullRotation
 		} else {
 			return longitude
 		}
