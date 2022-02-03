@@ -11,20 +11,8 @@ import MapKit
 
 extension Coordinate2D {
 	
-	public var clLocation: CLLocation {
-		CLLocation(latitude: latitude.degrees, longitude: longitude.degrees)
-	}
-	
-	public var clLocationCoordinate2D: CLLocationCoordinate2D {
-		CLLocationCoordinate2D(latitude: latitude.degrees, longitude: longitude.degrees)
-	}
-	
 	public var mkMapPoint: MKMapPoint {
 		MKMapPoint(clLocationCoordinate2D)
-	}
-	
-	public init(_ coordinate: CLLocationCoordinate2D) {
-		self.init(latitude: Latitude(coordinate.latitude), longitude: Longitude(coordinate.longitude))
 	}
 	
 }

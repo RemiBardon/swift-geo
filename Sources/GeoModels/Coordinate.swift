@@ -169,6 +169,10 @@ public struct Latitude: Coordinate {
 		self.degrees = degrees
 	}
 	
+	public static func random() -> Self {
+		return Self.random(in: -halfRotation...halfRotation)
+	}
+	
 }
 
 public struct Longitude: Coordinate {
@@ -189,6 +193,10 @@ public struct Longitude: Coordinate {
 	
 	public init(degrees: Double) {
 		self.degrees = degrees
+	}
+	
+	public static func random() -> Self {
+		return Self.random(in: -halfRotation...halfRotation)
 	}
 	
 }

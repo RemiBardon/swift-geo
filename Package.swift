@@ -21,7 +21,10 @@ let package = Package(
 		.target(name: "GeoModels"),
 		.testTarget(
 			name: "GeoModelsTests",
-			dependencies: ["GeoModels"]
+			dependencies: [
+				.target(name: "GeoModels"),
+				.product(name: "Algorithms", package: "swift-algorithms"),
+			]
 		),
 		.target(
 			name: "Turf",
