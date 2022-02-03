@@ -76,13 +76,13 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 	for i in 0..<coords.count - 1 {
 		// pi is the current point
 		let pi: Coordinate2D = neutralizedPoints[i]
-		let xi: Double = pi.longitude.degrees
-		let yi: Double = pi.latitude.degrees
+		let xi: Double = pi.longitude.decimalDegrees
+		let yi: Double = pi.latitude.decimalDegrees
 		
 		// pj is the next point (pi+1)
 		let pj: Coordinate2D = neutralizedPoints[i + 1]
-		let xj: Double = pj.longitude.degrees
-		let yj: Double = pj.latitude.degrees
+		let xj: Double = pj.longitude.decimalDegrees
+		let yj: Double = pj.latitude.decimalDegrees
 		
 		// a is the common factor to compute the signed area and the final coordinates
 		let a: Double = xi * yj - xj * yi

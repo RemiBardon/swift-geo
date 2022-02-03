@@ -12,11 +12,11 @@ import CoreLocation
 extension Coordinate2D {
 	
 	public var clLocation: CLLocation {
-		CLLocation(latitude: latitude.degrees, longitude: longitude.degrees)
+		CLLocation(latitude: latitude.decimalDegrees, longitude: longitude.decimalDegrees)
 	}
 	
 	public var clLocationCoordinate2D: CLLocationCoordinate2D {
-		CLLocationCoordinate2D(latitude: latitude.degrees, longitude: longitude.degrees)
+		CLLocationCoordinate2D(latitude: latitude.decimalDegrees, longitude: longitude.decimalDegrees)
 	}
 	
 	public init(_ location: CLLocation) {
@@ -24,7 +24,7 @@ extension Coordinate2D {
 	}
 	
 	public init(_ coordinate: CLLocationCoordinate2D) {
-		self.init(latitude: Latitude(degrees: coordinate.latitude), longitude: Longitude(degrees: coordinate.longitude))
+		self.init(latitude: Latitude(decimalDegrees: coordinate.latitude), longitude: Longitude(decimalDegrees: coordinate.longitude))
 	}
 	
 }

@@ -30,27 +30,27 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 	
 	func testCoordinate2DFromCoreLocationCoordinate() {
 		let testValues = product(Self.testLatitudes, Self.testLongitudes)
-			.map { ($0.0.degrees, $0.1.degrees) }
+			.map { ($0.0.decimalDegrees, $0.1.decimalDegrees) }
 			.map(CLLocationCoordinate2D.init(latitude:longitude:))
 		
 		testValues.forEach { clLocationCoordinate in
 			let coordinate = Coordinate2D(clLocationCoordinate)
 			
-			XCTAssertEqual(coordinate.latitude.degrees, clLocationCoordinate.latitude)
-			XCTAssertEqual(coordinate.longitude.degrees, clLocationCoordinate.longitude)
+			XCTAssertEqual(coordinate.latitude.decimalDegrees, clLocationCoordinate.latitude)
+			XCTAssertEqual(coordinate.longitude.decimalDegrees, clLocationCoordinate.longitude)
 		}
 	}
 	
 	func testCoordinate2DFromCoreLocation() {
 		let testValues = product(Self.testLatitudes, Self.testLongitudes)
-			.map { ($0.0.degrees, $0.1.degrees) }
+			.map { ($0.0.decimalDegrees, $0.1.decimalDegrees) }
 			.map(CLLocation.init(latitude:longitude:))
 		
 		testValues.forEach { clLocation in
 			let coordinate = Coordinate2D(clLocation)
 			
-			XCTAssertEqual(coordinate.latitude.degrees, clLocation.coordinate.latitude)
-			XCTAssertEqual(coordinate.longitude.degrees, clLocation.coordinate.longitude)
+			XCTAssertEqual(coordinate.latitude.decimalDegrees, clLocation.coordinate.latitude)
+			XCTAssertEqual(coordinate.longitude.decimalDegrees, clLocation.coordinate.longitude)
 		}
 	}
 	
@@ -58,8 +58,8 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 		Self.testCoordinates.forEach { coordinate in
 			let clLocationCoordinate = coordinate.clLocationCoordinate2D
 			
-			XCTAssertEqual(clLocationCoordinate.latitude, coordinate.latitude.degrees)
-			XCTAssertEqual(clLocationCoordinate.longitude, coordinate.longitude.degrees)
+			XCTAssertEqual(clLocationCoordinate.latitude, coordinate.latitude.decimalDegrees)
+			XCTAssertEqual(clLocationCoordinate.longitude, coordinate.longitude.decimalDegrees)
 		}
 	}
 	
@@ -67,8 +67,8 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 		Self.testCoordinates.forEach { coordinate in
 			let clLocation = coordinate.clLocation
 			
-			XCTAssertEqual(clLocation.coordinate.latitude, coordinate.latitude.degrees)
-			XCTAssertEqual(clLocation.coordinate.longitude, coordinate.longitude.degrees)
+			XCTAssertEqual(clLocation.coordinate.latitude, coordinate.latitude.decimalDegrees)
+			XCTAssertEqual(clLocation.coordinate.longitude, coordinate.longitude.decimalDegrees)
 		}
 	}
 	

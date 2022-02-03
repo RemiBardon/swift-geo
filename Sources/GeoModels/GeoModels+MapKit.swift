@@ -20,7 +20,7 @@ extension Coordinate2D {
 extension BoundingBox2D {
 	
 	public var mkCoordinateSpan: MKCoordinateSpan {
-		MKCoordinateSpan(latitudeDelta: height.degrees, longitudeDelta: width.degrees)
+		MKCoordinateSpan(latitudeDelta: height.decimalDegrees, longitudeDelta: width.decimalDegrees)
 	}
 	public var mkCoordinateRegion: MKCoordinateRegion {
 		MKCoordinateRegion(center: center.clLocationCoordinate2D, span: mkCoordinateSpan)
