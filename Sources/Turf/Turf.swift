@@ -65,8 +65,8 @@ public func center(for coords: [Coordinate2D]) -> Coordinate2D? {
 public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 	// First, we neutralize the feature (set it around coordinates [0,0]) to prevent rounding errors
 	// We take any point to translate all the points around 0
-	let centre = centroid(for: coords)
-	let translation = centre
+	let centre: Coordinate2D = centroid(for: coords)
+	let translation: Coordinate2D = centre
 	var sx: Double = 0
 	var sy: Double = 0
 	var sArea: Double = 0
@@ -75,14 +75,14 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 	
 	for i in 0..<coords.count - 1 {
 		// pi is the current point
-		let pi = neutralizedPoints[i]
-		let xi = pi.longitude
-		let yi = pi.latitude
+		let pi: Coordinate2D = neutralizedPoints[i]
+		let xi: Double = pi.longitude.degrees
+		let yi: Double = pi.latitude.degrees
 		
 		// pj is the next point (pi+1)
-		let pj = neutralizedPoints[i + 1]
-		let xj = pj.longitude
-		let yj = pj.latitude
+		let pj: Coordinate2D = neutralizedPoints[i + 1]
+		let xj: Double = pj.longitude.degrees
+		let yj: Double = pj.latitude.degrees
 		
 		// a is the common factor to compute the signed area and the final coordinates
 		let a: Double = xi * yj - xj * yi
@@ -100,13 +100,13 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 		return centre
 	} else {
 		// Compute the signed area, and factorize 1/6A
-		let area = sArea * 0.5
-		let areaFactor = 1 / (6 * area)
+		let area: Double = sArea * 0.5
+		let areaFactor: Double = 1 / (6 * area)
 		
 		// Compute the final coordinates, adding back the values that have been neutralized
 		return Coordinate2D(
-			latitude: translation.latitude + areaFactor * sy,
-			longitude: translation.longitude + areaFactor * sx
+			latitude: translation.latitude + Latitude(areaFactor * sy),
+			longitude: translation.longitude + Longitude(areaFactor * sx)
 		)
 	}
 }
@@ -115,8 +115,8 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-centroid/index.ts#L21-L40>
 public func centroid(for coordinates: [Coordinate2D]) -> Coordinate2D {
-	var sumLongitude: Double = 0.0
-	var sumLatitude: Double = 0.0
+	var sumLongitude: Longitude = 0.0
+	var sumLatitude: Latitude = 0.0
 	
 	for coordinate in coordinates {
 		sumLongitude += coordinate.longitude
@@ -124,7 +124,7 @@ public func centroid(for coordinates: [Coordinate2D]) -> Coordinate2D {
 	}
 	
 	return Coordinate2D(
-		latitude: sumLatitude / Double(coordinates.count),
-		longitude: sumLongitude / Double(coordinates.count)
+		latitude: sumLatitude / Latitude(coordinates.count),
+		longitude: sumLongitude / Longitude(coordinates.count)
 	)
 }

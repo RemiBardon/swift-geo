@@ -57,7 +57,7 @@ final class GeoModelsTests: XCTestCase {
 	func testLine2DMinimalLongitudeDelta() {
 		self.continueAfterFailure = true
 		
-		func test(from longitude1: Coordinate, to longitude2: Coordinate, equals minimalDelta: Coordinate) {
+		func test(from longitude1: Longitude, to longitude2: Longitude, equals minimalDelta: Longitude) {
 			let start = Coordinate2D(latitude: 0, longitude: longitude1)
 			let end = Coordinate2D(latitude: 0, longitude: longitude2)
 			let line = Line2D(start: start, end: end)
@@ -69,7 +69,7 @@ final class GeoModelsTests: XCTestCase {
 			)
 		}
 		
-		func symetricTest(between longitude1: Coordinate, and longitude2: Coordinate, equals minimalDelta: Coordinate) {
+		func symetricTest(between longitude1: Longitude, and longitude2: Longitude, equals minimalDelta: Longitude) {
 			test(from: longitude1, to: longitude2, equals: minimalDelta)
 			test(from: longitude2, to: longitude1, equals: minimalDelta)
 		}

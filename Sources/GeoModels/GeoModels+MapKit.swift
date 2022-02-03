@@ -11,8 +11,12 @@ import MapKit
 
 extension Coordinate2D {
 	
+	public var clLocation: CLLocation {
+		CLLocation(latitude: latitude.degrees, longitude: longitude.degrees)
+	}
+	
 	public var clLocationCoordinate2D: CLLocationCoordinate2D {
-		CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+		CLLocationCoordinate2D(latitude: latitude.degrees, longitude: longitude.degrees)
 	}
 	
 	public var mkMapPoint: MKMapPoint {
@@ -20,7 +24,7 @@ extension Coordinate2D {
 	}
 	
 	public init(_ coordinate: CLLocationCoordinate2D) {
-		self.init(latitude: coordinate.latitude, longitude: coordinate.longitude)
+		self.init(latitude: Latitude(coordinate.latitude), longitude: Longitude(coordinate.longitude))
 	}
 	
 }
@@ -28,7 +32,7 @@ extension Coordinate2D {
 extension BoundingBox2D {
 	
 	public var mkCoordinateSpan: MKCoordinateSpan {
-		MKCoordinateSpan(latitudeDelta: height, longitudeDelta: width)
+		MKCoordinateSpan(latitudeDelta: height.degrees, longitudeDelta: width.degrees)
 	}
 	public var mkCoordinateRegion: MKCoordinateRegion {
 		MKCoordinateRegion(center: center.clLocationCoordinate2D, span: mkCoordinateSpan)
@@ -54,14 +58,14 @@ extension BoundingBox2D {
 		)
 	}
 	
-	public func mkMapWidthAtLatitude(_ latitude: Coordinate) -> Double {
+	public func mkMapWidthAtLatitude(_ latitude: Latitude) -> Double {
 		let east = eastAtLatitude(latitude).mkMapPoint
 		let west = westAtLatitude(latitude).mkMapPoint
 		
 		// `east.x > west.x`
 		return east.x - west.x
 	}
-	public func mkMapHeightAtLongitude(_ longitude: Coordinate) -> Double {
+	public func mkMapHeightAtLongitude(_ longitude: Longitude) -> Double {
 		let south = southAtLongitude(longitude).mkMapPoint
 		let north = northAtLongitude(longitude).mkMapPoint
 		

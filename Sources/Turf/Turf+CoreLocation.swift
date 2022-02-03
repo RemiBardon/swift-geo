@@ -15,7 +15,7 @@ import GeoModels
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-length/index.ts#L26-L41>
 func length(polyline coords: [Coordinate2D]) -> Double {
-	let locations = coords.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+	let locations = coords.map(\.clLocation)
 	var length: Double = 0
 	for (location1, location2) in locations.adjacentPairs() {
 		length += location1.distance(from: location2)

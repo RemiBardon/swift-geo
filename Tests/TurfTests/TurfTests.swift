@@ -57,10 +57,10 @@ class TurfTests: XCTestCase {
 	func testMinimumBBox() throws {
 		func test(
 			coordinates: [Coordinate2D],
-			topLat: Coordinate,
-			leftLong: Coordinate,
-			latDelta: Coordinate,
-			longDelta: Coordinate
+			topLat: Latitude,
+			leftLong: Longitude,
+			latDelta: Latitude,
+			longDelta: Longitude
 		) throws {
 			let bbox = try XCTUnwrap(Turf.minimumBBox(for: coordinates))
 			
