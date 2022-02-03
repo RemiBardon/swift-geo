@@ -1,77 +1,10 @@
 //
-//  GeoModels.swift
+//  BoundingBox2D.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 02/02/2022.
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
-
-public struct Coordinate2D: Hashable {
-	
-	public static var zero: Coordinate2D {
-		Coordinate2D(latitude: 0, longitude: 0)
-	}
-	
-	public var latitude: Latitude
-	public var longitude: Longitude
-	
-	public var x: Longitude { longitude }
-	public var y: Latitude { latitude }
-	
-	public var withPositiveLongitude: Coordinate2D {
-		Coordinate2D(latitude: latitude, longitude: longitude.positive)
-	}
-	
-	public init(
-		latitude: Latitude,
-		longitude: Longitude
-	) {
-		self.latitude = latitude
-		self.longitude = longitude
-	}
-	
-	public func offsetBy(dLat: Latitude = 0, dLong: Longitude = 0) -> Coordinate2D {
-		Coordinate2D(latitude: latitude + dLat, longitude: longitude + dLong)
-	}
-	public func offsetBy(dx: Longitude = 0, dy: Latitude = 0) -> Coordinate2D {
-		Coordinate2D(latitude: latitude + dy, longitude: longitude + dx)
-	}
-	
-}
-
-public struct Line2D: Hashable {
-	
-	public let start: Coordinate2D
-	public let end: Coordinate2D
-	
-	public var latitudeDelta: Latitude {
-		end.latitude - start.latitude
-	}
-	public var longitudeDelta: Longitude {
-		end.longitude - start.longitude
-	}
-	public var minimalLongitudeDelta: Longitude {
-		let delta = longitudeDelta
-		
-		if delta > .halfRotation {
-			return delta - .fullRotation
-		} else if delta <= -.halfRotation {
-			return delta + .fullRotation
-		} else {
-			return delta
-		}
-	}
-	
-	public var crosses180thMeridian: Bool {
-		abs(longitudeDelta) > .fullRotation
-	}
-	
-	public init(start: Coordinate2D, end: Coordinate2D) {
-		self.start = start
-		self.end = end
-	}
-	
-}
 
 public struct BoundingBox2D: Hashable {
 	
