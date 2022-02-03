@@ -19,8 +19,12 @@ extension Coordinate2D {
 		CLLocationCoordinate2D(latitude: latitude.degrees, longitude: longitude.degrees)
 	}
 	
+	public init(_ location: CLLocation) {
+		self.init(location.coordinate)
+	}
+	
 	public init(_ coordinate: CLLocationCoordinate2D) {
-		self.init(latitude: Latitude(coordinate.latitude), longitude: Longitude(coordinate.longitude))
+		self.init(latitude: Latitude(degrees: coordinate.latitude), longitude: Longitude(degrees: coordinate.longitude))
 	}
 	
 }
