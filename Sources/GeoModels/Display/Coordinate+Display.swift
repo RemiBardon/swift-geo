@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Coordinate {
+extension AngularCoordinate {
 	
 	public var directionChar: Character {
 		return self.decimalDegrees < .zero ? Self.negativeDirectionChar : Self.positiveDirectionChar
@@ -36,7 +36,7 @@ extension Coordinate {
 
 // MARK: - GeographicNotation
 
-extension Coordinate {
+extension AngularCoordinate {
 	
 	public func ddNotation(maxDigits: UInt8 = 6) -> String {
 		let formatter = NumberFormatter()
