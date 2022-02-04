@@ -8,7 +8,10 @@
 
 import Foundation
 
-public protocol AngularCoordinate: Coordinate, GeographicNotation {
+public protocol AngularCoordinate: ValidatableCoordinate, GeographicNotation {
+	
+	static var fullRotation: Self { get }
+	static var halfRotation: Self { get }
 	
 	/// "N" or "E" depending on axis
 	static var positiveDirectionChar: Character { get }
@@ -93,6 +96,28 @@ public struct Longitude: AngularCoordinate {
 	
 	public static func random() -> Self {
 		return Self.random(in: -halfRotation...halfRotation)
+	}
+	
+}
+
+extension AngularCoordinate {
+	
+	public static var min: Self { -halfRotation }
+	public static var max: Self { halfRotation }
+	
+	public var valid: Self {
+		if isValid {
+			return self
+		} else {
+			let remainder = self.truncatingRemainder(dividingBy: Self.fullRotation)
+			
+			if abs(remainder) > .halfRotation {
+				let base = self < .zero ? Self.fullRotation : -Self.fullRotation
+				return base + remainder
+			} else {
+				return remainder
+			}
+		}
 	}
 	
 }
