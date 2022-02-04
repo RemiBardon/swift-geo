@@ -121,3 +121,25 @@ public struct BoundingBox2D: Hashable {
 	}
 	
 }
+
+extension BoundingBox2D: BoundingBox {
+	
+	public static var zero: BoundingBox2D {
+		BoundingBox2D(southWest: .zero, width: .zero, height: .zero)
+	}
+	
+	/// The union of bounding boxes gives a new bounding box that encloses the given two.
+	public func union(_ other: BoundingBox2D) -> BoundingBox2D {
+		BoundingBox2D(
+			southWest: Coordinate2D(
+				latitude: min(self.southWest.latitude, other.southWest.latitude),
+				longitude: min(self.southWest.longitude, other.southWest.longitude)
+			),
+			northEast: Coordinate2D(
+				latitude: max(self.northEast.latitude, other.northEast.latitude),
+				longitude: max(self.northEast.longitude, other.northEast.longitude)
+			)
+		)
+	}
+	
+}

@@ -51,6 +51,13 @@ public func bbox(for coords: [Coordinate2D]) -> BoundingBox2D? {
 	)
 }
 
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.
+public func bbox<T: Boundable, C: Collection>(for boundables: C) -> T.BoundingBox? where C.Element == T {
+	guard !boundables.isEmpty else { return nil }
+	
+	return boundables.reduce(.zero, { $0.union($1.bbox) })
+}
+
 /// Returns the absolute center of a polygon.
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-center/index.ts#L36-L44>
