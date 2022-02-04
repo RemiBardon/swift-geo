@@ -137,5 +137,19 @@ let package = Package(
 			"GeodeticConversions",
 			"WGS84Conversions",
 		]),
+
+		// 📄 GeoJSON representation
+		.target(
+			name: "GeoJSON",
+			dependencies: [
+				.target(name: "GeoModels"),
+				.target(name: "Turf"),
+				.product(name: "NonEmpty", package: "swift-nonempty"),
+			]
+		),
+		.testTarget(
+			name: "GeoJSONTests",
+			dependencies: ["GeoJSON"]
+		),
 	]
 )
