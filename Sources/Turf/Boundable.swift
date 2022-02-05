@@ -37,3 +37,28 @@ extension BoundingBox2D: Boundable {
 	public var bbox: BoundingBox2D { self }
 	
 }
+
+// Extension of protocol 'Collection' cannot have an inheritance clause
+//extension Collection: Boundable where Element: Boundable {
+//
+//	public var bbox: Element.BoundingBox {
+//		self.reduce(.zero, { $0.union($1.bbox) })
+//	}
+//
+//}
+
+extension Array: Boundable where Element: Boundable {
+	
+	public var bbox: Element.BoundingBox {
+		self.reduce(.zero, { $0.union($1.bbox) })
+	}
+	
+}
+
+extension Set: Boundable where Element: Boundable {
+	
+	public var bbox: Element.BoundingBox {
+		self.reduce(.zero, { $0.union($1.bbox) })
+	}
+	
+}
