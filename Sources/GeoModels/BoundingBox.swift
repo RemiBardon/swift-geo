@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public protocol BoundingBox {
+public protocol BoundingBox: Hashable {
 	
 	static var zero: Self { get }
 	
