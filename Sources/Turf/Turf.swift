@@ -52,6 +52,11 @@ public func bbox(for coords: [Coordinate2D]) -> BoundingBox2D? {
 }
 
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.
+public func bbox<C: Collection & Boundable>(for boundables: C) -> C.BoundingBox? {
+	return boundables.bbox
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.
 public func bbox<T: Boundable, C: Collection>(for boundables: C) -> T.BoundingBox? where C.Element == T {
 	guard !boundables.isEmpty else { return nil }
 	
