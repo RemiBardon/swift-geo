@@ -135,8 +135,8 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-centroid/index.ts#L21-L40>
 public func centroid(for coordinates: [Coordinate2D]) -> Coordinate2D {
-	var sumLongitude: Longitude = 0.0
-	var sumLatitude: Latitude = 0.0
+	var sumLongitude: Longitude = .zero
+	var sumLatitude: Latitude = .zero
 	
 	for coordinate in coordinates {
 		sumLongitude += coordinate.longitude

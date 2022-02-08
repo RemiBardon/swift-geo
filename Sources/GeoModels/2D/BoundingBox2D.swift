@@ -107,16 +107,18 @@ public struct BoundingBox2D: Hashable {
 		Coordinate2D(latitude: latitude, longitude: northEast.longitude)
 	}
 	
-	public func offsetBy(dLat: Latitude = 0, dLong: Longitude = 0) -> BoundingBox2D {
-		BoundingBox2D(
+	public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> BoundingBox2D {
+		Self.init(
 			southWest: southWest.offsetBy(dLat: dLat, dLong: dLong),
-			northEast: northEast.offsetBy(dLat: dLat, dLong: dLong)
+			width: width,
+			height: height
 		)
 	}
-	public func offsetBy(dx: Longitude = 0, dy: Latitude = 0) -> BoundingBox2D {
-		BoundingBox2D(
+	public func offsetBy(dx: Coordinate2D.X = .zero, dy: Coordinate2D.Y = .zero) -> BoundingBox2D {
+		Self.init(
 			southWest: southWest.offsetBy(dx: dx, dy: dy),
-			northEast: northEast.offsetBy(dx: dx, dy: dy)
+			width: width,
+			height: height
 		)
 	}
 	
@@ -125,19 +127,19 @@ public struct BoundingBox2D: Hashable {
 extension BoundingBox2D: BoundingBox {
 	
 	public static var zero: BoundingBox2D {
-		BoundingBox2D(southWest: .zero, width: .zero, height: .zero)
+		Self.init(southWest: .zero, width: .zero, height: .zero)
 	}
 	
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
 	public func union(_ other: BoundingBox2D) -> BoundingBox2D {
-		BoundingBox2D(
+		Self.init(
 			southWest: Coordinate2D(
-				latitude: min(self.southWest.latitude, other.southWest.latitude),
-				longitude: min(self.southWest.longitude, other.southWest.longitude)
+				latitude: min(self.southLatitude, other.southLatitude),
+				longitude: min(self.westLongitude, other.westLongitude)
 			),
 			northEast: Coordinate2D(
-				latitude: max(self.northEast.latitude, other.northEast.latitude),
-				longitude: max(self.northEast.longitude, other.northEast.longitude)
+				latitude: max(self.northLatitude, other.northLatitude),
+				longitude: max(self.eastLongitude, other.eastLongitude)
 			)
 		)
 	}

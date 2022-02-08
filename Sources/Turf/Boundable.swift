@@ -19,7 +19,7 @@ public protocol Boundable {
 extension Coordinate2D: Boundable {
 	
 	public var bbox: BoundingBox2D {
-		BoundingBox2D(southWest: self, width: 0, height: 0)
+		BoundingBox2D(southWest: self, width: .zero, height: .zero)
 	}
 	
 }
@@ -27,7 +27,7 @@ extension Coordinate2D: Boundable {
 extension Coordinate3D: Boundable {
 	
 	public var bbox: BoundingBox3D {
-		BoundingBox3D(twoDimensions.bbox, lowAltitude: altitude, zHeight: .zero)
+		BoundingBox3D(southWestLow: self, width: .zero, height: .zero, zHeight: .zero)
 	}
 	
 }

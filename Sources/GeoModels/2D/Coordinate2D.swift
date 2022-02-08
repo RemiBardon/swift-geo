@@ -8,33 +8,37 @@
 
 public struct Coordinate2D: Hashable {
 	
+	public typealias X = Longitude
+	public typealias Y = Latitude
+	
 	public static var zero: Coordinate2D {
-		Coordinate2D(latitude: 0, longitude: 0)
+		Self.init(latitude: .zero, longitude: .zero)
 	}
 	
 	public var latitude: Latitude
 	public var longitude: Longitude
 	
-	public var x: Longitude { longitude }
-	public var y: Latitude { latitude }
+	public var x: X { longitude }
+	public var y: Y { latitude }
 	
 	public var withPositiveLongitude: Coordinate2D {
-		Coordinate2D(latitude: latitude, longitude: longitude.positive)
+		Self.init(latitude: latitude, longitude: longitude.positive)
 	}
 	
-	public init(
-		latitude: Latitude,
-		longitude: Longitude
-	) {
+	public init(latitude: Latitude, longitude: Longitude) {
 		self.latitude = latitude
 		self.longitude = longitude
 	}
 	
-	public func offsetBy(dLat: Latitude = 0, dLong: Longitude = 0) -> Coordinate2D {
-		Coordinate2D(latitude: latitude + dLat, longitude: longitude + dLong)
+	public init(x: X, y: Y) {
+		self.init(latitude: y, longitude: x)
 	}
-	public func offsetBy(dx: Longitude = 0, dy: Latitude = 0) -> Coordinate2D {
-		Coordinate2D(latitude: latitude + dy, longitude: longitude + dx)
+	
+	public func offsetBy(dLat: Latitude = 0, dLong: Longitude = 0) -> Coordinate2D {
+		Self.init(latitude: latitude + dLat, longitude: longitude + dLong)
+	}
+	public func offsetBy(dx: X = .zero, dy: Y = .zero) -> Coordinate2D {
+		Self.init(x: x + dx, y: y + dy)
 	}
 	
 }
@@ -52,7 +56,7 @@ extension Coordinate2D {
 	}
 	
 	public prefix static func - (value: Coordinate2D) -> Coordinate2D {
-		return Coordinate2D(latitude: -value.latitude, longitude: -value.longitude)
+		return Self.init(latitude: -value.latitude, longitude: -value.longitude)
 	}
 	
 }
