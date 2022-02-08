@@ -44,3 +44,33 @@ public struct MultiLineString2D: MultiLineString {
 	}
 	
 }
+
+public struct MultiLineString3D: MultiLineString {
+	
+	public typealias LineString = LineString3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiLineString }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .multiLineString3D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+	public init?(coordinates: [[Position3D]]) {
+		var coord1 = [LineString3D.Coordinates]()
+		
+		for coord2 in coordinates {
+			guard let coord3 = NonEmpty(rawValue: coord2)
+				.flatMap(NonEmpty.init(rawValue:))
+			else { return nil }
+			
+			coord1.append(coord3)
+		}
+		
+		self.init(coordinates: coord1)
+	}
+	
+}

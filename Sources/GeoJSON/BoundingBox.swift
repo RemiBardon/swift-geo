@@ -22,9 +22,18 @@ extension BoundingBox2D: BoundingBox {
 	
 }
 
+public typealias BoundingBox3D = GeoModels.BoundingBox3D
+
+extension BoundingBox3D: BoundingBox {
+	
+	public var asAny: AnyBoundingBox { .threeDimensions(self) }
+	
+}
+
 public enum AnyBoundingBox: BoundingBox, Hashable, Codable {
 	
 	case twoDimensions(BoundingBox2D)
+	case threeDimensions(BoundingBox3D)
 	
 	public var asAny: AnyBoundingBox { self }
 	

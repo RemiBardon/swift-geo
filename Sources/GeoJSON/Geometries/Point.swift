@@ -28,3 +28,19 @@ public struct Point2D: Point {
 	}
 	
 }
+
+public struct Point3D: Point {
+	
+	public typealias Position = Position3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .point }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .point3D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+}
