@@ -40,7 +40,7 @@ public func minimumBBox(for coords: [Coordinate2D]) -> BoundingBox2D? {
 }
 
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing the points.
-public func bbox(for coords: [Coordinate2D]) -> BoundingBox2D? {
+public func bbox<C: Collection>(for coords: C) -> BoundingBox2D? where C.Element == Coordinate2D {
 	guard let (south, north) = coords.map(\.latitude).minAndMax(),
 		  let (west, east) = coords.map(\.longitude).minAndMax()
 	else { return nil }
@@ -51,9 +51,17 @@ public func bbox(for coords: [Coordinate2D]) -> BoundingBox2D? {
 	)
 }
 
-/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.
-public func bbox<C: Collection & Boundable>(for boundables: C) -> C.BoundingBox? {
-	return boundables.bbox
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing the points.
+public func bbox<C: Collection>(for coords: C) -> BoundingBox3D? where C.Element == Coordinate3D {
+	guard let (south, north) = coords.map(\.latitude).minAndMax(),
+		  let (west, east) = coords.map(\.longitude).minAndMax(),
+		  let (low, high) = coords.map(\.altitude).minAndMax()
+	else { return nil }
+	
+	return BoundingBox3D(
+		southWestLow: Coordinate3D(latitude: south, longitude: west, altitude: low),
+		northEastHigh: Coordinate3D(latitude: north, longitude: east, altitude: high)
+	)
 }
 
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.

@@ -24,6 +24,14 @@ extension Coordinate2D: Boundable {
 	
 }
 
+extension Coordinate3D: Boundable {
+	
+	public var bbox: BoundingBox3D {
+		BoundingBox3D(twoDimensions.bbox, lowAltitude: altitude, zHeight: .zero)
+	}
+	
+}
+
 extension Line2D: Boundable {
 	
 	public var bbox: BoundingBox2D {
@@ -32,9 +40,23 @@ extension Line2D: Boundable {
 	
 }
 
+extension Line3D: Boundable {
+	
+	public var bbox: BoundingBox3D {
+		Turf.bbox(for: [start, end])!
+	}
+	
+}
+
 extension BoundingBox2D: Boundable {
 	
 	public var bbox: BoundingBox2D { self }
+	
+}
+
+extension BoundingBox3D: Boundable {
+	
+	public var bbox: BoundingBox3D { self }
 	
 }
 
