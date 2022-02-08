@@ -14,3 +14,7 @@ public protocol Position: Hashable, Boundable {}
 public typealias Position2D = Coordinate2D
 
 extension Position2D: Position {}
+
+public typealias Position3D = Coordinate3D
+
+extension Position3D: Position {}

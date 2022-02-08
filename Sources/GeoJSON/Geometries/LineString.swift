@@ -38,3 +38,27 @@ public struct LineString2D: LineString {
 	}
 	
 }
+
+public struct LineString3D: LineString {
+	
+	public typealias Position = Position3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .lineString }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .lineString3D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+	public init?(coordinates: [Position3D]) {
+		guard let coordinates = NonEmpty(rawValue: coordinates)
+			.flatMap(NonEmpty.init(rawValue:))
+		else { return nil }
+		
+		self.init(coordinates: coordinates)
+	}
+	
+}

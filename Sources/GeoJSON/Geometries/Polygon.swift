@@ -55,7 +55,7 @@ extension LinearRingCoordinates: ExpressibleByArrayLiteral {
 	
 }
 
-/// A polygon / linear ring.
+/// A 2D polygon / linear ring.
 public struct Polygon2D: Polygon {
 	
 	public typealias Point = Point2D
@@ -65,6 +65,23 @@ public struct Polygon2D: Polygon {
 	public var coordinates: Coordinates
 	
 	public var asAnyGeometry: AnyGeometry { .polygon2D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+}
+
+/// A 3D polygon / linear ring.
+public struct Polygon3D: Polygon {
+	
+	public typealias Point = Point3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .polygon }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .polygon3D(self) }
 	
 	public init(coordinates: Coordinates) {
 		self.coordinates = coordinates

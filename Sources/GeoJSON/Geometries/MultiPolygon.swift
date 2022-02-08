@@ -28,3 +28,19 @@ public struct MultiPolygon2D: MultiPolygon {
 	}
 	
 }
+
+public struct MultiPolygon3D: MultiPolygon {
+	
+	public typealias Polygon = Polygon3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPolygon }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .multiPolygon3D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+}

@@ -52,6 +52,13 @@ public enum AnyGeometry: Hashable, Codable {
 	case polygon2D(Polygon2D)
 	case multiPolygon2D(MultiPolygon2D)
 	
+	case point3D(Point3D)
+	case multiPoint3D(MultiPoint3D)
+	case lineString3D(LineString3D)
+	case multiLineString3D(MultiLineString3D)
+	case polygon3D(Polygon3D)
+	case multiPolygon3D(MultiPolygon3D)
+	
 	public var bbox: AnyBoundingBox? {
 		switch self {
 		case .geometryCollection(let geometryCollection):
@@ -69,6 +76,19 @@ public enum AnyGeometry: Hashable, Codable {
 			return polygon2D.bbox?.asAny
 		case .multiPolygon2D(let multiPolygon2D):
 			return multiPolygon2D.bbox?.asAny
+			
+		case .point3D(let point3D):
+			return point3D.bbox?.asAny
+		case .multiPoint3D(let multiPoint3D):
+			return multiPoint3D.bbox?.asAny
+		case .lineString3D(let lineString3D):
+			return lineString3D.bbox?.asAny
+		case .multiLineString3D(let multiLineString3D):
+			return multiLineString3D.bbox?.asAny
+		case .polygon3D(let polygon3D):
+			return polygon3D.bbox?.asAny
+		case .multiPolygon3D(let multiPolygon3D):
+			return multiPolygon3D.bbox?.asAny
 		}
 	}
 	

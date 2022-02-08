@@ -28,3 +28,19 @@ public struct MultiPoint2D: MultiPoint {
 	}
 	
 }
+
+public struct MultiPoint3D: MultiPoint {
+	
+	public typealias Point = Point3D
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPoint }
+	
+	public var coordinates: Coordinates
+	
+	public var asAnyGeometry: AnyGeometry { .multiPoint3D(self) }
+	
+	public init(coordinates: Coordinates) {
+		self.coordinates = coordinates
+	}
+	
+}
