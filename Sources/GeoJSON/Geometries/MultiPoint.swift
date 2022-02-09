@@ -6,6 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON MultiPoint](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.3).
 public protocol MultiPoint: SingleGeometry {
 	
 	associatedtype Point: GeoJSON.Point
@@ -13,6 +14,7 @@ public protocol MultiPoint: SingleGeometry {
 	
 }
 
+/// A ``MultiPoint`` with ``Point2D``s.
 public struct MultiPoint2D: MultiPoint {
 	
 	public typealias Point = Point2D
@@ -29,6 +31,7 @@ public struct MultiPoint2D: MultiPoint {
 	
 }
 
+/// A ``MultiPoint`` with ``Point3D``s.
 public struct MultiPoint3D: MultiPoint {
 	
 	public typealias Point = Point3D

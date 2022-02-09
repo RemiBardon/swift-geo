@@ -9,6 +9,7 @@
 import NonEmpty
 import Turf
 
+/// A [GeoJSON Polygon](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6) / linear ring.
 public protocol Polygon: SingleGeometry {
 	
 	associatedtype Point: GeoJSON.Point
@@ -55,7 +56,7 @@ extension LinearRingCoordinates: ExpressibleByArrayLiteral {
 	
 }
 
-/// A 2D polygon / linear ring.
+/// A ``Polygon`` with ``Point2D``s.
 public struct Polygon2D: Polygon {
 	
 	public typealias Point = Point2D
@@ -72,7 +73,7 @@ public struct Polygon2D: Polygon {
 	
 }
 
-/// A 3D polygon / linear ring.
+/// A ``Polygon`` with ``Point3D``s.
 public struct Polygon3D: Polygon {
 	
 	public typealias Point = Point3D

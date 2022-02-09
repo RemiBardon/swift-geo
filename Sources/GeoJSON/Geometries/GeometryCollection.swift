@@ -6,9 +6,10 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON GeometryCollection](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8).
 public struct GeometryCollection: Geometry {
 	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .geometryCollection}
+	public static var geometryType: GeoJSON.`Type`.Geometry { .geometryCollection }
 	
 	public var bbox: AnyBoundingBox?
 	

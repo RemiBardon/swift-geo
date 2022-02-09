@@ -8,6 +8,7 @@
 
 import NonEmpty
 
+/// A [GeoJSON MultiLineString](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.5).
 public protocol MultiLineString: SingleGeometry {
 	
 	associatedtype LineString: GeoJSON.LineString
@@ -15,6 +16,7 @@ public protocol MultiLineString: SingleGeometry {
 	
 }
 
+/// A ``MultiLineString`` with ``Point2D``s.
 public struct MultiLineString2D: MultiLineString {
 	
 	public typealias LineString = LineString2D
@@ -45,6 +47,7 @@ public struct MultiLineString2D: MultiLineString {
 	
 }
 
+/// A ``MultiLineString`` with ``Point3D``s.
 public struct MultiLineString3D: MultiLineString {
 	
 	public typealias LineString = LineString3D

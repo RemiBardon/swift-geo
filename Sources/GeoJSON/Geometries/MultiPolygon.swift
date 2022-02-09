@@ -6,6 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON MultiPolygon](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.7).
 public protocol MultiPolygon: SingleGeometry {
 	
 	associatedtype Polygon: GeoJSON.Polygon
@@ -13,6 +14,7 @@ public protocol MultiPolygon: SingleGeometry {
 	
 }
 
+/// A ``MultiPolygon`` with ``Point2D``s.
 public struct MultiPolygon2D: MultiPolygon {
 	
 	public typealias Polygon = Polygon2D
@@ -29,6 +31,7 @@ public struct MultiPolygon2D: MultiPolygon {
 	
 }
 
+/// A ``MultiPolygon`` with ``Point3D``s.
 public struct MultiPolygon3D: MultiPolygon {
 	
 	public typealias Polygon = Polygon3D

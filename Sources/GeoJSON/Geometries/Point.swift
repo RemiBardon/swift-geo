@@ -6,6 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON Point](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.2).
 public protocol Point: SingleGeometry {
 	
 	associatedtype Position: GeoJSON.Position
@@ -13,6 +14,7 @@ public protocol Point: SingleGeometry {
 	
 }
 
+/// A two-dimensional ``Point`` (with longitude and latitude).
 public struct Point2D: Point {
 	
 	public typealias Position = Position2D
@@ -29,6 +31,7 @@ public struct Point2D: Point {
 	
 }
 
+/// A three-dimensional ``Point`` (with longitude, latitude and altitude).
 public struct Point3D: Point {
 	
 	public typealias Position = Position3D

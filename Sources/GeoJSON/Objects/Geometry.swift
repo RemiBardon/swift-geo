@@ -8,12 +8,15 @@
 
 import Turf
 
+/// A [GeoJSON Geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1).
 public protocol Geometry: GeoJSON.Object {
 	
+	/// The GeoJSON type of this geometry.
 	static var geometryType: GeoJSON.`Type`.Geometry { get }
 	
 	var bbox: BoundingBox? { get }
 	
+	/// This geometry, but type-erased.
 	var asAnyGeometry: AnyGeometry { get }
 	
 }
@@ -24,6 +27,8 @@ extension Geometry {
 	
 }
 
+/// A single [GeoJSON Geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1)
+/// (not a [GeometryCollection](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8)).
 public protocol SingleGeometry: Geometry {
 	
 	associatedtype Coordinates: Boundable & Hashable & Codable
@@ -41,6 +46,7 @@ extension SingleGeometry {
 	
 }
 
+/// A type-erased ``Geometry``.
 public enum AnyGeometry: Hashable, Codable {
 	
 	case geometryCollection(GeometryCollection)
