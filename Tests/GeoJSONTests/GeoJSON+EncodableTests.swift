@@ -163,4 +163,32 @@ final class GeoJSONEncodableTests: XCTestCase {
 		XCTAssertEqual(string, expected)
 	}
 	
+	func testFeature2DWithIDEncode() throws {
+		struct FeatureProperties: Hashable, Codable {}
+		
+		let feature: Feature = Feature(
+			id: "feature_id",
+			geometry: Point2D(coordinates: .nantes),
+			properties: FeatureProperties()
+		)
+		let data: Data = try JSONEncoder().encode(feature)
+		let string: String = try XCTUnwrap(String(data: data, encoding: .utf8))
+		
+		let expected: String = [
+			"{",
+				// For some reason, `"id"` goes here 🤷
+				"\"id\":\"feature_id\",",
+				// For some reason, `"properties"` goes here 🤷
+				"\"properties\":{},",
+				"\"type\":\"Feature\",",
+				"\"geometry\":{",
+					"\"type\":\"Point\",",
+					"\"coordinates\":[-1.55366,47.21881]",
+				"},",
+				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
+			"}",
+		].joined()
+		XCTAssertEqual(string, expected)
+	}
+	
 }

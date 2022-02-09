@@ -7,7 +7,7 @@
 //
 
 /// A [GeoJSON Object](https://datatracker.ietf.org/doc/html/rfc7946#section-3).
-public protocol Object: Hashable {
+public protocol Object {
 	
 	associatedtype BoundingBox: GeoJSON.BoundingBox
 	

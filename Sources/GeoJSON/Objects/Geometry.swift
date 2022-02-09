@@ -9,7 +9,7 @@
 import Turf
 
 /// A [GeoJSON Geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1).
-public protocol Geometry: GeoJSON.Object {
+public protocol Geometry: GeoJSON.Object, Hashable {
 	
 	var bbox: BoundingBox? { get }
 	

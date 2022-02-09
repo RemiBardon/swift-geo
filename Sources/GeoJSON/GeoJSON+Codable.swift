@@ -375,12 +375,13 @@ extension AnyBoundingBox {
 
 fileprivate enum FeatureCodingKeys: String, CodingKey {
 	case geoJSONType = "type"
-	case geometry, properties, bbox
+	case id, geometry, properties, bbox
 }
 
 extension Feature {
 	
 	public init(from decoder: Decoder) throws {
+		print(String(describing: ID.self))
 		let container = try decoder.container(keyedBy: FeatureCodingKeys.self)
 		
 		let type = try container.decode(GeoJSON.`Type`.self, forKey: .geoJSONType)
@@ -391,16 +392,18 @@ extension Feature {
 			))
 		}
 		
+		let id = try container.decodeIfPresent(ID.self, forKey: .id)
 		let geometry = try container.decodeIfPresent(Geometry.self, forKey: .geometry)
 		let properties = try container.decode(Properties.self, forKey: .properties)
 		
-		self.init(geometry: geometry, properties: properties)
+		self.init(id: id, geometry: geometry, properties: properties)
 	}
 	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: FeatureCodingKeys.self)
 		
 		try container.encode(Self.geoJSONType, forKey: .geoJSONType)
+		try container.encodeIfPresent(self.id, forKey: .id)
 		try container.encodeIfPresent(self.geometry, forKey: .geometry)
 		try container.encode(self.properties, forKey: .properties)
 		// TODO: Create GeoJSONEncoder that allows setting "export bboxes" to a boolean value
@@ -429,7 +432,7 @@ extension FeatureCollection {
 		}
 		
 		let features = try container.decodeIfPresent(
-			[Feature<Geometry, Properties>].self,
+			[Feature<ID, Geometry, Properties>].self,
 			forKey: .features
 		) ?? []
 		
