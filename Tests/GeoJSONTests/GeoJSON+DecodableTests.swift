@@ -170,10 +170,10 @@ final class GeoJSONDecodableTests: XCTestCase {
 		].joined()
 		
 		let data: Data = try XCTUnwrap(string.data(using: .utf8))
-		let feature = try JSONDecoder().decode(Feature<FeatureProperties>.self, from: data)
+		let feature = try JSONDecoder().decode(Feature<Point2D, FeatureProperties>.self, from: data)
 		
 		let expected: Feature = Feature(
-			geometry: .point2D(Point2D(coordinates: .nantes)),
+			geometry: Point2D(coordinates: .nantes),
 			properties: FeatureProperties()
 		)
 		XCTAssertEqual(feature, expected)
@@ -200,9 +200,9 @@ final class GeoJSONDecodableTests: XCTestCase {
 		"""
 		
 		let data: Data = try XCTUnwrap(string.data(using: .utf8))
-		let feature = try JSONDecoder().decode(Feature<RealWorldProperties>.self, from: data)
+		let feature = try JSONDecoder().decode(AnyFeature<RealWorldProperties>.self, from: data)
 		
-		let expected: Feature = Feature(
+		let expected: AnyFeature = AnyFeature(
 			geometry: .point2D(Point2D(coordinates: .init(latitude: 0.5, longitude: 102))),
 			properties: RealWorldProperties(prop0: "value0")
 		)
@@ -337,9 +337,9 @@ final class GeoJSONDecodableTests: XCTestCase {
 		"""
 		
 		let data: Data = try XCTUnwrap(string.data(using: .utf8))
-		let feature = try JSONDecoder().decode(FeatureCollection<HeterogeneousProperties>.self, from: data)
+		let feature = try JSONDecoder().decode(AnyFeatureCollection<HeterogeneousProperties>.self, from: data)
 		
-		let expected: FeatureCollection<HeterogeneousProperties> = FeatureCollection(features: [
+		let expected: AnyFeatureCollection<HeterogeneousProperties> = AnyFeatureCollection(features: [
 			Feature(
 				geometry: .point2D(Point2D(coordinates: .init(latitude: 0.5, longitude: 102))),
 				properties: .type1(.init(prop0: "value0"))

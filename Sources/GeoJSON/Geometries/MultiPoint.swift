@@ -14,12 +14,16 @@ public protocol MultiPoint: SingleGeometry {
 	
 }
 
+extension MultiPoint {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPoint }
+	
+}
+
 /// A ``MultiPoint`` with ``Point2D``s.
 public struct MultiPoint2D: MultiPoint {
 	
 	public typealias Point = Point2D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPoint }
 	
 	public var coordinates: Coordinates
 	
@@ -35,8 +39,6 @@ public struct MultiPoint2D: MultiPoint {
 public struct MultiPoint3D: MultiPoint {
 	
 	public typealias Point = Point3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPoint }
 	
 	public var coordinates: Coordinates
 	

@@ -5,6 +5,7 @@
 ### Base
 
 - ``Geometry``
+- ``CodableGeometry``
 - ``AnyGeometry``
 
 ### Introduced concepts

@@ -14,12 +14,16 @@ public protocol MultiPolygon: SingleGeometry {
 	
 }
 
+extension MultiPolygon {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPolygon }
+	
+}
+
 /// A ``MultiPolygon`` with ``Point2D``s.
 public struct MultiPolygon2D: MultiPolygon {
 	
 	public typealias Polygon = Polygon2D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPolygon }
 	
 	public var coordinates: Coordinates
 	
@@ -35,8 +39,6 @@ public struct MultiPolygon2D: MultiPolygon {
 public struct MultiPolygon3D: MultiPolygon {
 	
 	public typealias Polygon = Polygon3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiPolygon }
 	
 	public var coordinates: Coordinates
 	

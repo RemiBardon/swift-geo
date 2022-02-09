@@ -16,12 +16,16 @@ public protocol MultiLineString: SingleGeometry {
 	
 }
 
+extension MultiLineString {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .multiLineString }
+	
+}
+
 /// A ``MultiLineString`` with ``Point2D``s.
 public struct MultiLineString2D: MultiLineString {
 	
 	public typealias LineString = LineString2D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiLineString }
 	
 	public var coordinates: Coordinates
 	
@@ -51,8 +55,6 @@ public struct MultiLineString2D: MultiLineString {
 public struct MultiLineString3D: MultiLineString {
 	
 	public typealias LineString = LineString3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .multiLineString }
 	
 	public var coordinates: Coordinates
 	

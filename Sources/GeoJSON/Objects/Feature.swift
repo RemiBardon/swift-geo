@@ -8,21 +8,23 @@
 
 /// A [GeoJSON Feature](https://datatracker.ietf.org/doc/html/rfc7946#section-3.2).
 public struct Feature<
-//	Geometry: GeoJSON.Geometry,
-//	BoundingBox: GeoJSON.BoundingBox,
+	Geometry: GeoJSON.Geometry & Codable,
 	Properties: GeoJSON.FeatureProperties
->: GeoJSON.Object {
+>: CodableObject {
 	
 	public static var geoJSONType: GeoJSON.`Type` { .feature }
 	
-	public var bbox: AnyBoundingBox? { geometry?.bbox }
+	public var bbox: Geometry.BoundingBox? { geometry?.bbox }
 	
-	public var geometry: AnyGeometry?
+	public var geometry: Geometry?
 	public var properties: Properties
 	
-	public init(geometry: AnyGeometry?, properties: Properties) {
+	public init(geometry: Geometry?, properties: Properties) {
 		self.geometry = geometry
 		self.properties = properties
 	}
 	
 }
+
+/// A (half) type-erased ``Feature``.
+public typealias AnyFeature<Properties: GeoJSON.FeatureProperties> = Feature<AnyGeometry, Properties>

@@ -7,7 +7,7 @@
 //
 
 /// A [GeoJSON GeometryCollection](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8).
-public struct GeometryCollection: Geometry {
+public struct GeometryCollection: CodableGeometry {
 	
 	public static var geometryType: GeoJSON.`Type`.Geometry { .geometryCollection }
 	

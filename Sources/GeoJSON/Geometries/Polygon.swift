@@ -17,6 +17,12 @@ public protocol Polygon: SingleGeometry {
 	
 }
 
+extension Polygon {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .polygon }
+	
+}
+
 public struct LinearRingCoordinates<Point: GeoJSON.Point>: Boundable, Hashable, Codable {
 	
 	public typealias RawValue = NonEmpty<NonEmpty<NonEmpty<NonEmpty<[Point.Coordinates]>>>>
@@ -61,8 +67,6 @@ public struct Polygon2D: Polygon {
 	
 	public typealias Point = Point2D
 	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .polygon }
-	
 	public var coordinates: Coordinates
 	
 	public var asAnyGeometry: AnyGeometry { .polygon2D(self) }
@@ -77,8 +81,6 @@ public struct Polygon2D: Polygon {
 public struct Polygon3D: Polygon {
 	
 	public typealias Point = Point3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .polygon }
 	
 	public var coordinates: Coordinates
 	

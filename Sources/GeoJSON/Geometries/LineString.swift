@@ -16,12 +16,16 @@ public protocol LineString: SingleGeometry {
 	
 }
 
+extension LineString {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .lineString }
+	
+}
+
 /// A ``LineString`` with ``Point2D``s.
 public struct LineString2D: LineString {
 	
 	public typealias Position = Position2D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .lineString }
 	
 	public var coordinates: Coordinates
 	
@@ -45,8 +49,6 @@ public struct LineString2D: LineString {
 public struct LineString3D: LineString {
 	
 	public typealias Position = Position3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .lineString }
 	
 	public var coordinates: Coordinates
 	

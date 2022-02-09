@@ -14,12 +14,16 @@ public protocol Point: SingleGeometry {
 	
 }
 
+extension Point {
+	
+	public static var geometryType: GeoJSON.`Type`.Geometry { .point }
+	
+}
+
 /// A two-dimensional ``Point`` (with longitude and latitude).
 public struct Point2D: Point {
 	
 	public typealias Position = Position2D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .point }
 	
 	public var coordinates: Coordinates
 	
@@ -35,8 +39,6 @@ public struct Point2D: Point {
 public struct Point3D: Point {
 	
 	public typealias Position = Position3D
-	
-	public static var geometryType: GeoJSON.`Type`.Geometry { .point }
 	
 	public var coordinates: Coordinates
 	
