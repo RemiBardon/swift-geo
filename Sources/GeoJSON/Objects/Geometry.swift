@@ -8,7 +8,7 @@
 
 import Turf
 
-public protocol Geometry: GeoJSON.Object, Hashable, Codable {
+public protocol Geometry: GeoJSON.Object {
 	
 	static var geometryType: GeoJSON.`Type`.Geometry { get }
 	

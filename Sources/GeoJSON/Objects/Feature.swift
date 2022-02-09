@@ -10,7 +10,7 @@ public struct Feature<
 //	Geometry: GeoJSON.Geometry,
 //	BoundingBox: GeoJSON.BoundingBox,
 	Properties: GeoJSON.Properties
->: GeoJSON.Object, Hashable, Codable {
+>: GeoJSON.Object {
 	
 	public static var geoJSONType: GeoJSON.`Type` { .feature }
 	
