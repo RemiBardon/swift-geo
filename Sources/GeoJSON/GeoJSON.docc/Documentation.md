@@ -15,9 +15,12 @@
 ### Objects
 
 - ``Object``
+- ``CodableObject``
 - <doc:Geometries>
 - ``Feature``
+- ``AnyFeature``
 - ``FeatureCollection``
+- ``AnyFeatureCollection``
 
 ### Bounding Boxes
 

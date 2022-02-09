@@ -391,7 +391,7 @@ extension Feature {
 			))
 		}
 		
-		let geometry = try container.decodeIfPresent(AnyGeometry.self, forKey: .geometry)
+		let geometry = try container.decodeIfPresent(Geometry.self, forKey: .geometry)
 		let properties = try container.decode(Properties.self, forKey: .properties)
 		
 		self.init(geometry: geometry, properties: properties)
@@ -428,7 +428,10 @@ extension FeatureCollection {
 			))
 		}
 		
-		let features = try container.decodeIfPresent([Feature<Properties>].self, forKey: .features) ?? []
+		let features = try container.decodeIfPresent(
+			[Feature<Geometry, Properties>].self,
+			forKey: .features
+		) ?? []
 		
 		self.init(features: features)
 	}

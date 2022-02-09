@@ -142,7 +142,7 @@ final class GeoJSONEncodableTests: XCTestCase {
 		struct FeatureProperties: Hashable, Codable {}
 		
 		let feature: Feature = Feature(
-			geometry: .point2D(Point2D(coordinates: .nantes)),
+			geometry: Point2D(coordinates: .nantes),
 			properties: FeatureProperties()
 		)
 		let data: Data = try JSONEncoder().encode(feature)
