@@ -409,3 +409,38 @@ extension Feature {
 	}
 	
 }
+
+fileprivate enum FeatureCollectionCodingKeys: String, CodingKey {
+	case geoJSONType = "type"
+	case features, bbox
+}
+
+extension FeatureCollection {
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: FeatureCollectionCodingKeys.self)
+		
+		let type = try container.decode(GeoJSON.`Type`.self, forKey: .geoJSONType)
+		guard type == Self.geoJSONType else {
+			throw DecodingError.typeMismatch(Self.self, DecodingError.Context(
+				codingPath: container.codingPath,
+				debugDescription: "Found GeoJSON type '\(type.rawValue)'"
+			))
+		}
+		
+		let features = try container.decodeIfPresent([Feature<Properties>].self, forKey: .features) ?? []
+		
+		self.init(features: features)
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: FeatureCollectionCodingKeys.self)
+		
+		try container.encode(Self.geoJSONType, forKey: .geoJSONType)
+		try container.encodeIfPresent(self.features, forKey: .features)
+		// TODO: Create GeoJSONEncoder that allows setting "export bboxes" to a boolean value
+		// TODO: Memoize bboxes not to recompute them all the time (bboxes tree)
+		try container.encodeIfPresent(self.bbox, forKey: .bbox)
+	}
+	
+}

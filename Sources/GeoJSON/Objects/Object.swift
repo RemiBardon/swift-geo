@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public protocol Object {
+public protocol Object: Hashable, Codable {
 	
 	associatedtype BoundingBox: GeoJSON.BoundingBox
 	
