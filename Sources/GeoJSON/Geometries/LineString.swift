@@ -8,6 +8,7 @@
 
 import NonEmpty
 
+/// A [GeoJSON LineString](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.4).
 public protocol LineString: SingleGeometry {
 	
 	associatedtype Position: GeoJSON.Position
@@ -15,6 +16,7 @@ public protocol LineString: SingleGeometry {
 	
 }
 
+/// A ``LineString`` with ``Point2D``s.
 public struct LineString2D: LineString {
 	
 	public typealias Position = Position2D
@@ -39,6 +41,7 @@ public struct LineString2D: LineString {
 	
 }
 
+/// A ``LineString`` with ``Point3D``s.
 public struct LineString3D: LineString {
 	
 	public typealias Position = Position3D

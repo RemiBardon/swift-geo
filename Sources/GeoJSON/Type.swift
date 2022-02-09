@@ -6,8 +6,10 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON type identifier](https://datatracker.ietf.org/doc/html/rfc7946#section-1.4).
 public enum `Type`: Hashable, Codable, RawRepresentable {
 	
+	/// A [GeoJSON geometry identifier](https://datatracker.ietf.org/doc/html/rfc7946#section-1.4).
 	public enum Geometry: String, Hashable, Codable {
 		case point = "Point"
 		case multiPoint = "MultiPoint"

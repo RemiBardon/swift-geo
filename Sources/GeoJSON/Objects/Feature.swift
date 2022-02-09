@@ -6,10 +6,11 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+/// A [GeoJSON Feature](https://datatracker.ietf.org/doc/html/rfc7946#section-3.2).
 public struct Feature<
 //	Geometry: GeoJSON.Geometry,
 //	BoundingBox: GeoJSON.BoundingBox,
-	Properties: GeoJSON.Properties
+	Properties: GeoJSON.FeatureProperties
 >: GeoJSON.Object {
 	
 	public static var geoJSONType: GeoJSON.`Type` { .feature }

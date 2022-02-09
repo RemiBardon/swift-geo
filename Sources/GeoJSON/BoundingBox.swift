@@ -8,12 +8,15 @@
 
 import GeoModels
 
+/// A [GeoJSON Bounding Box](https://datatracker.ietf.org/doc/html/rfc7946#section-5).
 public protocol BoundingBox: Hashable, Codable {
 	
+	/// This bonding box, but type-erased.
 	var asAny: AnyBoundingBox { get }
 	
 }
 
+/// A two-dimensional ``BoundingBox``.
 public typealias BoundingBox2D = GeoModels.BoundingBox2D
 
 extension BoundingBox2D: BoundingBox {
@@ -22,6 +25,7 @@ extension BoundingBox2D: BoundingBox {
 	
 }
 
+/// A three-dimensional ``BoundingBox``.
 public typealias BoundingBox3D = GeoModels.BoundingBox3D
 
 extension BoundingBox3D: BoundingBox {
@@ -30,6 +34,7 @@ extension BoundingBox3D: BoundingBox {
 	
 }
 
+/// A type-erased ``BoundingBox``.
 public enum AnyBoundingBox: BoundingBox, Hashable, Codable {
 	
 	case twoDimensions(BoundingBox2D)
