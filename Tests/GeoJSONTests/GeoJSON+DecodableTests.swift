@@ -170,9 +170,36 @@ final class GeoJSONDecodableTests: XCTestCase {
 		].joined()
 		
 		let data: Data = try XCTUnwrap(string.data(using: .utf8))
-		let feature = try JSONDecoder().decode(Feature<Point2D, FeatureProperties>.self, from: data)
+		let feature = try JSONDecoder().decode(Feature<NonID, Point2D, FeatureProperties>.self, from: data)
 		
 		let expected: Feature = Feature(
+			geometry: Point2D(coordinates: .nantes),
+			properties: FeatureProperties()
+		)
+		XCTAssertEqual(feature, expected)
+	}
+	
+	func testFeature2DWithIDDecode() throws {
+		struct FeatureProperties: Hashable, Codable {}
+		
+		let string: String = [
+			"{",
+				"\"type\":\"Feature\",",
+				"\"id\":\"feature_id\",",
+				"\"geometry\":{",
+					"\"type\":\"Point\",",
+					"\"coordinates\":[-1.55366,47.21881]",
+				"},",
+				"\"properties\":{},",
+				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
+			"}",
+		].joined()
+		
+		let data: Data = try XCTUnwrap(string.data(using: .utf8))
+		let feature = try JSONDecoder().decode(Feature<String, Point2D, FeatureProperties>.self, from: data)
+		
+		let expected: Feature = Feature(
+			id: "feature_id",
 			geometry: Point2D(coordinates: .nantes),
 			properties: FeatureProperties()
 		)
