@@ -40,8 +40,17 @@ public enum AnyBoundingBox: BoundingBox, Hashable, Codable {
 	public static var zero: AnyBoundingBox = .twoDimensions(.zero)
 	
 	public func union(_ other: AnyBoundingBox) -> AnyBoundingBox {
-		#warning("Implement `AnyBoundingBox.union`")
-		fatalError("Not implemented yet")
+		switch (self, other) {
+		case let (.twoDimensions(self), .twoDimensions(other)):
+			return .twoDimensions(self.union(other))
+			
+		case let (.twoDimensions(bbox2d), .threeDimensions(bbox3d)),
+			 let (.threeDimensions(bbox3d), .twoDimensions(bbox2d)):
+			return .threeDimensions(bbox3d.union(bbox2d))
+			
+		case let (.threeDimensions(self), .threeDimensions(other)):
+			return .threeDimensions(self.union(other))
+		}
 	}
 	
 	case twoDimensions(BoundingBox2D)

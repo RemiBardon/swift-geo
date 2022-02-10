@@ -17,8 +17,9 @@ public struct FeatureCollection<
 	
 	public var features: [Feature<ID, Geometry, Properties>]
 	
-	// FIXME: Fix bounding box
-	public var bbox: AnyBoundingBox? { nil }
+	public var bbox: AnyBoundingBox? {
+		features.compactMap(\.bbox).reduce(nil, { $0.union($1.asAny) })
+	}
 	
 }
 

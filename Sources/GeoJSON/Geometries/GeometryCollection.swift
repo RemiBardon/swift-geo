@@ -11,10 +11,14 @@ public struct GeometryCollection: CodableGeometry {
 	
 	public static var geometryType: GeoJSON.`Type`.Geometry { .geometryCollection }
 	
-	public var _bbox: AnyBoundingBox { asAnyGeometry.bbox }
+	public var _bbox: AnyBoundingBox { geometries.bbox }
 	
 	public var asAnyGeometry: AnyGeometry { .geometryCollection(self) }
 	
 	public var geometries: [AnyGeometry]
+	
+	public init(geometries: [AnyGeometry]) {
+		self.geometries = geometries
+	}
 	
 }
