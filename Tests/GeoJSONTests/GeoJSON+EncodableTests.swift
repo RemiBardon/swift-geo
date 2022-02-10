@@ -26,7 +26,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 		XCTAssertEqual(string, [
 			"{",
 				"\"type\":\"Point\",",
-				"\"coordinates\":[-1.55366,47.21881]",
+				"\"coordinates\":[-1.55366,47.21881],",
+				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 			"}",
 		].joined())
 	}
@@ -41,7 +42,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 				"\"type\":\"MultiPoint\",",
 				"\"coordinates\":[",
 					"[-1.55366,47.21881]",
-				"]",
+				"],",
+				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 			"}",
 		].joined())
 	}
@@ -57,7 +59,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 				"\"coordinates\":[",
 					"[-1.55366,47.21881],",
 					"[2.3529,48.85719]",
-				"]",
+				"],",
+				"\"bbox\":[-1.55366,47.21881,2.3529,48.85719]",
 			"}",
 		].joined())
 	}
@@ -79,7 +82,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 						"[2.3529,48.85719],",
 						"[5.36468,43.29868]",
 					"]",
-				"]",
+				"],",
+				"\"bbox\":[-1.55366,43.29868,5.36468,48.85719]",
 			"}",
 		].joined())
 	}
@@ -102,7 +106,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 						"[2.3529,48.85719],",
 						"[-1.55366,47.21881]",
 					"]",
-				"]",
+				"],",
+				"\"bbox\":[-1.55366,43.29868,5.36468,48.85719]",
 			"}",
 		].joined())
 	}
@@ -133,7 +138,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 							"[-1.55366,47.21881]",
 						"]",
 					"]",
-				"]",
+				"],",
+				"\"bbox\":[-1.55366,43.29868,5.36468,48.85719]",
 			"}",
 		].joined())
 	}
@@ -155,7 +161,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 				"\"type\":\"Feature\",",
 				"\"geometry\":{",
 					"\"type\":\"Point\",",
-					"\"coordinates\":[-1.55366,47.21881]",
+					"\"coordinates\":[-1.55366,47.21881],",
+					"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 				"},",
 				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 			"}",
@@ -183,7 +190,8 @@ final class GeoJSONEncodableTests: XCTestCase {
 				"\"type\":\"Feature\",",
 				"\"geometry\":{",
 					"\"type\":\"Point\",",
-					"\"coordinates\":[-1.55366,47.21881]",
+					"\"coordinates\":[-1.55366,47.21881],",
+					"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 				"},",
 				"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
 			"}",
