@@ -176,6 +176,39 @@ extension SingleGeometry {
 	
 }
 
+fileprivate enum GeometryCollectionCodingKeys: String, CodingKey {
+	case geoJSONType = "type"
+	case geometries, bbox
+}
+
+extension GeometryCollection {
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: GeometryCollectionCodingKeys.self)
+		
+		let type = try container.decode(GeoJSON.`Type`.self, forKey: .geoJSONType)
+		guard type == Self.geoJSONType else {
+			throw DecodingError.typeMismatch(Self.self, DecodingError.Context(
+				codingPath: container.codingPath,
+				debugDescription: "Found GeoJSON type '\(type.rawValue)'"
+			))
+		}
+		
+		let geometries = try container.decode([AnyGeometry].self, forKey: .geometries)
+		
+		self.init(geometries: geometries)
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: GeometryCollectionCodingKeys.self)
+		
+		try container.encode(Self.geoJSONType, forKey: .geoJSONType)
+		try container.encode(self.geometries, forKey: .geometries)
+		try container.encode(self.bbox, forKey: .bbox)
+	}
+	
+}
+
 fileprivate enum AnyGeometryCodingKeys: String, CodingKey {
 	case geoJSONType = "type"
 }

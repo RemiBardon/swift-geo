@@ -199,4 +199,84 @@ final class GeoJSONEncodableTests: XCTestCase {
 		XCTAssertEqual(string, expected)
 	}
 	
+	func testFeatureCollectionOfGeometryCollectionEncode() throws {
+		struct FeatureProperties: Hashable, Codable {}
+		
+		let featureCollection: FeatureCollection = FeatureCollection(features: [
+			Feature(
+				geometry: GeometryCollection(geometries: [
+					.point2D(Point2D(coordinates: .nantes)),
+					.point2D(Point2D(coordinates: .bordeaux)),
+				]),
+				properties: FeatureProperties()
+			),
+			Feature(
+				geometry: GeometryCollection(geometries: [
+					.point2D(Point2D(coordinates: .paris)),
+					 .point2D(Point2D(coordinates: .marseille)),
+				]),
+				properties: FeatureProperties()
+			),
+		])
+		let data: Data = try JSONEncoder().encode(featureCollection)
+		let string: String = try XCTUnwrap(String(data: data, encoding: .utf8))
+		
+		let expected: String = [
+			"{",
+				"\"type\":\"FeatureCollection\",",
+				// For some reason, `"bbox"` goes here 🤷
+				"\"bbox\":[-1.55366,43.29868,5.36468,48.85719],",
+				"\"features\":[",
+					"{",
+						// For some reason, `"properties"` goes here 🤷
+						"\"properties\":{},",
+						"\"type\":\"Feature\",",
+						"\"geometry\":{",
+							"\"type\":\"GeometryCollection\",",
+							// For some reason, `"bbox"` goes here 🤷
+							"\"bbox\":[-1.55366,44.8378,-0.58143,47.21881],",
+							"\"geometries\":[",
+								"{",
+									"\"type\":\"Point\",",
+									"\"coordinates\":[-1.55366,47.21881],",
+									"\"bbox\":[-1.55366,47.21881,-1.55366,47.21881]",
+								"},",
+								"{",
+									"\"type\":\"Point\",",
+									"\"coordinates\":[-0.58143,44.8378],",
+									"\"bbox\":[-0.58143,44.8378,-0.58143,44.8378]",
+								"}",
+							"]",
+						"},",
+						"\"bbox\":[-1.55366,44.8378,-0.58143,47.21881]",
+					"},",
+					"{",
+						// For some reason, `"properties"` goes here 🤷
+						"\"properties\":{},",
+						"\"type\":\"Feature\",",
+						"\"geometry\":{",
+							"\"type\":\"GeometryCollection\",",
+							// For some reason, `"bbox"` goes here 🤷
+							"\"bbox\":[2.3529,43.29868,5.36468,48.85719],",
+							"\"geometries\":[",
+								"{",
+									"\"type\":\"Point\",",
+									"\"coordinates\":[2.3529,48.85719],",
+									"\"bbox\":[2.3529,48.85719,2.3529,48.85719]",
+								"},",
+								"{",
+									"\"type\":\"Point\",",
+									"\"coordinates\":[5.36468,43.29868],",
+									"\"bbox\":[5.36468,43.29868,5.36468,43.29868]",
+								"}",
+							"]",
+						"},",
+						"\"bbox\":[2.3529,43.29868,5.36468,48.85719]",
+					"}",
+				"]",
+			"}",
+		].joined()
+		XCTAssertEqual(string, expected)
+	}
+	
 }
