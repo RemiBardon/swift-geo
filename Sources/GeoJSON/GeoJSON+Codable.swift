@@ -145,7 +145,7 @@ extension LinearRingCoordinates {
 
 fileprivate enum SingleGeometryCodingKeys: String, CodingKey {
 	case geoJSONType = "type"
-	case coordinates
+	case coordinates, bbox
 }
 
 extension SingleGeometry {
@@ -171,6 +171,7 @@ extension SingleGeometry {
 		
 		try container.encode(Self.geoJSONType, forKey: .geoJSONType)
 		try container.encode(self.coordinates, forKey: .coordinates)
+		try container.encode(self.bbox, forKey: .bbox)
 	}
 	
 }

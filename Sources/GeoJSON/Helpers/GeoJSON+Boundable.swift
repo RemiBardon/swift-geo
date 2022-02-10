@@ -12,7 +12,7 @@ import Turf
 extension NonEmpty: Boundable where Collection: Hashable, Element: Boundable {
 	
 	public var _bbox: Element.BoundingBox {
-		self.reduce(.zero, { $0.union($1.bbox) })
+		self.reduce(nil, { $0.union($1.bbox) }) ?? .zero
 	}
 	
 }
