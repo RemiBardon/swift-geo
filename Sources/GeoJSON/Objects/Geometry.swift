@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Geometry.swift
 //  GeoSwift
 //
 //  Created by Rémi Bardon on 04/02/2022.
@@ -9,9 +9,9 @@
 import Turf
 
 /// A [GeoJSON Geometry](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1).
-public protocol Geometry: GeoJSON.Object, Hashable {
-	
-	var bbox: BoundingBox? { get }
+public protocol Geometry: GeoJSON.Object, Boundable, Hashable
+where BoundingBox: GeoJSON.BoundingBox
+{
 	
 	/// This geometry, but type-erased.
 	var asAnyGeometry: AnyGeometry { get }
@@ -46,7 +46,7 @@ public protocol SingleGeometry: CodableGeometry {
 
 extension SingleGeometry {
 	
-	public var bbox: Coordinates.BoundingBox? { coordinates.bbox }
+	public var _bbox: Coordinates.BoundingBox { coordinates.bbox }
 	
 }
 
@@ -89,23 +89,23 @@ public enum AnyGeometry: Geometry, Hashable, Codable {
 //		}
 //	}
 	
-	public var bbox: AnyBoundingBox? {
+	public var _bbox: AnyBoundingBox {
 		switch self {
 		case .geometryCollection(let geo): 	return geo.bbox
 			
-		case .point2D(let geo): 			return geo.bbox?.asAny
-		case .multiPoint2D(let geo): 		return geo.bbox?.asAny
-		case .lineString2D(let geo): 		return geo.bbox?.asAny
-		case .multiLineString2D(let geo): 	return geo.bbox?.asAny
-		case .polygon2D(let geo): 			return geo.bbox?.asAny
-		case .multiPolygon2D(let geo): 		return geo.bbox?.asAny
+		case .point2D(let geo): 			return geo.bbox.asAny
+		case .multiPoint2D(let geo): 		return geo.bbox.asAny
+		case .lineString2D(let geo): 		return geo.bbox.asAny
+		case .multiLineString2D(let geo): 	return geo.bbox.asAny
+		case .polygon2D(let geo): 			return geo.bbox.asAny
+		case .multiPolygon2D(let geo): 		return geo.bbox.asAny
 			
-		case .point3D(let geo): 			return geo.bbox?.asAny
-		case .multiPoint3D(let geo): 		return geo.bbox?.asAny
-		case .lineString3D(let geo): 		return geo.bbox?.asAny
-		case .multiLineString3D(let geo): 	return geo.bbox?.asAny
-		case .polygon3D(let geo): 			return geo.bbox?.asAny
-		case .multiPolygon3D(let geo): 		return geo.bbox?.asAny
+		case .point3D(let geo): 			return geo.bbox.asAny
+		case .multiPoint3D(let geo): 		return geo.bbox.asAny
+		case .lineString3D(let geo): 		return geo.bbox.asAny
+		case .multiLineString3D(let geo): 	return geo.bbox.asAny
+		case .polygon3D(let geo): 			return geo.bbox.asAny
+		case .multiPolygon3D(let geo): 		return geo.bbox.asAny
 		}
 	}
 	

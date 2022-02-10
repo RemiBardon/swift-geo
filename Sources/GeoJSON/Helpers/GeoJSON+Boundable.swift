@@ -9,9 +9,9 @@
 import NonEmpty
 import Turf
 
-extension NonEmpty: Boundable where Element: Boundable {
+extension NonEmpty: Boundable where Collection: Hashable, Element: Boundable {
 	
-	public var bbox: Element.BoundingBox {
+	public var _bbox: Element.BoundingBox {
 		self.reduce(.zero, { $0.union($1.bbox) })
 	}
 	

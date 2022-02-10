@@ -11,7 +11,7 @@ public struct GeometryCollection: CodableGeometry {
 	
 	public static var geometryType: GeoJSON.`Type`.Geometry { .geometryCollection }
 	
-	public var bbox: AnyBoundingBox?
+	public var _bbox: AnyBoundingBox { asAnyGeometry.bbox }
 	
 	public var asAnyGeometry: AnyGeometry { .geometryCollection(self) }
 	

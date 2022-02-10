@@ -9,7 +9,7 @@
 import GeoModels
 
 /// A [GeoJSON Bounding Box](https://datatracker.ietf.org/doc/html/rfc7946#section-5).
-public protocol BoundingBox: Hashable, Codable {
+public protocol BoundingBox: GeoModels.BoundingBox, Codable {
 	
 	/// This bonding box, but type-erased.
 	var asAny: AnyBoundingBox { get }
@@ -36,6 +36,13 @@ extension BoundingBox3D: BoundingBox {
 
 /// A type-erased ``BoundingBox``.
 public enum AnyBoundingBox: BoundingBox, Hashable, Codable {
+	
+	public static var zero: AnyBoundingBox = .twoDimensions(.zero)
+	
+	public func union(_ other: AnyBoundingBox) -> AnyBoundingBox {
+		#warning("Implement `AnyBoundingBox.union`")
+		fatalError("Not implemented yet")
+	}
 	
 	case twoDimensions(BoundingBox2D)
 	case threeDimensions(BoundingBox3D)

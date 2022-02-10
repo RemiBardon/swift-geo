@@ -29,7 +29,7 @@ public struct LinearRingCoordinates<Point: GeoJSON.Point>: Boundable, Hashable, 
 	
 	public var rawValue: RawValue
 	
-	public var bbox: RawValue.BoundingBox { rawValue.bbox }
+	public var _bbox: RawValue.BoundingBox { rawValue.bbox }
 	
 	public init(rawValue: RawValue) throws {
 		guard rawValue.first == rawValue.last else {
