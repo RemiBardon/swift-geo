@@ -407,7 +407,6 @@ extension Feature {
 		try container.encodeIfPresent(self.geometry, forKey: .geometry)
 		try container.encode(self.properties, forKey: .properties)
 		// TODO: Create GeoJSONEncoder that allows setting "export bboxes" to a boolean value
-		// TODO: Memoize bboxes not to recompute them all the time (bboxes tree)
 		try container.encodeIfPresent(self.bbox, forKey: .bbox)
 	}
 	
@@ -445,7 +444,6 @@ extension FeatureCollection {
 		try container.encode(Self.geoJSONType, forKey: .geoJSONType)
 		try container.encodeIfPresent(self.features, forKey: .features)
 		// TODO: Create GeoJSONEncoder that allows setting "export bboxes" to a boolean value
-		// TODO: Memoize bboxes not to recompute them all the time (bboxes tree)
 		try container.encodeIfPresent(self.bbox, forKey: .bbox)
 	}
 	

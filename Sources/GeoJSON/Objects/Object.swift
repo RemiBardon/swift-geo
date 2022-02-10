@@ -7,13 +7,7 @@
 //
 
 /// A [GeoJSON Object](https://datatracker.ietf.org/doc/html/rfc7946#section-3).
-public protocol Object {
-	
-	associatedtype BoundingBox: GeoJSON.BoundingBox
-	
-	var bbox: BoundingBox? { get }
-	
-}
+public protocol Object {}
 
 public protocol CodableObject: GeoJSON.Object, Codable {
 	

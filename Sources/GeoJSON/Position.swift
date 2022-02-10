@@ -10,7 +10,7 @@ import GeoModels
 import Turf
 
 /// A [GeoJSON Position](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.1).
-public protocol Position: Hashable, Boundable {}
+public protocol Position: Boundable {}
 
 /// A ``Position`` with two elements (longitude and latitude).
 public typealias Position2D = Coordinate2D
