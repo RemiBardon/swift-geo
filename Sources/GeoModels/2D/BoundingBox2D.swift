@@ -145,3 +145,9 @@ extension BoundingBox2D: BoundingBox {
 	}
 	
 }
+
+extension BoundingBox2D {
+	
+	public func union(_ bbox3d: BoundingBox3D) -> BoundingBox3D { bbox3d.union(self) }
+	
+}

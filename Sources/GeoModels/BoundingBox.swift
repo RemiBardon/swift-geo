@@ -13,3 +13,11 @@ public protocol BoundingBox: Hashable {
 	func union(_ other: Self) -> Self
 	
 }
+
+extension Optional where Wrapped: BoundingBox {
+	
+	public func union(_ bbox: Wrapped) -> Wrapped {
+		self?.union(bbox) ?? bbox
+	}
+	
+}

@@ -110,3 +110,12 @@ extension BoundingBox3D: BoundingBox {
 	}
 	
 }
+
+extension BoundingBox3D {
+	
+	public func union(_ bbox2d: BoundingBox2D) -> BoundingBox3D {
+		let other = BoundingBox3D(bbox2d, lowAltitude: self.lowAltitude, zHeight: .zero)
+		return self.union(other)
+	}
+	
+}

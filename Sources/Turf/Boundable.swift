@@ -12,13 +12,25 @@ public protocol Boundable {
 	
 	associatedtype BoundingBox: GeoModels.BoundingBox
 	
-	var bbox: BoundingBox { get }
+	var _bbox: BoundingBox { get }
 	
 }
 
-extension Coordinate2D: Boundable {
+extension Boundable {
 	
-	public var bbox: BoundingBox2D {
+	public var bbox: BoundingBox { _bbox }
+	
+}
+
+extension Boundable where Self: Hashable {
+	
+	public var bbox: BoundingBox { BoundingBoxCache.shared.bbox(for: self) }
+	
+}
+
+extension Coordinate2D {
+	
+	public var _bbox: BoundingBox2D {
 		BoundingBox2D(southWest: self, width: .zero, height: .zero)
 	}
 	
@@ -26,7 +38,7 @@ extension Coordinate2D: Boundable {
 
 extension Coordinate3D: Boundable {
 	
-	public var bbox: BoundingBox3D {
+	public var _bbox: BoundingBox3D {
 		BoundingBox3D(southWestLow: self, width: .zero, height: .zero, zHeight: .zero)
 	}
 	
@@ -34,7 +46,7 @@ extension Coordinate3D: Boundable {
 
 extension Line2D: Boundable {
 	
-	public var bbox: BoundingBox2D {
+	public var _bbox: BoundingBox2D {
 		Turf.bbox(for: [start, end])!
 	}
 	
@@ -42,7 +54,7 @@ extension Line2D: Boundable {
 
 extension Line3D: Boundable {
 	
-	public var bbox: BoundingBox3D {
+	public var _bbox: BoundingBox3D {
 		Turf.bbox(for: [start, end])!
 	}
 	
@@ -50,37 +62,37 @@ extension Line3D: Boundable {
 
 extension BoundingBox2D: Boundable {
 	
-	public var bbox: BoundingBox2D { self }
+	public var _bbox: BoundingBox2D { self }
 	
 }
 
 extension BoundingBox3D: Boundable {
 	
-	public var bbox: BoundingBox3D { self }
+	public var _bbox: BoundingBox3D { self }
 	
 }
 
 // Extension of protocol 'Collection' cannot have an inheritance clause
 //extension Collection: Boundable where Element: Boundable {
 //
-//	public var bbox: Element.BoundingBox {
-//		self.reduce(.zero, { $0.union($1.bbox) })
+//	public var _bbox: Element.BoundingBox {
+//		self.reduce(nil, { $0.union($1.bbox) }) ?? .zero
 //	}
 //
 //}
 
 extension Array: Boundable where Element: Boundable {
 	
-	public var bbox: Element.BoundingBox {
-		self.reduce(.zero, { $0.union($1.bbox) })
+	public var _bbox: Element.BoundingBox {
+		self.reduce(nil, { $0.union($1.bbox) }) ?? .zero
 	}
 	
 }
 
 extension Set: Boundable where Element: Boundable {
 	
-	public var bbox: Element.BoundingBox {
-		self.reduce(.zero, { $0.union($1.bbox) })
+	public var _bbox: Element.BoundingBox {
+		self.reduce(nil, { $0.union($1.bbox) }) ?? .zero
 	}
 	
 }

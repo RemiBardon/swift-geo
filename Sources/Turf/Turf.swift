@@ -68,7 +68,7 @@ public func bbox<C: Collection>(for coords: C) -> BoundingBox3D? where C.Element
 public func bbox<T: Boundable, C: Collection>(for boundables: C) -> T.BoundingBox? where C.Element == T {
 	guard !boundables.isEmpty else { return nil }
 	
-	return boundables.reduce(.zero, { $0.union($1.bbox) })
+	return boundables.reduce(nil, { $0.union($1.bbox) }) ?? .zero
 }
 
 /// Returns the absolute center of a polygon.

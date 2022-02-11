@@ -14,6 +14,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
+		.package(url: "https://github.com/pointfreeco/swift-nonempty", .upToNextMajor(from: "0.4.0")),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -36,6 +37,18 @@ let package = Package(
 		.testTarget(
 			name: "TurfTests",
 			dependencies: ["Turf"]
+		),
+		.target(
+			name: "GeoJSON",
+			dependencies: [
+				.target(name: "GeoModels"),
+				.target(name: "Turf"),
+				.product(name: "NonEmpty", package: "swift-nonempty"),
+			]
+		),
+		.testTarget(
+			name: "GeoJSONTests",
+			dependencies: ["GeoJSON"]
 		),
 	]
 )
