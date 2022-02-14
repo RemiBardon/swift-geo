@@ -148,3 +148,39 @@ public func centroid(for coordinates: [Coordinate2D]) -> Coordinate2D {
 		longitude: sumLongitude / Longitude(coordinates.count)
 	)
 }
+
+/// Calculates the signed area of a planar non-self-intersecting polygon
+/// (not taking into account the curvature of the Earth).
+///
+/// Formula from <https://mathworld.wolfram.com/PolygonArea.html>.
+public func plannarArea(for coordinates: [Coordinate2D]) -> Double {
+	guard let first = coordinates.first else { return 0 }
+	
+	var ring = coordinates
+	// Close the ring
+	if ring.last != first {
+		ring.append(first)
+	}
+	
+	var area: Double = 0
+	for (c1, c2) in ring.adjacentPairs() {
+		area += c1.x.decimalDegrees * c2.y.decimalDegrees - c2.x.decimalDegrees * c1.y.decimalDegrees
+	}
+	
+	return area / 2.0
+}
+
+/// Calculates if a given polygon is clockwise or counter-clockwise.
+///
+/// ```swift
+/// var clockwiseRing = turf.lineString([[0,0],[1,1],[1,0],[0,0]]);
+/// var counterClockwiseRing = turf.lineString([[0,0],[1,0],[1,1],[0,0]]);
+///
+/// turf.booleanClockwise(clockwiseRing) // true
+/// turf.booleanClockwise(counterClockwiseRing) // false
+/// ```
+///
+/// Ported from [Turf](https://github.com/Turfjs/turf/blob/d72985ce1a577b42340fed5fc70efe8e4bc8b062/packages/turf-boolean-clockwise/index.ts#L19-L35).
+public func isClockwise(_ coordinates: [Coordinate2D]) -> Bool {
+	return plannarArea(for: coordinates) > 0
+}
