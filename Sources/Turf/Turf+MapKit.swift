@@ -11,7 +11,7 @@ import GeoModels
 import MapKit
 
 func mkBBox(for coords: [Coordinate2D]) -> MKMapRect {
-	return bbox(for: coords)?.mkMapRect ?? .world
+	return naiveBBox(forCollection: coords)?.mkMapRect ?? .world
 }
 
 func mkBBox(for coords: [CLLocationCoordinate2D]) -> MKMapRect {

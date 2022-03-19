@@ -110,3 +110,11 @@ extension BoundingBox3D: BoundingBox {
 	}
 	
 }
+
+extension BoundingBox3D: CustomDebugStringConvertible {
+	
+	public var debugDescription: String {
+		"BBox3D(southWestLow: \(String(reflecting: self.southWestLow)), northEastHigh: \(String(reflecting: self.northEastHigh)))"
+	}
+	
+}

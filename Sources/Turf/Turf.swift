@@ -8,8 +8,183 @@
 
 import Algorithms
 import GeoModels
+import NonEmpty
 
 // FIXME: Fix formulae so they handle crossing the anti meridian
+
+// MARK: - Bounding box
+
+// MARK: Points
+
+public func bbox(forPoint point: Point2D) -> BoundingBox2D {
+	return BoundingBox2D(southWest: point, width: .zero, height: .zero)
+}
+
+extension GeoModels.Point2D {
+	public var bbox: BoundingBox2D { Turf.bbox(forPoint: self) }
+}
+
+public func bbox(forPoint point: Point3D) -> BoundingBox3D {
+	return BoundingBox3D(southWestLow: point, width: .zero, height: .zero, zHeight: .zero)
+}
+
+extension GeoModels.Point3D {
+	public var bbox: BoundingBox3D { Turf.bbox(forPoint: self) }
+}
+
+// MARK: MultiPoints
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 2D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
+public func naiveBBox<Points: Collection>(forCollection points: Points) -> BoundingBox2D?
+where Points.Element == Point2D
+{
+	guard let (south, north) = points.map(\.latitude).minAndMax(),
+		  let (west, east) = points.map(\.longitude).minAndMax()
+	else { return nil }
+	
+	return BoundingBox2D(
+		southWest: Point2D(latitude: south, longitude: west),
+		northEast: Point2D(latitude: north, longitude: east)
+	)
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 3D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
+public func naiveBBox<Points: Collection>(forCollection points: Points) -> BoundingBox3D?
+where Points.Element == Point3D
+{
+	guard let (south, north) = points.map(\.latitude).minAndMax(),
+		  let (west, east) = points.map(\.longitude).minAndMax(),
+		  let (low, high) = points.map(\.altitude).minAndMax()
+	else { return nil }
+	
+	return BoundingBox3D(
+		southWestLow: Point3D(latitude: south, longitude: west, altitude: low),
+		northEastHigh: Point3D(latitude: north, longitude: east, altitude: high)
+	)
+}
+
+public func naiveBBox<Points: NonEmptyProtocol>(forNonEmptyCollection points: Points) -> BoundingBox2D
+where Points.Element == Point2D
+{
+	return naiveBBox(forCollection: points) ?? bbox(forPoint: points.first)
+}
+
+public func naiveBBox<Points: NonEmptyProtocol>(forNonEmptyCollection points: Points) -> BoundingBox3D
+where Points.Element == Point3D
+{
+	return naiveBBox(forCollection: points) ?? bbox(forPoint: points.first)
+}
+
+public func naiveBBox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox2D
+where Cluster.Point == Point2D
+{
+	return naiveBBox(forNonEmptyCollection: cluster.points)
+}
+
+extension GeoModels.MultiPoint where Point == Point2D {
+	public var naiveBBox: BoundingBox2D { Turf.naiveBBox(forMultiPoint: self) }
+}
+
+public func naiveBBox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox3D
+where Cluster.Point == Point3D
+{
+	return naiveBBox(forNonEmptyCollection: cluster.points)
+}
+
+extension GeoModels.MultiPoint where Point == Point3D {
+	public var naiveBBox: BoundingBox3D { Turf.naiveBBox(forMultiPoint: self) }
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 2D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Note: This implementation takes into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
+public func bbox<Points: Collection>(forCollection points: Points) -> BoundingBox2D?
+where Points.Element == Point2D
+{
+	guard let bbox = Turf.naiveBBox(forCollection: points) else { return nil }
+	
+	if bbox.width > Longitude.halfRotation {
+		let offsetCoords = points.map(\.withPositiveLongitude)
+		
+		return Turf.bbox(forCollection: offsetCoords)
+	} else {
+		return bbox
+	}
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 3D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Note: This implementation takes into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
+public func bbox<Points: Collection>(forCollection points: Points) -> BoundingBox3D?
+where Points.Element == Point3D
+{
+	guard let bbox = Turf.naiveBBox(forCollection: points) else { return nil }
+	
+	if bbox.twoDimensions.width > Longitude.halfRotation {
+		let offsetCoords = points.map(\.withPositiveLongitude)
+		
+		return Turf.bbox(forCollection: offsetCoords)
+	} else {
+		return bbox
+	}
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 2D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Note: This implementation takes into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
+public func bbox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox2D
+where Cluster.Point == Point2D
+{
+	let bbox = Turf.naiveBBox(forMultiPoint: cluster)
+	
+	if bbox.width > Longitude.halfRotation {
+		let offsetCoords = cluster.points.map(\.withPositiveLongitude)
+		
+		return Turf.naiveBBox(forCollection: offsetCoords) ?? Turf.bbox(forPoint: cluster.points.first)
+	} else {
+		return bbox
+	}
+}
+
+/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+/// enclosing a cluster of 3D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Note: This implementation takes into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
+public func bbox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox3D
+where Cluster.Point == Point3D
+{
+	let bbox = Turf.naiveBBox(forMultiPoint: cluster)
+	
+	if bbox.twoDimensions.width > Longitude.halfRotation {
+		let offsetCoords = cluster.points.map(\.withPositiveLongitude)
+		
+		return Turf.naiveBBox(forCollection: offsetCoords) ?? Turf.bbox(forPoint: cluster.points.first)
+	} else {
+		return bbox
+	}
+}
+
+// MARK: Lines (fix > .halfRotation)
+
+extension GeoModels.Line2D {
+	public var naiveBBox: BoundingBox2D { Turf.naiveBBox(forNonEmptyCollection: self.points) }
+//	public var bbox: BoundingBox2D { Turf.bbox(forNonEmptyCollection: self.points) }
+}
 
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) of a polygon.
 ///
@@ -25,57 +200,48 @@ import GeoModels
 //	}
 //}
 
-/// Returns the minimum straight [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
-/// enclosing the points.
-public func minimumBBox(for coords: [Coordinate2D]) -> BoundingBox2D? {
-	guard let bbox = Turf.bbox(for: coords) else { return nil }
-	
-	if bbox.width > .halfRotation {
-		let offsetCoords = coords.map(\.withPositiveLongitude)
-		
-		return Turf.bbox(for: offsetCoords)
-	} else {
-		return bbox
-	}
-}
-
-/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing the points.
-public func bbox<C: Collection>(for coords: C) -> BoundingBox2D? where C.Element == Coordinate2D {
-	guard let (south, north) = coords.map(\.latitude).minAndMax(),
-		  let (west, east) = coords.map(\.longitude).minAndMax()
-	else { return nil }
-	
-	return BoundingBox2D(
-		southWest: Coordinate2D(latitude: south, longitude: west),
-		northEast: Coordinate2D(latitude: north, longitude: east)
-	)
-}
-
-/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing the points.
-public func bbox<C: Collection>(for coords: C) -> BoundingBox3D? where C.Element == Coordinate3D {
-	guard let (south, north) = coords.map(\.latitude).minAndMax(),
-		  let (west, east) = coords.map(\.longitude).minAndMax(),
-		  let (low, high) = coords.map(\.altitude).minAndMax()
-	else { return nil }
-	
-	return BoundingBox3D(
-		southWestLow: Coordinate3D(latitude: south, longitude: west, altitude: low),
-		northEastHigh: Coordinate3D(latitude: north, longitude: east, altitude: high)
-	)
-}
-
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) enclosing all elements.
-public func bbox<T: Boundable, C: Collection>(for boundables: C) -> T.BoundingBox? where C.Element == T {
-	guard !boundables.isEmpty else { return nil }
+//public func bbox<T: Boundable, C: Collection>(for boundables: C) -> T.BoundingBox? where C.Element == T {
+//	guard !boundables.isEmpty else { return nil }
+//	
+//	return boundables.reduce(.zero, { $0.union($1.bbox) })
+//}
+
+// MARK: - Center
+
+/// Returns the linear center of a cluster of 2D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a center near 0°N 0°E).
+public func naiveCenter<Points: Collection>(for points: Points) -> Point2D?
+where Points.Element == Point2D
+{
+	guard let (south, north) = points.map(\.latitude).minAndMax(),
+		  let (west, east) = points.map(\.longitude).minAndMax()
+	else { return nil }
 	
-	return boundables.reduce(.zero, { $0.union($1.bbox) })
+	return Point2D(latitude: (north - south) / 2, longitude: (east - west) / 2)
+}
+
+/// Returns the linear center of a cluster of 2D points.
+/// - Warning: This does not take into account the curvature of the Earth.
+/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+///   (i.e. a cluster around 0°N 180°E will have a center near 0°N 0°E).
+public func naiveCenter<Cluster: GeoModels.MultiPoint>(for cluster: Cluster) -> Point2D
+where Cluster.Point == Point2D
+{
+	return naiveCenter(for: cluster.points) ?? cluster.points.first
+}
+
+extension GeoModels.MultiPoint where Point == Point2D {
+	public var naiveCenter: Point { Turf.naiveCenter(for: self) }
 }
 
 /// Returns the absolute center of a polygon.
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-center/index.ts#L36-L44>
 public func center(for coords: [Coordinate2D]) -> Coordinate2D? {
-	return bbox(for: coords)?.center
+	return bbox(forCollection: coords)?.center
 }
 
 /// Returns the [center of mass](https://en.wikipedia.org/wiki/Center_of_mass) of a polygon.

@@ -12,10 +12,10 @@ import GeoModels
 
 class TurfTests: XCTestCase {
 	
-	func testPointsBoundingBoxCrosses180thMeridian() throws {
+	func testNaiveBoundingBoxNeverCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(Turf.bbox(for: coordinates))
-			XCTAssertEqual(bbox.crosses180thMeridian, crosses)
+			let naiveBBox = try XCTUnwrap(Turf.naiveBBox(forCollection: coordinates))
+			XCTAssertEqual(naiveBBox.crosses180thMeridian, crosses, String(reflecting: naiveBBox))
 		}
 		
 		// Green: Across the world
@@ -33,10 +33,10 @@ class TurfTests: XCTestCase {
 		], crosses: false)
 	}
 	
-	func testMinimumBoundingBoxCrosses180thMeridian() throws {
+	func testBoundingBoxCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(Turf.minimumBBox(for: coordinates))
-			XCTAssertEqual(bbox.crosses180thMeridian, crosses)
+			let bbox = try XCTUnwrap(Turf.bbox(forCollection: coordinates))
+			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
 		}
 		
 		// Green: Across the world
@@ -54,7 +54,7 @@ class TurfTests: XCTestCase {
 		], crosses: true)
 	}
 	
-	func testMinimumBBox() throws {
+	func testBBox() throws {
 		func test(
 			coordinates: [Coordinate2D],
 			topLat: Latitude,
@@ -62,7 +62,7 @@ class TurfTests: XCTestCase {
 			latDelta: Latitude,
 			longDelta: Longitude
 		) throws {
-			let bbox = try XCTUnwrap(Turf.minimumBBox(for: coordinates))
+			let bbox = try XCTUnwrap(Turf.bbox(forCollection: coordinates))
 			
 			let expectedOrigin = Coordinate2D(latitude: topLat, longitude: leftLong)
 			
@@ -163,6 +163,19 @@ class TurfTests: XCTestCase {
 			latDelta: 30,
 			longDelta: 40
 		)
+	}
+	
+	func testLineBBox() throws {
+		func test(line: Line2D, naiveBBox expected: BoundingBox2D) throws {
+			let bbox = try XCTUnwrap(line.naiveBBox)
+			XCTAssertEqual(bbox, expected)
+		}
+		
+		let line1 = Line2D(
+			start: Point2D(latitude: .min + 30, longitude: .min + 50),
+			end: Point2D(latitude: .max - 10, longitude: .max - 10)
+		)
+		try test(line: line1, naiveBBox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
 	}
 	
 }

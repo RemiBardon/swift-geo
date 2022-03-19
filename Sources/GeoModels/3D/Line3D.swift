@@ -6,10 +6,12 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public struct Line3D: Hashable {
+public struct Line3D: Line, Hashable {
 	
-	public let start: Coordinate3D
-	public let end: Coordinate3D
+	public typealias Point = Coordinate3D
+	
+	public let start: Point
+	public let end: Point
 	
 	public var latitudeDelta: Latitude {
 		twoDimensions.latitudeDelta
@@ -32,7 +34,7 @@ public struct Line3D: Hashable {
 		Line2D(start: start.twoDimensions, end: end.twoDimensions)
 	}
 	
-	public init(start: Coordinate3D, end: Coordinate3D) {
+	public init(start: Point, end: Point) {
 		self.start = start
 		self.end = end
 	}

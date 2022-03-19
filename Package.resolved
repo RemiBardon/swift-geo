@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "swift-nonempty",
+        "repositoryURL": "https://github.com/RemiBardon/swift-nonempty",
+        "state": {
+          "branch": "nested-nonempty",
+          "revision": "ed3a12b709049a7a20d1bf3f45de7573c6544ac0",
+          "version": null
+        }
+      },
+      {
         "package": "swift-numerics",
         "repositoryURL": "https://github.com/apple/swift-numerics",
         "state": {

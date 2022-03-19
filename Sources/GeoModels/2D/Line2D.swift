@@ -6,10 +6,12 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public struct Line2D: Hashable {
+public struct Line2D: Line, Hashable {
 	
-	public let start: Coordinate2D
-	public let end: Coordinate2D
+	public typealias Point = Point2D
+	
+	public let start: Point
+	public let end: Point
 	
 	public var latitudeDelta: Latitude {
 		end.latitude - start.latitude
@@ -33,7 +35,7 @@ public struct Line2D: Hashable {
 		abs(longitudeDelta) > .fullRotation
 	}
 	
-	public init(start: Coordinate2D, end: Coordinate2D) {
+	public init(start: Point, end: Point) {
 		self.start = start
 		self.end = end
 	}

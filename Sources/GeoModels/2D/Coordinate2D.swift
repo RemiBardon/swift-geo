@@ -21,6 +21,11 @@ public struct Coordinate2D: Hashable {
 	public var x: X { longitude }
 	public var y: Y { latitude }
 	
+	public var west: X { longitude }
+	public var east: X { longitude }
+	public var south: Y { latitude }
+	public var north: Y { latitude }
+	
 	public var withPositiveLongitude: Coordinate2D {
 		Self.init(latitude: latitude, longitude: longitude.positive)
 	}

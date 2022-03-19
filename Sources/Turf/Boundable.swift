@@ -7,6 +7,7 @@
 //
 
 import GeoModels
+import NonEmpty
 
 public protocol Boundable {
 	
@@ -16,26 +17,14 @@ public protocol Boundable {
 	
 }
 
-extension Coordinate2D: Boundable {
-	
-	public var bbox: BoundingBox2D {
-		BoundingBox2D(southWest: self, width: .zero, height: .zero)
-	}
-	
-}
+extension Coordinate2D: Boundable {}
 
-extension Coordinate3D: Boundable {
-	
-	public var bbox: BoundingBox3D {
-		BoundingBox3D(southWestLow: self, width: .zero, height: .zero, zHeight: .zero)
-	}
-	
-}
+extension Coordinate3D: Boundable {}
 
 extension Line2D: Boundable {
 	
 	public var bbox: BoundingBox2D {
-		Turf.bbox(for: [start, end])!
+		Turf.naiveBBox(forNonEmptyCollection: self.points)
 	}
 	
 }
@@ -43,7 +32,7 @@ extension Line2D: Boundable {
 extension Line3D: Boundable {
 	
 	public var bbox: BoundingBox3D {
-		Turf.bbox(for: [start, end])!
+		Turf.naiveBBox(forNonEmptyCollection: self.points)
 	}
 	
 }
@@ -69,18 +58,18 @@ extension BoundingBox3D: Boundable {
 //
 //}
 
-extension Array: Boundable where Element: Boundable {
-	
-	public var bbox: Element.BoundingBox {
-		self.reduce(.zero, { $0.union($1.bbox) })
-	}
-	
-}
-
-extension Set: Boundable where Element: Boundable {
-	
-	public var bbox: Element.BoundingBox {
-		self.reduce(.zero, { $0.union($1.bbox) })
-	}
-	
-}
+//extension Array: Boundable where Element: Boundable {
+//
+//	public var bbox: Element.BoundingBox {
+//		self.reduce(.zero, { $0.union($1.bbox) })
+//	}
+//
+//}
+//
+//extension Set: Boundable where Element: Boundable {
+//
+//	public var bbox: Element.BoundingBox {
+//		self.reduce(.zero, { $0.union($1.bbox) })
+//	}
+//
+//}

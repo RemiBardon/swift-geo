@@ -145,3 +145,11 @@ extension BoundingBox2D: BoundingBox {
 	}
 	
 }
+
+extension BoundingBox2D: CustomDebugStringConvertible {
+	
+	public var debugDescription: String {
+		"BBox2D(southWest: (\(String(reflecting: self.southWest))), northEast: (\(String(reflecting: self.northEast))))"
+	}
+	
+}
