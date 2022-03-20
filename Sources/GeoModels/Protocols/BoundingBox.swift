@@ -8,7 +8,13 @@
 
 public protocol BoundingBox: Hashable {
 	
+	associatedtype Point: GeoModels.Point
+	
 	static var zero: Self { get }
+	
+	var origin: Point { get }
+	
+	init(origin: Point.Components, size: Point.Components)
 	
 	func union(_ other: Self) -> Self
 	

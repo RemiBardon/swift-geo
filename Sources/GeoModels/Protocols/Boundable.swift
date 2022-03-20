@@ -6,8 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import GeoModels
-import NonEmpty
+//import NonEmpty
 
 public protocol Boundable {
 	
@@ -17,37 +16,37 @@ public protocol Boundable {
 	
 }
 
-extension Coordinate2D: Boundable {}
-
-extension Coordinate3D: Boundable {}
-
-extension Line2D: Boundable {
-	
-	public var bbox: BoundingBox2D {
-		Turf.naiveBBox(forNonEmptyCollection: self.points)
-	}
-	
-}
-
-extension Line3D: Boundable {
-	
-	public var bbox: BoundingBox3D {
-		Turf.naiveBBox(forNonEmptyCollection: self.points)
-	}
-	
-}
-
-extension BoundingBox2D: Boundable {
-	
-	public var bbox: BoundingBox2D { self }
-	
-}
-
-extension BoundingBox3D: Boundable {
-	
-	public var bbox: BoundingBox3D { self }
-	
-}
+//extension Coordinate2D: Boundable {}
+//
+//extension Coordinate3D: Boundable {}
+//
+//extension Line2D: Boundable {
+//	
+//	public var bbox: BoundingBox2D {
+//		Turf.naiveBBox(forCollection: self.points) ?? BoundingBox2D(southWest: self.points.first, width: .zero, height: .zero)
+//	}
+//	
+//}
+//
+//extension Line3D: Boundable {
+//	
+//	public var bbox: BoundingBox3D {
+//		Turf.naiveBBox(forNonEmptyCollection: self.points)
+//	}
+//	
+//}
+//
+//extension BoundingBox2D: Boundable {
+//	
+//	public var bbox: BoundingBox2D { self }
+//	
+//}
+//
+//extension BoundingBox3D: Boundable {
+//	
+//	public var bbox: BoundingBox3D { self }
+//	
+//}
 
 // Extension of protocol 'Collection' cannot have an inheritance clause
 //extension Collection: Boundable where Element: Boundable {

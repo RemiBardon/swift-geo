@@ -8,4 +8,14 @@
 
 import NonEmpty
 
-public protocol Point: Hashable {}
+public protocol Point: Hashable {
+	
+	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
+		where Self.CoordinateSystem.Point == Self
+	associatedtype Components
+	
+	var components: Components { get }
+	
+	init(_ components: Components)
+	
+}

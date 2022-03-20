@@ -124,14 +124,26 @@ public struct BoundingBox2D: Hashable {
 	
 }
 
-extension BoundingBox2D: BoundingBox {
+extension BoundingBox2D: GeoModels.BoundingBox {
+	
+	public typealias Point = Point2D
 	
 	public static var zero: BoundingBox2D {
 		Self.init(southWest: .zero, width: .zero, height: .zero)
 	}
 	
+	public var origin: Point2D { self.southWest }
+	
+	public init(
+		origin: (Point2D.X, Point2D.Y),
+		size:   (Point2D.X, Point2D.Y)
+	) {
+		self.init(southWest: Point2D(origin), width: size.0, height: size.1)
+	}
+	
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
 	public func union(_ other: BoundingBox2D) -> BoundingBox2D {
+		// FIXME: Use width and height, because `eastLongitude` can cross the antimeridian
 		Self.init(
 			southWest: Coordinate2D(
 				latitude: min(self.southLatitude, other.southLatitude),

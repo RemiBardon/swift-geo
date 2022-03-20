@@ -8,7 +8,6 @@
 
 import Algorithms
 import GeoModels
-import NonEmpty
 
 // FIXME: Fix formulae so they handle crossing the anti meridian
 
@@ -20,16 +19,8 @@ public func bbox(forPoint point: Point2D) -> BoundingBox2D {
 	return BoundingBox2D(southWest: point, width: .zero, height: .zero)
 }
 
-extension GeoModels.Point2D {
-	public var bbox: BoundingBox2D { Turf.bbox(forPoint: self) }
-}
-
 public func bbox(forPoint point: Point3D) -> BoundingBox3D {
 	return BoundingBox3D(southWestLow: point, width: .zero, height: .zero, zHeight: .zero)
-}
-
-extension GeoModels.Point3D {
-	public var bbox: BoundingBox3D { Turf.bbox(forPoint: self) }
 }
 
 // MARK: MultiPoints
@@ -71,38 +62,6 @@ where Points.Element == Point3D
 	)
 }
 
-public func naiveBBox<Points: NonEmptyProtocol>(forNonEmptyCollection points: Points) -> BoundingBox2D
-where Points.Element == Point2D
-{
-	return naiveBBox(forCollection: points) ?? bbox(forPoint: points.first)
-}
-
-public func naiveBBox<Points: NonEmptyProtocol>(forNonEmptyCollection points: Points) -> BoundingBox3D
-where Points.Element == Point3D
-{
-	return naiveBBox(forCollection: points) ?? bbox(forPoint: points.first)
-}
-
-public func naiveBBox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox2D
-where Cluster.Point == Point2D
-{
-	return naiveBBox(forNonEmptyCollection: cluster.points)
-}
-
-extension GeoModels.MultiPoint where Point == Point2D {
-	public var naiveBBox: BoundingBox2D { Turf.naiveBBox(forMultiPoint: self) }
-}
-
-public func naiveBBox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox3D
-where Cluster.Point == Point3D
-{
-	return naiveBBox(forNonEmptyCollection: cluster.points)
-}
-
-extension GeoModels.MultiPoint where Point == Point3D {
-	public var naiveBBox: BoundingBox3D { Turf.naiveBBox(forMultiPoint: self) }
-}
-
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 /// enclosing a cluster of 2D points.
 /// - Warning: This does not take into account the curvature of the Earth.
@@ -141,56 +100,13 @@ where Points.Element == Point3D
 	}
 }
 
-/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
-/// enclosing a cluster of 2D points.
-/// - Warning: This does not take into account the curvature of the Earth.
-/// - Note: This implementation takes into account the angular coordinate system
-///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
-public func bbox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox2D
-where Cluster.Point == Point2D
-{
-	let bbox = Turf.naiveBBox(forMultiPoint: cluster)
-	
-	if bbox.width > Longitude.halfRotation {
-		let offsetCoords = cluster.points.map(\.withPositiveLongitude)
-		
-		return Turf.naiveBBox(forCollection: offsetCoords) ?? Turf.bbox(forPoint: cluster.points.first)
-	} else {
-		return bbox
-	}
-}
-
-/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
-/// enclosing a cluster of 3D points.
-/// - Warning: This does not take into account the curvature of the Earth.
-/// - Note: This implementation takes into account the angular coordinate system
-///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
-public func bbox<Cluster: GeoModels.MultiPoint>(forMultiPoint cluster: Cluster) -> BoundingBox3D
-where Cluster.Point == Point3D
-{
-	let bbox = Turf.naiveBBox(forMultiPoint: cluster)
-	
-	if bbox.twoDimensions.width > Longitude.halfRotation {
-		let offsetCoords = cluster.points.map(\.withPositiveLongitude)
-		
-		return Turf.naiveBBox(forCollection: offsetCoords) ?? Turf.bbox(forPoint: cluster.points.first)
-	} else {
-		return bbox
-	}
-}
-
 // MARK: Lines (fix > .halfRotation)
-
-extension GeoModels.Line2D {
-	public var naiveBBox: BoundingBox2D { Turf.naiveBBox(forNonEmptyCollection: self.points) }
-//	public var bbox: BoundingBox2D { Turf.bbox(forNonEmptyCollection: self.points) }
-}
 
 /// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box) of a polygon.
 ///
 /// - Warning: As stated in [section 3.1.6 of FRC 7946](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6),
 ///   polygon ring MUST follow the right-hand rule for orientation (counterclockwise).
-//public func bbox(forPolygon coords: [Coordinate2D]) -> BoundingBox2D? {
+//public func bbox(forPolygon coords: [Point2D]) -> BoundingBox2D? {
 //	if coords.adjacentPairs().contains(where: { Line2D(start: $0, end: $1).crosses180thMeridian }) {
 //		let offsetCoords = coords.map(\.withPositiveLongitude)
 //
@@ -213,72 +129,59 @@ extension GeoModels.Line2D {
 /// - Warning: This does not take into account the curvature of the Earth.
 /// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 ///   (i.e. a cluster around 0°N 180°E will have a center near 0°N 0°E).
-public func naiveCenter<Points: Collection>(for points: Points) -> Point2D?
+public func naiveCenter<Points: Collection>(forCollection points: Points) -> Point2D?
 where Points.Element == Point2D
 {
-	guard let (south, north) = points.map(\.latitude).minAndMax(),
-		  let (west, east) = points.map(\.longitude).minAndMax()
-	else { return nil }
-	
-	return Point2D(latitude: (north - south) / 2, longitude: (east - west) / 2)
+	return Turf.naiveBBox(forCollection: points)
+		.flatMap(Turf.center(forBBox:))
 }
 
-/// Returns the linear center of a cluster of 2D points.
-/// - Warning: This does not take into account the curvature of the Earth.
-/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
-///   (i.e. a cluster around 0°N 180°E will have a center near 0°N 0°E).
-public func naiveCenter<Cluster: GeoModels.MultiPoint>(for cluster: Cluster) -> Point2D
-where Cluster.Point == Point2D
-{
-	return naiveCenter(for: cluster.points) ?? cluster.points.first
+public func center(forBBox bbox: BoundingBox2D) -> Point2D {
+	return Point2D(
+		x: bbox.origin.x + bbox.width / 2,
+		y: bbox.origin.y + bbox.height / 2
+	)
 }
 
-extension GeoModels.MultiPoint where Point == Point2D {
-	public var naiveCenter: Point { Turf.naiveCenter(for: self) }
-}
-
-/// Returns the absolute center of a polygon.
-///
-/// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-center/index.ts#L36-L44>
-public func center(for coords: [Coordinate2D]) -> Coordinate2D? {
-	return bbox(forCollection: coords)?.center
-}
+// MARK: - Center of mass
 
 /// Returns the [center of mass](https://en.wikipedia.org/wiki/Center_of_mass) of a polygon.
 /// Used formula: [Centroid of Polygon](https://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon)
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-center-of-mass/index.ts#L32-L86>
-public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
+public func centerOfMass<Points: Collection>(forCollection points: Points) -> Point2D?
+where Points.Element == Point2D
+{
 	// First, we neutralize the feature (set it around coordinates [0,0]) to prevent rounding errors
 	// We take any point to translate all the points around 0
-	let centre: Coordinate2D = centroid(for: coords)
-	let translation: Coordinate2D = centre
-	var sx: Double = 0
-	var sy: Double = 0
+	guard let centre: Point2D = Turf.centroid(forCollection: points) else { return nil }
+	let translation: Point2D = centre
+	var sx: Point2D.X = 0
+	var sy: Point2D.Y = 0
 	var sArea: Double = 0
 	
-	let neutralizedPoints: [Coordinate2D] = coords.map { $0 - translation }
+	let neutralizedPoints: [Point2D] = points.map { Point2D(x: $0.x - translation.x, y: $0.y - translation.y) }
 	
-	for i in 0..<coords.count - 1 {
+	for i in 0..<points.count - 1 {
 		// pi is the current point
-		let pi: Coordinate2D = neutralizedPoints[i]
-		let xi: Double = pi.longitude.decimalDegrees
-		let yi: Double = pi.latitude.decimalDegrees
+		let pi: Point2D = neutralizedPoints[i]
+		let xi: Point2D.X = pi.x
+		let yi: Point2D.Y = pi.y
 		
 		// pj is the next point (pi+1)
-		let pj: Coordinate2D = neutralizedPoints[i + 1]
-		let xj: Double = pj.longitude.decimalDegrees
-		let yj: Double = pj.latitude.decimalDegrees
+		let pj: Point2D = neutralizedPoints[i + 1]
+		let xj: Point2D.X = pj.x
+		let yj: Point2D.Y = pj.y
 		
 		// a is the common factor to compute the signed area and the final coordinates
-		let a: Double = xi * yj - xj * yi
+		let a: Double = xi.decimalDegrees * yj.decimalDegrees - xj.decimalDegrees * yi.decimalDegrees
 		
 		// sArea is the sum used to compute the signed area
 		sArea += a
 		
 		// sx and sy are the sums used to compute the final coordinates
-		sx += (xi + xj) * a
-		sy += (yi + yj) * a
+		sx += (xi + xj) * Point2D.X(a)
+		sy += (yi + yj) * Point2D.Y(a)
 	}
 	
 	// Shape has no area: fallback on turf.centroid
@@ -290,39 +193,49 @@ public func centerOfMass(for coords: [Coordinate2D]) -> Coordinate2D {
 		let areaFactor: Double = 1 / (6 * area)
 		
 		// Compute the final coordinates, adding back the values that have been neutralized
-		return Coordinate2D(
-			latitude: translation.latitude + Latitude(areaFactor * sy),
-			longitude: translation.longitude + Longitude(areaFactor * sx)
+		return Point2D(
+			x: translation.x + (Point2D.X(areaFactor) * sx),
+			y: translation.y + (Point2D.Y(areaFactor) * sy)
 		)
 	}
 }
 
+// MARK: - Centroid
+
 /// Calculates the centroid of a polygon using the mean of all vertices.
 ///
 /// Ported from <https://github.com/Turfjs/turf/blob/84110709afda447a686ccdf55724af6ca755c1f8/packages/turf-centroid/index.ts#L21-L40>
-public func centroid(for coordinates: [Coordinate2D]) -> Coordinate2D {
-	var sumLongitude: Longitude = .zero
-	var sumLatitude: Latitude = .zero
+public func centroid<Points: Collection>(forCollection points: Points) -> Point2D?
+where Points.Element == Point2D
+{
+	guard !points.isEmpty else { return nil }
 	
-	for coordinate in coordinates {
-		sumLongitude += coordinate.longitude
-		sumLatitude += coordinate.latitude
+	var sumX: Point2D.X = .zero
+	var sumY: Point2D.Y = .zero
+	
+	for point in points {
+		sumX += point.x
+		sumY += point.y
 	}
 	
-	return Coordinate2D(
-		latitude: sumLatitude / Latitude(coordinates.count),
-		longitude: sumLongitude / Longitude(coordinates.count)
+	return Point2D(
+		x: sumX / Point2D.X(points.count),
+		y: sumY / Point2D.Y(points.count)
 	)
 }
+
+// MARK: - Plannar area
 
 /// Calculates the signed area of a planar non-self-intersecting polygon
 /// (not taking into account the curvature of the Earth).
 ///
 /// Formula from <https://mathworld.wolfram.com/PolygonArea.html>.
-public func plannarArea(for coordinates: [Coordinate2D]) -> Double {
-	guard let first = coordinates.first else { return 0 }
+public func plannarArea<Points: Collection>(forCollection points: Points) -> Double
+where Points.Element == Point2D
+{
+	guard let first = points.first else { return 0 }
 	
-	var ring = coordinates
+	var ring = Array(points)
 	// Close the ring
 	if ring.last != first {
 		ring.append(first)
@@ -336,17 +249,21 @@ public func plannarArea(for coordinates: [Coordinate2D]) -> Double {
 	return area / 2.0
 }
 
+// MARK: - Clockwise
+
 /// Calculates if a given polygon is clockwise or counter-clockwise.
 ///
 /// ```swift
-/// var clockwiseRing = turf.lineString([[0,0],[1,1],[1,0],[0,0]]);
-/// var counterClockwiseRing = turf.lineString([[0,0],[1,0],[1,1],[0,0]]);
+/// let clockwiseRing = LineString2D(Point2D(0, 0), Point2D(1, 1), Point2D(1, 0), Point2D(0, 0))
+/// let counterClockwiseRing = LineString2D(Point2D(0, 0), Point2D(1, 0), Point2D(1, 1), Point2D(0, 0))
 ///
-/// turf.booleanClockwise(clockwiseRing) // true
-/// turf.booleanClockwise(counterClockwiseRing) // false
+/// Turf.isClockwise(clockwiseRing) // true
+/// Turf.isClockwise(counterClockwiseRing) // false
 /// ```
 ///
 /// Ported from [Turf](https://github.com/Turfjs/turf/blob/d72985ce1a577b42340fed5fc70efe8e4bc8b062/packages/turf-boolean-clockwise/index.ts#L19-L35).
-public func isClockwise(_ coordinates: [Coordinate2D]) -> Bool {
-	return plannarArea(for: coordinates) > 0
+public func isClockwise<Points: Collection>(_ points: Points) -> Bool
+where Points.Element == Point2D
+{
+	return plannarArea(forCollection: points) > 0
 }

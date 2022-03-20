@@ -7,7 +7,7 @@
 //
 
 #if canImport(MapKit)
-@testable import Turf
+import Turf
 import XCTest
 import MapKit
 import GeoModels
@@ -66,8 +66,8 @@ class TurfMapKitTests: XCTestCase {
 		XCTAssertEqual(region.span.longitudeDelta.rounded(), 320)
 	}
 	
-	func testBBoxForEmptyListReturnsWorld() {
-		XCTAssertEqual(Turf.mkBBox(for: [Coordinate2D]()), .world)
+	func testNaiveBBoxForEmptyListReturnsWorld() {
+		XCTAssertEqual(Turf.mkNaiveBBox(for: [Point2D]()), .world)
 	}
 	
 }

@@ -89,14 +89,26 @@ public struct BoundingBox3D: Hashable {
 	
 }
 
-extension BoundingBox3D: BoundingBox {
+extension BoundingBox3D: GeoModels.BoundingBox {
+	
+	public typealias Point = Point3D
 	
 	public static var zero: BoundingBox3D {
 		BoundingBox3D(.zero, lowAltitude: .zero, zHeight: .zero)
 	}
 	
+	public var origin: Point3D { self.southWestLow }
+	
+	public init(
+		origin: (Point3D.X, Point3D.Y, Point3D.Z),
+		size:   (Point3D.X, Point3D.Y, Point3D.Z)
+	) {
+		self.init(southWestLow: Point3D(origin), width: size.0, height: size.1, zHeight: size.2)
+	}
+	
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
 	public func union(_ other: BoundingBox3D) -> BoundingBox3D {
+		// FIXME: Use width, height and zHeight, because `eastLongitude` can cross the antimeridian
 		BoundingBox3D(
 			southWestLow: Coordinate3D(
 				self.twoDimensions.union(other.twoDimensions).southWest,

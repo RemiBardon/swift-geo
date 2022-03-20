@@ -6,9 +6,10 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public struct Line3D: Line, Hashable {
+public struct Line3D: GeoModels.Line, Hashable {
 	
-	public typealias Point = Coordinate3D
+	public typealias CoordinateSystem = Geo3D
+	public typealias Point = Point3D
 	
 	public let start: Point
 	public let end: Point

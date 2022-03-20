@@ -6,8 +6,9 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public struct Line2D: Line, Hashable {
+public struct Line2D: GeoModels.Line, Hashable {
 	
+	public typealias CoordinateSystem = Geo2D
 	public typealias Point = Point2D
 	
 	public let start: Point
