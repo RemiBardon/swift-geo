@@ -25,8 +25,8 @@ extension MultiLine {
 	
 	public var points: Points {
 		Points(
-			lines.head.points.first,
-			lines.head.points.second,
+			lines.first.points.first,
+			lines.first.points.second,
 			tail: lines.dropFirst(Lines.minimumCount).flatMap(\.points)
 		)
 	}

@@ -12,7 +12,7 @@ public protocol Zeroable {
 	
 }
 
-extension BoundingBox where Point: Zeroable {
+extension BoundingBox {
 	
 	static var zero: Self { Self.init(origin: Point.zero.components, size: Point.zero.components) }
 	

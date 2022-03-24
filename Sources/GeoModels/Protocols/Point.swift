@@ -8,7 +8,7 @@
 
 import NonEmpty
 
-public protocol Point: Hashable {
+public protocol Point: Hashable, Zeroable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
 		where Self.CoordinateSystem.Point == Self

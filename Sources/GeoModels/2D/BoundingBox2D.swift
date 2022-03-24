@@ -134,10 +134,7 @@ extension BoundingBox2D: GeoModels.BoundingBox {
 	
 	public var origin: Point2D { self.southWest }
 	
-	public init(
-		origin: (Point2D.X, Point2D.Y),
-		size:   (Point2D.X, Point2D.Y)
-	) {
+	public init(origin: Point2D.Components, size: Point2D.Components) {
 		self.init(southWest: Point2D(origin), width: size.0, height: size.1)
 	}
 	

@@ -12,7 +12,7 @@ public protocol CoordinateSystem {
 //	associatedtype MultiPoint: GeoModels.MultiPoint
 //		where Self.MultiPoint.Point == Self.Point
 	associatedtype Line: GeoModels.Line
-		where Self.Line.Point == Self.Point
+//		where Self.Line.Point == Self.Point
 //	associatedtype MultiLine: GeoModels.MultiLine
 //		where Self.MultiLine.Line == Self.Line
 //	associatedtype LineString: GeoModels.LineString

@@ -99,10 +99,7 @@ extension BoundingBox3D: GeoModels.BoundingBox {
 	
 	public var origin: Point3D { self.southWestLow }
 	
-	public init(
-		origin: (Point3D.X, Point3D.Y, Point3D.Z),
-		size:   (Point3D.X, Point3D.Y, Point3D.Z)
-	) {
+	public init(origin: Point3D.Components, size: Point3D.Components) {
 		self.init(southWestLow: Point3D(origin), width: size.0, height: size.1, zHeight: size.2)
 	}
 	

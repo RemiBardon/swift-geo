@@ -1,25 +1,25 @@
-////
-////  Turf+GeoModels.swift
-////  SwiftGeo
-////
-////  Created by Rémi Bardon on 20/03/2022.
-////  Copyright © 2022 Rémi Bardon. All rights reserved.
-////
 //
-//import Algorithms
-//import GeoModels
-//import NonEmpty
+//  Turf+GeoModels.swift
+//  SwiftGeo
 //
-//// FIXME: Fix formulae so they handle crossing the anti meridian
+//  Created by Rémi Bardon on 20/03/2022.
+//  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
-//// MARK: - Bounding box
-//
-//// MARK: Points
-//
-//public func bbox(forPoint point: Point2D) -> BoundingBox2D {
-//	return BoundingBox2D(southWest: point, width: .zero, height: .zero)
-//}
-//
+
+import Algorithms
+import GeoModels
+import NonEmpty
+
+// FIXME: Fix formulae so they handle crossing the anti meridian
+
+// MARK: - Bounding box
+
+// MARK: Points
+
+public func bbox<Point: GeoModels.Point>(forPoint point: Point) -> Point.CoordinateSystem.BoundingBox {
+	return Point.CoordinateSystem.BoundingBox(origin: point.components, size: Point.zero.components)
+}
+
 //extension GeoModels.Point2D {
 //	public var bbox: BoundingBox2D { Turf.bbox(forPoint: self) }
 //}
