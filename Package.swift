@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -14,7 +14,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
-		.package(url: "https://github.com/RemiBardon/swift-nonempty", .branch("nested-nonempty")),
+		.package(url: "https://github.com/RemiBardon/swift-nonempty", branch: "nested-nonempty"),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -24,6 +24,14 @@ let package = Package(
 			dependencies: [
 				.product(name: "Algorithms", package: "swift-algorithms"),
 				.product(name: "NonEmpty", package: "swift-nonempty"),
+			],
+			swiftSettings: [
+				// Fix compiler issue. For more details, see
+				// <https://forums.swift.org/t/wrong-redundant-conformance-constraint-warning/56207>.
+				.unsafeFlags([
+//					"-Xfrontend", "-requirement-machine-protocol-signatures=on",
+					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
+				]),
 			]
 		),
 		.testTarget(

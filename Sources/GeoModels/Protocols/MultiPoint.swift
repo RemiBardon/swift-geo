@@ -11,8 +11,7 @@ import NonEmpty
 public protocol MultiPoint: Hashable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
-		where Self.CoordinateSystem.Point == Self.Point
-	associatedtype Point: GeoModels.Point
+	typealias Point = Self.CoordinateSystem.Point
 	associatedtype Points: NonEmptyProtocol
 		where Points.Collection: NonEmptyProtocol,
 			  Points.Element == Self.Point
