@@ -8,14 +8,25 @@
 
 import NonEmpty
 
+@dynamicMemberLookup
 public protocol Point: Hashable, Zeroable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
 		where Self.CoordinateSystem.Point == Self
-	associatedtype Components
+	typealias Coordinates = Self.CoordinateSystem.Coordinates
 	
-	var components: Components { get }
+	var coordinates: Self.Coordinates { get }
 	
-	init(_ components: Components)
+	init(_ coordinates: Self.Coordinates)
+	
+	subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T { get }
+	
+}
+
+extension Point {
+	
+	public subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T {
+		self.coordinates[keyPath: keyPath]
+	}
 	
 }

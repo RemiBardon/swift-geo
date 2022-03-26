@@ -8,7 +8,10 @@
 
 public enum Geo2D: GeoModels.CoordinateSystem {
 	
+	public typealias Coordinates = Coordinate2D
+	
 	public typealias Point = Point2D
+	public typealias Size = Size2D
 //	public typealias MultiPoint = MultiPoint2D
 	public typealias Line = Line2D
 //	public typealias MultiLine = MultiLine2D

@@ -8,19 +8,23 @@
 
 public protocol CoordinateSystem {
 	
-	associatedtype Point // GeoModels.Point
+	associatedtype Coordinates
+	associatedtype Point: GeoModels.Point
+		where Self.Point.CoordinateSystem == Self
+	associatedtype Size: GeoModels.Size
+		where Self.Size.CoordinateSystem == Self
 //	associatedtype MultiPoint: GeoModels.MultiPoint
-//		where Self.MultiPoint.Point == Self.Point
+//		where Self.MultiPoint.CoordinateSystem == Self
 	associatedtype Line: GeoModels.Line
-//		where Self.Line.Point == Self.Point
+		where Self.Line.CoordinateSystem == Self
 //	associatedtype MultiLine: GeoModels.MultiLine
-//		where Self.MultiLine.Line == Self.Line
+//		where Self.MultiLine.CoordinateSystem == Self
 //	associatedtype LineString: GeoModels.LineString
-//		where Self.LineString.Line == Self.Line
+//		where Self.LineString.CoordinateSystem == Self
 //	associatedtype LinearRing: GeoModels.LinearRing
-//		where Self.LinearRing.Line == Self.Line
+//		where Self.LinearRing.CoordinateSystem == Self
 	
 	associatedtype BoundingBox: GeoModels.BoundingBox
-		where Self.BoundingBox.Point == Self.Point
+		where Self.BoundingBox.CoordinateSystem == Self
 	
 }

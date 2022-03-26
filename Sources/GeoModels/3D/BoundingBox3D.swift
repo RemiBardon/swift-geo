@@ -19,14 +19,14 @@ public struct BoundingBox3D: Hashable {
 		lowAltitude + (zHeight / 2.0)
 	}
 	
-	public var southWestLow: Coordinate3D {
-		Coordinate3D(twoDimensions.southWest, altitude: lowAltitude)
+	public var southWestLow: Self.Point {
+		Self.Point.init(twoDimensions.southWest, altitude: lowAltitude)
 	}
-	public var northEastHigh: Coordinate3D {
-		Coordinate3D(twoDimensions.northEast, altitude: highAltitude)
+	public var northEastHigh: Self.Point {
+		Self.Point.init(twoDimensions.northEast, altitude: highAltitude)
 	}
-	public var center: Coordinate3D {
-		Coordinate3D(twoDimensions.center, altitude: centerAltitude)
+	public var center: Self.Point {
+		Self.Point.init(twoDimensions.center, altitude: centerAltitude)
 	}
 	
 	public var crosses180thMeridian: Bool {
@@ -46,15 +46,15 @@ public struct BoundingBox3D: Hashable {
 		zHeight: Altitude
 	) {
 		self.init(
-			BoundingBox2D(southWest: southWestLow.twoDimensions, width: width, height: height),
+			BoundingBox2D(southWest: southWestLow.lowerDimension, width: width, height: height),
 			lowAltitude: southWestLow.altitude,
 			zHeight: zHeight
 		)
 	}
 	
 	public init(
-		southWestLow: Coordinate3D,
-		northEastHigh: Coordinate3D
+		southWestLow: Self.Point,
+		northEastHigh: Self.Point
 	) {
 		self.init(
 			southWestLow: southWestLow,
@@ -91,20 +91,22 @@ public struct BoundingBox3D: Hashable {
 
 extension BoundingBox3D: GeoModels.BoundingBox {
 	
-	public typealias Point = Point3D
+	public typealias CoordinateSystem = Geo3D
 	
-	public static var zero: BoundingBox3D {
-		BoundingBox3D(.zero, lowAltitude: .zero, zHeight: .zero)
-	}
+	public var origin: Self.Point { self.southWestLow }
+	public var size: Self.Size { Self.Size(self.twoDimensions.size, zHeight: self.zHeight) }
 	
-	public var origin: Point3D { self.southWestLow }
-	
-	public init(origin: Point3D.Components, size: Point3D.Components) {
-		self.init(southWestLow: Point3D(origin), width: size.0, height: size.1, zHeight: size.2)
+	public init(origin: Self.Point, size: Self.Size) {
+		self.init(
+			southWestLow: origin,
+			width: size.width,
+			height: size.height,
+			zHeight: size.zHeight
+		)
 	}
 	
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
-	public func union(_ other: BoundingBox3D) -> BoundingBox3D {
+	public func union(_ other: Self) -> Self {
 		// FIXME: Use width, height and zHeight, because `eastLongitude` can cross the antimeridian
 		BoundingBox3D(
 			southWestLow: Coordinate3D(

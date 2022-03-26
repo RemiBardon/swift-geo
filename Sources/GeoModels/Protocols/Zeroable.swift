@@ -11,9 +11,3 @@ public protocol Zeroable {
 	static var zero: Self { get }
 	
 }
-
-extension BoundingBox {
-	
-	static var zero: Self { Self.init(origin: Point.zero.components, size: Point.zero.components) }
-	
-}

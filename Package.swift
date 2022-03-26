@@ -26,11 +26,17 @@ let package = Package(
 				.product(name: "NonEmpty", package: "swift-nonempty"),
 			],
 			swiftSettings: [
+				// Debug compile times
+//				.unsafeFlags([
+//					"-Xfrontend", "-debug-time-function-bodies",
+//					"-Xfrontend", "-debug-time-expression-type-checking",
+//				]),
 				// Fix compiler issue. For more details, see
 				// <https://forums.swift.org/t/wrong-redundant-conformance-constraint-warning/56207>.
 				.unsafeFlags([
+					"-Xfrontend", "-enable-requirement-machine-loop-normalization",
 //					"-Xfrontend", "-requirement-machine-protocol-signatures=on",
-					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
+//					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
 				]),
 			]
 		),
@@ -46,6 +52,19 @@ let package = Package(
 			dependencies: [
 				.target(name: "GeoModels"),
 				.product(name: "Algorithms", package: "swift-algorithms"),
+			],
+			swiftSettings: [
+				// Debug compile times
+				.unsafeFlags([
+					"-Xfrontend", "-debug-time-function-bodies",
+					"-Xfrontend", "-debug-time-expression-type-checking",
+				]),
+				// Fix compiler issue. For more details, see
+				// <https://forums.swift.org/t/wrong-redundant-conformance-constraint-warning/56207>.
+				.unsafeFlags([
+//					"-Xfrontend", "-requirement-machine-protocol-signatures=on",
+//					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
+				]),
 			]
 		),
 		.testTarget(

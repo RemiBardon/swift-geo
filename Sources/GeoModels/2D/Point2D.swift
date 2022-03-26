@@ -6,22 +6,19 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public typealias Point2D = Coordinate2D
+public typealias Point2D = GeoModels.Coordinate2D
 
 extension Point2D: GeoModels.Point {
 	
-	public typealias CoordinateSystem = Geo2D
-	public typealias Components = (X, Y)
+	public typealias CoordinateSystem = GeoModels.Geo2D
 	
-	public var components: Components { (x, y) }
+	public var coordinates: Self.Coordinates { self }
 	
-	public init(_ components: Components) {
-		self.init(x: components.0, y: components.1)
+	public init(_ coordinates: Self.Coordinates) {
+		self.init(x: coordinates.x, y: coordinates.y)
 	}
 	
 }
-
-extension Point2D: GeoModels.Zeroable {}
 
 extension Point2D: CustomDebugStringConvertible {
 	

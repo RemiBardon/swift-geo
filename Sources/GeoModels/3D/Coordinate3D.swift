@@ -28,10 +28,6 @@ public struct Coordinate3D: Hashable {
 		Coordinate3D(latitude: latitude, longitude: longitude.positive, altitude: altitude)
 	}
 	
-	public var twoDimensions: Coordinate2D {
-		Coordinate2D(latitude: latitude, longitude: longitude)
-	}
-	
 	public init(
 		latitude: Latitude,
 		longitude: Longitude,
@@ -81,6 +77,18 @@ extension Coordinate3D {
 			longitude: -value.longitude,
 			altitude: -value.altitude
 		)
+	}
+	
+}
+
+// MARK: - Protocol conformances
+
+extension Coordinate3D: GeoModels.CompoundDimension {
+	
+	public typealias LowerDimension = GeoModels.Coordinate2D
+	
+	public var lowerDimension: Self.LowerDimension {
+		LowerDimension(latitude: latitude, longitude: longitude)
 	}
 	
 }

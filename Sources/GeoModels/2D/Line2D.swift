@@ -8,20 +8,19 @@
 
 public struct Line2D: GeoModels.Line, Hashable {
 	
-	public typealias CoordinateSystem = Geo2D
-	public typealias Point = Point2D
+	public typealias CoordinateSystem = GeoModels.Geo2D
 	
-	public let start: Point
-	public let end: Point
+	public let start: Self.Point
+	public let end: Self.Point
 	
-	public var latitudeDelta: Latitude {
-		end.latitude - start.latitude
+	public var latitudeDelta: GeoModels.Latitude {
+		self.end.latitude - self.start.latitude
 	}
-	public var longitudeDelta: Longitude {
-		end.longitude - start.longitude
+	public var longitudeDelta: GeoModels.Longitude {
+		self.end.longitude - self.start.longitude
 	}
-	public var minimalLongitudeDelta: Longitude {
-		let delta = longitudeDelta
+	public var minimalLongitudeDelta: GeoModels.Longitude {
+		let delta = self.longitudeDelta
 		
 		if delta > .halfRotation {
 			return delta - .fullRotation
@@ -33,10 +32,10 @@ public struct Line2D: GeoModels.Line, Hashable {
 	}
 	
 	public var crosses180thMeridian: Bool {
-		abs(longitudeDelta) > .fullRotation
+		abs(self.longitudeDelta) > .fullRotation
 	}
 	
-	public init(start: Point, end: Point) {
+	public init(start: Self.Point, end: Self.Point) {
 		self.start = start
 		self.end = end
 	}

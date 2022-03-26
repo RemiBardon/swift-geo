@@ -8,9 +8,11 @@
 
 public struct BoundingBox2D: Hashable {
 	
-	public var southWest: Coordinate2D
-	public var width: Longitude
-	public var height: Latitude
+	public var southWest: Self.Point
+	public var size: Self.Size
+	
+	public var width: Longitude { self.size.width }
+	public var height: Latitude { self.size.height }
 	
 	public var southLatitude: Latitude {
 		southWest.latitude
@@ -43,29 +45,29 @@ public struct BoundingBox2D: Hashable {
 		}
 	}
 	
-	public var northEast: Coordinate2D {
-		Coordinate2D(latitude: northLatitude, longitude: eastLongitude)
+	public var northEast: Self.Point {
+		Self.Point.init(latitude: northLatitude, longitude: eastLongitude)
 	}
-	public var northWest: Coordinate2D {
-		Coordinate2D(latitude: northLatitude, longitude: westLongitude)
+	public var northWest: Self.Point {
+		Self.Point.init(latitude: northLatitude, longitude: westLongitude)
 	}
-	public var southEast: Coordinate2D {
-		Coordinate2D(latitude: southLatitude, longitude: westLongitude)
+	public var southEast: Self.Point {
+		Self.Point.init(latitude: southLatitude, longitude: westLongitude)
 	}
-	public var center: Coordinate2D {
-		Coordinate2D(latitude: centerLatitude, longitude: centerLongitude)
+	public var center: Self.Point {
+		Self.Point.init(latitude: centerLatitude, longitude: centerLongitude)
 	}
 	
-	public var south: Coordinate2D {
+	public var south: Self.Point {
 		southAtLongitude(centerLongitude)
 	}
-	public var north: Coordinate2D {
+	public var north: Self.Point {
 		northAtLongitude(centerLongitude)
 	}
-	public var west: Coordinate2D {
+	public var west: Self.Point {
 		westAtLatitude(centerLatitude)
 	}
-	public var east: Coordinate2D {
+	public var east: Self.Point {
 		eastAtLatitude(centerLatitude)
 	}
 	
@@ -73,19 +75,22 @@ public struct BoundingBox2D: Hashable {
 		westLongitude > eastLongitude
 	}
 	
-	public init(
-		southWest: Coordinate2D,
-		width: Longitude,
-		height: Latitude
-	) {
+	public init(southWest: Self.Point, size: Self.Size) {
 		self.southWest = southWest
-		self.width = width
-		self.height = height
+		self.size = size
 	}
 	
 	public init(
-		southWest: Coordinate2D,
-		northEast: Coordinate2D
+		southWest: Self.Point,
+		width: Longitude,
+		height: Latitude
+	) {
+		self.init(southWest: southWest, size: Self.Size.init(width: width, height: height))
+	}
+	
+	public init(
+		southWest: Self.Point,
+		northEast: Self.Point
 	) {
 		self.init(
 			southWest: southWest,
@@ -94,31 +99,31 @@ public struct BoundingBox2D: Hashable {
 		)
 	}
 	
-	public func southAtLongitude(_ longitude: Longitude) -> Coordinate2D {
-		Coordinate2D(latitude: northEast.latitude, longitude: longitude)
+	public func southAtLongitude(_ longitude: Longitude) -> Self.Point {
+		Self.Point.init(latitude: northEast.latitude, longitude: longitude)
 	}
-	public func northAtLongitude(_ longitude: Longitude) -> Coordinate2D {
-		Coordinate2D(latitude: southWest.latitude, longitude: longitude)
+	public func northAtLongitude(_ longitude: Longitude) -> Self.Point {
+		Self.Point.init(latitude: southWest.latitude, longitude: longitude)
 	}
-	public func westAtLatitude(_ latitude: Latitude) -> Coordinate2D {
-		Coordinate2D(latitude: latitude, longitude: southWest.longitude)
+	public func westAtLatitude(_ latitude: Latitude) -> Self.Point {
+		Self.Point.init(latitude: latitude, longitude: southWest.longitude)
 	}
-	public func eastAtLatitude(_ latitude: Latitude) -> Coordinate2D {
-		Coordinate2D(latitude: latitude, longitude: northEast.longitude)
+	public func eastAtLatitude(_ latitude: Latitude) -> Self.Point {
+		Self.Point.init(latitude: latitude, longitude: northEast.longitude)
 	}
 	
-	public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> BoundingBox2D {
+	public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> Self {
 		Self.init(
 			southWest: southWest.offsetBy(dLat: dLat, dLong: dLong),
 			width: width,
 			height: height
 		)
 	}
-	public func offsetBy(dx: Coordinate2D.X = .zero, dy: Coordinate2D.Y = .zero) -> BoundingBox2D {
+	public func offsetBy(dx: Self.Coordinates.X = .zero, dy: Self.Coordinates.Y = .zero) -> Self {
 		Self.init(
 			southWest: southWest.offsetBy(dx: dx, dy: dy),
-			width: width,
-			height: height
+			width: self.width,
+			height: self.height
 		)
 	}
 	
@@ -126,20 +131,16 @@ public struct BoundingBox2D: Hashable {
 
 extension BoundingBox2D: GeoModels.BoundingBox {
 	
-	public typealias Point = Point2D
+	public typealias CoordinateSystem = GeoModels.Geo2D
 	
-	public static var zero: BoundingBox2D {
-		Self.init(southWest: .zero, width: .zero, height: .zero)
-	}
+	public var origin: Self.Point { self.southWest }
 	
-	public var origin: Point2D { self.southWest }
-	
-	public init(origin: Point2D.Components, size: Point2D.Components) {
-		self.init(southWest: Point2D(origin), width: size.0, height: size.1)
+	public init(origin: Self.Point, size: Self.Size) {
+		self.init(southWest: origin, size: size)
 	}
 	
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
-	public func union(_ other: BoundingBox2D) -> BoundingBox2D {
+	public func union(_ other: Self) -> Self {
 		// FIXME: Use width and height, because `eastLongitude` can cross the antimeridian
 		Self.init(
 			southWest: Coordinate2D(

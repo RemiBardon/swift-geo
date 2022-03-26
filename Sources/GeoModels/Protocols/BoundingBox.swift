@@ -6,16 +6,26 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public protocol BoundingBox: Hashable {
+public protocol BoundingBox: Hashable, Zeroable {
 	
-	associatedtype Point: GeoModels.Point
-	
-	static var zero: Self { get }
+	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
+	typealias Coordinates = Self.CoordinateSystem.Coordinates
+	typealias Point = Self.CoordinateSystem.Point
+	typealias Size = Self.CoordinateSystem.Size
 	
 	var origin: Point { get }
+	var size: Size { get }
 	
-	init(origin: Point.Components, size: Point.Components)
+	init(origin: Point, size: Size)
 	
 	func union(_ other: Self) -> Self
+	
+}
+
+extension BoundingBox {
+	
+	public static var zero: Self {
+		Self.init(origin: .zero, size: .zero)
+	}
 	
 }
