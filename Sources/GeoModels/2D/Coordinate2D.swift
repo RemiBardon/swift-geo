@@ -50,18 +50,26 @@ public struct Coordinate2D: Hashable {
 
 // MARK: - Operators
 
-extension Coordinate2D {
+extension Coordinate2D: AdditiveArithmetic {
 	
-	public static func + (lhs: Coordinate2D, rhs: Coordinate2D) -> Coordinate2D {
-		return lhs.offsetBy(dLat: rhs.latitude, dLong: rhs.longitude)
+	public static func + (lhs: Self, rhs: Self) -> Self {
+		return lhs.offsetBy(dx: rhs.x, dy: rhs.y)
 	}
 	
-	public static func - (lhs: Coordinate2D, rhs: Coordinate2D) -> Coordinate2D {
+	public static func - (lhs: Self, rhs: Self) -> Self {
 		return lhs + (-rhs)
 	}
 	
-	public prefix static func - (value: Coordinate2D) -> Coordinate2D {
-		return Self.init(latitude: -value.latitude, longitude: -value.longitude)
+}
+
+extension Coordinate2D {
+	
+	public prefix static func - (value: Self) -> Self {
+		return Self.init(x: -value.x, y: -value.y)
+	}
+	
+	public static func / (lhs: Self, rhs: Self) -> Self {
+		return Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
 	}
 	
 }

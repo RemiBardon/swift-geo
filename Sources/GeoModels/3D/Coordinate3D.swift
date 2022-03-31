@@ -61,21 +61,33 @@ public struct Coordinate3D: Hashable {
 
 // MARK: - Operators
 
-extension Coordinate3D {
+extension Coordinate3D: AdditiveArithmetic {
 	
-	public static func + (lhs: Coordinate3D, rhs: Coordinate3D) -> Coordinate3D {
-		return lhs.offsetBy(dLat: rhs.latitude, dLong: rhs.longitude, dAlt: rhs.altitude)
+	public static func + (lhs: Self, rhs: Self) -> Self {
+		return lhs.offsetBy(dx: rhs.x, dy: rhs.y, dz: rhs.z)
 	}
 	
-	public static func - (lhs: Coordinate3D, rhs: Coordinate3D) -> Coordinate3D {
+	public static func - (lhs: Self, rhs: Self) -> Self {
 		return lhs + (-rhs)
 	}
 	
-	public prefix static func - (value: Coordinate3D) -> Coordinate3D {
-		return Coordinate3D(
-			latitude: -value.latitude,
-			longitude: -value.longitude,
-			altitude: -value.altitude
+}
+
+extension Coordinate3D {
+	
+	public prefix static func - (value: Self) -> Self {
+		return Self.init(
+			x: -value.x,
+			y: -value.y,
+			z: -value.z
+		)
+	}
+	
+	public static func / (lhs: Self, rhs: Self) -> Self {
+		return Self.init(
+			x: lhs.x / rhs.x,
+			y: lhs.y / rhs.y,
+			z: lhs.z / rhs.z
 		)
 	}
 	

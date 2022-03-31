@@ -9,7 +9,7 @@
 import NonEmpty
 
 @dynamicMemberLookup
-public protocol Point: Hashable, Zeroable {
+public protocol Point: Hashable, Zeroable, AdditiveArithmetic {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
 		where Self.CoordinateSystem.Point == Self
@@ -18,8 +18,12 @@ public protocol Point: Hashable, Zeroable {
 	var coordinates: Self.Coordinates { get }
 	
 	init(_ coordinates: Self.Coordinates)
+	init<N: BinaryFloatingPoint>(repeating number: N)
 	
 	subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T { get }
+	
+	static func / (lhs: Self, rhs: Self) -> Self
+	static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self
 	
 }
 
@@ -27,6 +31,10 @@ extension Point {
 	
 	public subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T {
 		self.coordinates[keyPath: keyPath]
+	}
+	
+	public static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self {
+		return lhs / Self.init(repeating: rhs)
 	}
 	
 }
