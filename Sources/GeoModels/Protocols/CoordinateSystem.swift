@@ -8,7 +8,7 @@
 
 public protocol CoordinateSystem {
 	
-	associatedtype Coordinates
+	associatedtype Coordinates: GeoModels.Coordinates
 	associatedtype Point: GeoModels.Point
 		where Self.Point.CoordinateSystem == Self
 	associatedtype Size: GeoModels.Size

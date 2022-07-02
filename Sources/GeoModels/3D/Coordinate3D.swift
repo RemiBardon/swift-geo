@@ -83,14 +83,6 @@ extension Coordinate3D {
 		)
 	}
 	
-	public static func / (lhs: Self, rhs: Self) -> Self {
-		return Self.init(
-			x: lhs.x / rhs.x,
-			y: lhs.y / rhs.y,
-			z: lhs.z / rhs.z
-		)
-	}
-	
 }
 
 // MARK: - Protocol conformances
@@ -103,4 +95,24 @@ extension Coordinate3D: GeoModels.CompoundDimension {
 		LowerDimension(latitude: latitude, longitude: longitude)
 	}
 	
+}
+
+extension Coordinate3D: GeoModels.Coordinates {
+
+	public init<N: BinaryFloatingPoint>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
+	}
+
+	public init<N: BinaryInteger>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
+	}
+
+	public static func / (lhs: Self, rhs: Self) -> Self {
+		return Self.init(
+			x: lhs.x / rhs.x,
+			y: lhs.y / rhs.y,
+			z: lhs.z / rhs.z
+		)
+	}
+
 }

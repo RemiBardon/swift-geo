@@ -7,10 +7,8 @@ let package = Package(
 	name: "swift-geo",
 	products: [
 		// Products define the executables and libraries a package produces, and make them visible to other packages.
-		.library(
-			name: "GeoModels",
-			targets: ["GeoModels"]
-		),
+		.library(name: "GeoModels", targets: ["GeoModels"]),
+		.library(name: "Turf", targets: ["Turf"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
@@ -34,19 +32,13 @@ let package = Package(
 				// Fix compiler issue. For more details, see
 				// <https://forums.swift.org/t/wrong-redundant-conformance-constraint-warning/56207>.
 //				.unsafeFlags([
-//					"-Xfrontend", "-enable-requirement-machine-loop-normalization",
 //					"-Xfrontend", "-requirement-machine-protocol-signatures=on",
 //					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
+//					"-Xfrontend", "-requirement-machine-abstract-signatures=on",
 //				]),
 			]
 		),
-		.testTarget(
-			name: "GeoModelsTests",
-			dependencies: [
-				.target(name: "GeoModels"),
-				.product(name: "Algorithms", package: "swift-algorithms"),
-			]
-		),
+		.testTarget(name: "GeoModelsTests", dependencies: ["GeoModels"]),
 		.target(
 			name: "Turf",
 			dependencies: [
@@ -64,6 +56,7 @@ let package = Package(
 //				.unsafeFlags([
 //					"-Xfrontend", "-requirement-machine-protocol-signatures=on",
 //					"-Xfrontend", "-requirement-machine-inferred-signatures=on",
+//					"-Xfrontend", "-requirement-machine-abstract-signatures=on",
 //				]),
 			]
 		),

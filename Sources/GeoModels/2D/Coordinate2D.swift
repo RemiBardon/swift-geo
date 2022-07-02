@@ -68,8 +68,22 @@ extension Coordinate2D {
 		return Self.init(x: -value.x, y: -value.y)
 	}
 	
+}
+
+// MARK: - Protocol conformances
+
+extension Coordinate2D: GeoModels.Coordinates {
+
+	public init<N: BinaryFloatingPoint>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number))
+	}
+
+	public init<N: BinaryInteger>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number))
+	}
+
 	public static func / (lhs: Self, rhs: Self) -> Self {
 		return Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
 	}
-	
+
 }

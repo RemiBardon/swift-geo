@@ -14,7 +14,7 @@ class TurfTests: XCTestCase {
 	
 	func testNaiveBoundingBoxNeverCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let naiveBBox = try XCTUnwrap(Turf.naiveBBox(forCollection: coordinates))
+			let naiveBBox = try XCTUnwrap(Geo2D.naiveBBox(forCollection: coordinates))
 			XCTAssertEqual(naiveBBox.crosses180thMeridian, crosses, String(reflecting: naiveBBox))
 		}
 		
@@ -35,7 +35,7 @@ class TurfTests: XCTestCase {
 	
 	func testBoundingBoxCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(Turf.bbox(forCollection: coordinates))
+			let bbox = try XCTUnwrap(Geo2D.bbox(forCollection: coordinates))
 			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
 		}
 		
@@ -62,7 +62,7 @@ class TurfTests: XCTestCase {
 			latDelta: Latitude,
 			longDelta: Longitude
 		) throws {
-			let bbox = try XCTUnwrap(Turf.bbox(forCollection: coordinates))
+			let bbox = try XCTUnwrap(Geo2D.bbox(forCollection: coordinates))
 			
 			let expectedOrigin = Coordinate2D(latitude: topLat, longitude: leftLong)
 			

@@ -18,23 +18,31 @@ public protocol Point: Hashable, Zeroable, AdditiveArithmetic {
 	var coordinates: Self.Coordinates { get }
 	
 	init(_ coordinates: Self.Coordinates)
-	init<N: BinaryFloatingPoint>(repeating number: N)
-	
+
 	subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T { get }
-	
-	static func / (lhs: Self, rhs: Self) -> Self
-	static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self
-	
+
 }
 
 extension Point {
+
+	public init<N: BinaryFloatingPoint>(repeating number: N) {
+		self.init(Self.Coordinates(repeating: number))
+	}
+
+	public init<N: BinaryInteger>(repeating number: N) {
+		self.init(Self.Coordinates(repeating: number))
+	}
 	
 	public subscript<T>(dynamicMember keyPath: KeyPath<Self.Coordinates, T>) -> T {
 		self.coordinates[keyPath: keyPath]
 	}
-	
+
 	public static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self {
-		return lhs / Self.init(repeating: rhs)
+		Self(lhs.coordinates / rhs)
+	}
+
+	public static func / <N: BinaryInteger>(lhs: Self, rhs: N) -> Self {
+		Self(lhs.coordinates / rhs)
 	}
 	
 }

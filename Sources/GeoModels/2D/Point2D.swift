@@ -18,10 +18,6 @@ extension Point2D: GeoModels.Point {
 		self.init(x: coordinates.x, y: coordinates.y)
 	}
 	
-	public init<N: BinaryFloatingPoint>(repeating number: N) {
-		self.init(x: X(number), y: Y(number))
-	}
-	
 }
 
 extension Point2D: CustomDebugStringConvertible {
