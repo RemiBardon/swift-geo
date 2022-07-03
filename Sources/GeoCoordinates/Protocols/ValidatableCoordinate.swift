@@ -26,9 +26,9 @@ public protocol ValidatableCoordinate: Coordinate {
 	
 }
 
-extension  ValidatableCoordinate {
+extension ValidatableCoordinate {
 	
-	static var validRange: ClosedRange<Self> { min...max }
+	public static var validRange: ClosedRange<Self> { min...max }
 	
 	public var isValid: Bool {
 		Self.validRange.contains(self)

@@ -6,6 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
 import NonEmpty
 
 @dynamicMemberLookup

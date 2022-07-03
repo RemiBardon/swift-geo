@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct Line2D: GeoModels.Line, Hashable {
 	
 	public typealias CoordinateSystem = GeoModels.Geo2D
@@ -13,13 +15,13 @@ public struct Line2D: GeoModels.Line, Hashable {
 	public let start: Self.Point
 	public let end: Self.Point
 	
-	public var latitudeDelta: GeoModels.Latitude {
+	public var latitudeDelta: Latitude {
 		self.end.latitude - self.start.latitude
 	}
-	public var longitudeDelta: GeoModels.Longitude {
+	public var longitudeDelta: Longitude {
 		self.end.longitude - self.start.longitude
 	}
-	public var minimalLongitudeDelta: GeoModels.Longitude {
+	public var minimalLongitudeDelta: Longitude {
 		let delta = self.longitudeDelta
 		
 		if delta > .halfRotation {

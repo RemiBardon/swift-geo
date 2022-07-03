@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct BoundingBox2D: Hashable {
 	
 	public var southWest: Self.Point

@@ -62,6 +62,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeoCoordinates"
+               BuildableName = "GeoCoordinates"
+               BlueprintName = "GeoCoordinates"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -88,6 +102,16 @@
                BlueprintIdentifier = "TurfTests"
                BuildableName = "TurfTests"
                BlueprintName = "TurfTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeoCoordinatesTests"
+               BuildableName = "GeoCoordinatesTests"
+               BlueprintName = "GeoCoordinatesTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

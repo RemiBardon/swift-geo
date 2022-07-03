@@ -6,9 +6,11 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct Size3D: RawRepresentable {
 	
-	public typealias RawValue = GeoModels.Coordinate3D
+	public typealias RawValue = GeoCoordinates.Coordinate3D
 	
 	public let rawValue: Self.RawValue
 	
@@ -26,7 +28,7 @@ public struct Size3D: RawRepresentable {
 	
 }
 
-extension Size3D: GeoModels.Zeroable {
+extension Size3D: Zeroable {
 	
 	public static var zero: Self { Self.init(rawValue: .zero) }
 	
@@ -44,7 +46,7 @@ extension Size3D: GeoModels.Size {
 	
 }
 
-extension Size3D: GeoModels.CompoundDimension {
+extension Size3D: GeoCoordinates.CompoundDimension {
 	
 	public typealias LowerDimension = GeoModels.Size2D
 	

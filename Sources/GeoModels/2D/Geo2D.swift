@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public enum Geo2D: GeoModels.CoordinateSystem {
 	
 	public typealias Coordinates = Coordinate2D

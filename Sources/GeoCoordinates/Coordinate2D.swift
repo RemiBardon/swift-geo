@@ -70,13 +70,11 @@ extension Coordinate2D {
 	
 }
 
-// MARK: - Protocol conformances
+extension Coordinate2D: Coordinates {
 
-extension Coordinate2D: GeoModels.Coordinates {
-
-	public init<N: BinaryFloatingPoint>(repeating number: N) {
-		self.init(x: Self.X(number), y: Self.Y(number))
-	}
+//	public init<N: BinaryFloatingPoint>(repeating number: N) {
+//		self.init(x: Self.X(number), y: Self.Y(number))
+//	}
 
 	public init<N: BinaryInteger>(repeating number: N) {
 		self.init(x: Self.X(number), y: Self.Y(number))

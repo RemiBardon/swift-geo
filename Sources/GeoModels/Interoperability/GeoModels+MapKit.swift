@@ -9,14 +9,6 @@
 #if canImport(MapKit)
 import MapKit
 
-extension Coordinate2D {
-	
-	public var mkMapPoint: MKMapPoint {
-		MKMapPoint(clLocationCoordinate2D)
-	}
-	
-}
-
 extension BoundingBox2D {
 	
 	public var mkCoordinateSpan: MKCoordinateSpan {

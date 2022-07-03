@@ -6,9 +6,11 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public protocol CoordinateSystem {
 	
-	associatedtype Coordinates: GeoModels.Coordinates
+	associatedtype Coordinates: GeoCoordinates.Coordinates
 	associatedtype Point: GeoModels.Point
 		where Self.Point.CoordinateSystem == Self
 	associatedtype Size: GeoModels.Size

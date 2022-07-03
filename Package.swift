@@ -7,6 +7,7 @@ let package = Package(
 	name: "swift-geo",
 	products: [
 		// Products define the executables and libraries a package produces, and make them visible to other packages.
+		.library(name: "GeoCoordinates", targets: ["GeoCoordinates"]),
 		.library(name: "GeoModels", targets: ["GeoModels"]),
 		.library(name: "Turf", targets: ["Turf"]),
 	],
@@ -17,9 +18,15 @@ let package = Package(
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
+		.target(name: "GeoCoordinates"),
+		.testTarget(name: "GeoCoordinatesTests", dependencies: [
+			"GeoCoordinates",
+			.product(name: "Algorithms", package: "swift-algorithms"),
+		]),
 		.target(
 			name: "GeoModels",
 			dependencies: [
+				"GeoCoordinates",
 				.product(name: "Algorithms", package: "swift-algorithms"),
 				.product(name: "NonEmpty", package: "swift-nonempty"),
 			],

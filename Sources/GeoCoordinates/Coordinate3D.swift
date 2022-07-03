@@ -87,9 +87,9 @@ extension Coordinate3D {
 
 // MARK: - Protocol conformances
 
-extension Coordinate3D: GeoModels.CompoundDimension {
+extension Coordinate3D: CompoundDimension {
 	
-	public typealias LowerDimension = GeoModels.Coordinate2D
+	public typealias LowerDimension = Coordinate2D
 	
 	public var lowerDimension: Self.LowerDimension {
 		LowerDimension(latitude: latitude, longitude: longitude)
@@ -97,11 +97,11 @@ extension Coordinate3D: GeoModels.CompoundDimension {
 	
 }
 
-extension Coordinate3D: GeoModels.Coordinates {
+extension Coordinate3D: Coordinates {
 
-	public init<N: BinaryFloatingPoint>(repeating number: N) {
-		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
-	}
+//	public init<N: BinaryFloatingPoint>(repeating number: N) {
+//		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
+//	}
 
 	public init<N: BinaryInteger>(repeating number: N) {
 		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))

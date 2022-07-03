@@ -1,5 +1,5 @@
 //
-//  GeoModels+CoreLocationTests.swift
+//  GeoCoordinates+CoreLocationTests.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 03/02/2022.
@@ -7,7 +7,7 @@
 //
 
 #if canImport(CoreLocation)
-@testable import GeoModels
+@testable import GeoCoordinates
 import XCTest
 import Algorithms
 import CoreLocation

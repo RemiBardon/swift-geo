@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public protocol Size: Hashable, Zeroable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem

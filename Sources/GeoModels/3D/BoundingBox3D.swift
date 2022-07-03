@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct BoundingBox3D: Hashable {
 	
 	public var twoDimensions: BoundingBox2D

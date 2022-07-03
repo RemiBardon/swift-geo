@@ -1,5 +1,5 @@
 //
-//  GeoModels+CoreLocation.swift
+//  GeoCoordinates+CoreLocation.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 02/02/2022.

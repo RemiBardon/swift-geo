@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-@testable import GeoModels
+import GeoCoordinates
 import XCTest
 
 final class CoordinateTests: XCTestCase {

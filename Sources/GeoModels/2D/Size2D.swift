@@ -6,9 +6,11 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct Size2D: RawRepresentable {
 	
-	public typealias RawValue = GeoModels.Coordinate2D
+	public typealias RawValue = GeoCoordinates.Coordinate2D
 	
 	public let rawValue: Self.RawValue
 	
@@ -25,7 +27,7 @@ public struct Size2D: RawRepresentable {
 	
 }
 
-extension Size2D: GeoModels.Zeroable {
+extension Size2D: Zeroable {
 	
 	public static var zero: Self { Self.init(rawValue: .zero) }
 	

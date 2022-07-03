@@ -1,12 +1,12 @@
 //
-//  GeoModels+DisplayTests.swift
+//  CoordinateDisplayTests.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 03/02/2022.
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-@testable import GeoModels
+import GeoCoordinates
 import XCTest
 
 final class GeoModelsDisplayTests: XCTestCase {

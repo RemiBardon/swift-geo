@@ -6,7 +6,9 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public typealias Point3D = GeoModels.Coordinate3D
+import GeoCoordinates
+
+public typealias Point3D = Coordinate3D
 
 extension Point3D: GeoModels.Point {
 	

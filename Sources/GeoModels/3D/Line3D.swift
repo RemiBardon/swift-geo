@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoCoordinates
+
 public struct Line3D: GeoModels.Line, Hashable {
 	
 	public typealias CoordinateSystem = Geo3D
@@ -25,7 +27,7 @@ public struct Line3D: GeoModels.Line, Hashable {
 	
 }
 
-extension Line3D: GeoModels.CompoundDimension {
+extension Line3D: GeoCoordinates.CompoundDimension {
 	
 	public typealias LowerDimension = GeoModels.Line2D
 	
