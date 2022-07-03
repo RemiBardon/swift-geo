@@ -13,7 +13,11 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
-		.package(url: "https://github.com/RemiBardon/swift-nonempty", branch: "nested-nonempty"),
+		.package(
+			url: "https://github.com/RemiBardon/swift-nonempty",
+			// Last commit to date on https://github.com/RemiBardon/swift-nonempty/compare/nested-nonempty.
+			revision: "d6058befda633b3d9d44b0c99fac52bb7fedd01f"
+		),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
