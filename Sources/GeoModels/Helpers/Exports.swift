@@ -1,5 +1,5 @@
 //
-//  GeoCoordinates+Export.swift
+//  Exports.swift
 //  GeoSwift
 //
 //  Created by Rémi Bardon on 03/07/2022.
