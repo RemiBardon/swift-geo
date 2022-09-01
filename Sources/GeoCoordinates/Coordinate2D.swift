@@ -72,9 +72,9 @@ extension Coordinate2D {
 
 extension Coordinate2D: Coordinates {
 
-//	public init<N: BinaryFloatingPoint>(repeating number: N) {
-//		self.init(x: Self.X(number), y: Self.Y(number))
-//	}
+	public init<N: BinaryFloatingPoint>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number))
+	}
 
 	public init<N: BinaryInteger>(repeating number: N) {
 		self.init(x: Self.X(number), y: Self.Y(number))

@@ -8,7 +8,7 @@
 
 public protocol Coordinates: Hashable, Zeroable, AdditiveArithmetic {
 
-//	init<N: BinaryFloatingPoint>(repeating number: N)
+	init<N: BinaryFloatingPoint>(repeating number: N)
 	init<N: BinaryInteger>(repeating number: N)
 
 	static func / (lhs: Self, rhs: Self) -> Self
@@ -17,9 +17,9 @@ public protocol Coordinates: Hashable, Zeroable, AdditiveArithmetic {
 
 extension Coordinates {
 
-//	public static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self {
-//		lhs / Self(repeating: rhs)
-//	}
+	public static func / <N: BinaryFloatingPoint>(lhs: Self, rhs: N) -> Self {
+		lhs / Self(repeating: rhs)
+	}
 
 	public static func / <N: BinaryInteger>(lhs: Self, rhs: N) -> Self {
 		lhs / Self(repeating: rhs)

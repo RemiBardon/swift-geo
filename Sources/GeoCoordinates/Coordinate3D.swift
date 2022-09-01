@@ -99,9 +99,9 @@ extension Coordinate3D: CompoundDimension {
 
 extension Coordinate3D: Coordinates {
 
-//	public init<N: BinaryFloatingPoint>(repeating number: N) {
-//		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
-//	}
+	public init<N: BinaryFloatingPoint>(repeating number: N) {
+		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
+	}
 
 	public init<N: BinaryInteger>(repeating number: N) {
 		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
