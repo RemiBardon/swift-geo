@@ -22,7 +22,7 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
 	static func naiveBBox<Points: Collection>(forCollection points: Points) -> Self.BoundingBox?
-		where Points.Element == Self.Point
+	where Points.Element == Self.Point
 	
 	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of points.
@@ -30,8 +30,8 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
 	static func naiveBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-		where MultiPoint: GeoModels.MultiPoint,
-			  MultiPoint.Point == Self.Point
+	where MultiPoint: GeoModels.MultiPoint,
+				MultiPoint.Point == Self.Point
 	
 	/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of points.
@@ -39,17 +39,17 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	/// - Note: This implementation takes into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
 	static func bbox<Points: Collection>(forCollection points: Points) -> Self.BoundingBox?
-		where Points.Element == Self.Point
-	
+	where Points.Element == Self.Point
+
 	/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of points.
 	/// - Warning: This does not take into account the curvature of the Earth.
 	/// - Note: This implementation takes into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
 	static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-		where MultiPoint: GeoModels.MultiPoint,
-			  MultiPoint.Point == Self.Point
-	
+	where MultiPoint: GeoModels.MultiPoint,
+				MultiPoint.Point == Self.Point
+
 	// MARK: Center
 	
 	/// Returns the linear center of a cluster of points.
@@ -57,7 +57,7 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a center near 0°N 0°E).
 	static func naiveCenter<Points: Collection>(forCollection points: Points) -> Self.Point?
-		where Points.Element == Self.Point
+	where Points.Element == Self.Point
 	
 	static func center(forBBox bbox: Self.BoundingBox) -> Self.Point
 	
@@ -65,7 +65,7 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	
 	/// Calculates the centroid of a polygon using the mean of all vertices.
 	static func naiveCentroid<Points: Collection>(forCollection points: Points) -> Self.Point?
-		where Points.Element == Self.Point
+	where Points.Element == Self.Point
 	
 }
 
@@ -79,18 +79,18 @@ extension CoordinateSystemAlgebra {
 	
 	public static func naiveBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
 	where MultiPoint: GeoModels.MultiPoint,
-		  MultiPoint.Point == Self.Point
+				MultiPoint.Point == Self.Point
 	{
 		return self.naiveBBox(forCollection: multiPoint.points)
-			?? self.bbox(forPoint: multiPoint.points.first)
+		?? self.bbox(forPoint: multiPoint.points.first)
 	}
 	
 	public static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
 	where MultiPoint: GeoModels.MultiPoint,
-		  MultiPoint.Point == Self.Point
+				MultiPoint.Point == Self.Point
 	{
 		return self.bbox(forCollection: multiPoint.points)
-			?? self.bbox(forPoint: multiPoint.points.first)
+		?? self.bbox(forPoint: multiPoint.points.first)
 	}
 	
 	public static func naiveCenter<Points: Collection>(forCollection points: Points) -> Self.Point?
@@ -110,6 +110,28 @@ extension CoordinateSystemAlgebra {
 	
 }
 
+// MARK: Helper functions
+
+public extension GeoModels.Point where CoordinateSystem: CoordinateSystemAlgebra {
+
+	var bbox: Self.CoordinateSystem.BoundingBox {
+		Self.CoordinateSystem.bbox(forPoint: self)
+	}
+
+}
+
+public extension GeoModels.Line where CoordinateSystem: CoordinateSystemAlgebra {
+
+	var naiveBBox: Self.CoordinateSystem.BoundingBox {
+		Self.CoordinateSystem.naiveBBox(forMultiPoint: self)
+	}
+
+	var bbox: Self.CoordinateSystem.BoundingBox {
+		Self.CoordinateSystem.bbox(forMultiPoint: self)
+	}
+
+}
+
 // MARK: - 2D
 
 // MARK: Required methods
@@ -120,7 +142,7 @@ extension GeoModels.Geo2D: CoordinateSystemAlgebra {
 	where Points.Element == Self.Point
 	{
 		guard let (south, north) = points.map(\.latitude).minAndMax(),
-			  let (west, east) = points.map(\.longitude).minAndMax()
+					let (west, east) = points.map(\.longitude).minAndMax()
 		else { return nil }
 		
 		return Self.BoundingBox(
@@ -128,15 +150,15 @@ extension GeoModels.Geo2D: CoordinateSystemAlgebra {
 			northEast: Point2D(latitude: north, longitude: east)
 		)
 	}
-	
+
 	public static func bbox<Points: Collection>(forCollection points: Points) ->  Self.BoundingBox?
 	where Points.Element == Self.Point
 	{
 		guard let bbox = Self.naiveBBox(forCollection: points) else { return nil }
-		
+
 		if bbox.width > .halfRotation {
 			let offsetCoords = points.map(\.withPositiveLongitude)
-			
+
 			return Self.bbox(forCollection: offsetCoords)
 		} else {
 			return bbox
@@ -209,7 +231,47 @@ extension GeoModels.Geo2D {
 			)
 		}
 	}
-	
+
+	/// Calculates the signed area of a planar non-self-intersecting polygon
+	/// (not taking into account the curvature of the Earth).
+	///
+	/// Formula from <https://mathworld.wolfram.com/PolygonArea.html>.
+	public static func plannarArea<Points: Collection>(forCollection points: Points) -> Double
+	where Points.Element == Point2D
+	{
+		guard let first = points.first else { return 0 }
+
+		var ring = Array(points)
+		// Close the ring
+		if ring.last != first {
+			ring.append(first)
+		}
+
+		var area: Double = 0
+		for (c1, c2) in ring.adjacentPairs() {
+			area += c1.x.decimalDegrees * c2.y.decimalDegrees - c2.x.decimalDegrees * c1.y.decimalDegrees
+		}
+
+		return area / 2.0
+	}
+
+	/// Calculates if a given polygon is clockwise or counter-clockwise.
+	///
+	/// ```swift
+	/// let clockwiseRing = LineString2D(Point2D(0, 0), Point2D(1, 1), Point2D(1, 0), Point2D(0, 0))
+	/// let counterClockwiseRing = LineString2D(Point2D(0, 0), Point2D(1, 0), Point2D(1, 1), Point2D(0, 0))
+	///
+	/// Turf.isClockwise(clockwiseRing) // true
+	/// Turf.isClockwise(counterClockwiseRing) // false
+	/// ```
+	///
+	/// Ported from [Turf](https://github.com/Turfjs/turf/blob/d72985ce1a577b42340fed5fc70efe8e4bc8b062/packages/turf-boolean-clockwise/index.ts#L19-L35).
+	public static func isClockwise<Points: Collection>(collection points: Points) -> Bool
+	where Points.Element == Point2D
+	{
+		return Self.plannarArea(forCollection: points) > 0
+	}
+
 }
 
 // MARK: - 3D
@@ -222,8 +284,8 @@ extension GeoModels.Geo3D: CoordinateSystemAlgebra {
 	where Points.Element == Self.Point
 	{
 		guard let (south, north) = points.map(\.latitude).minAndMax(),
-			  let (west, east) = points.map(\.longitude).minAndMax(),
-			  let (low, high) = points.map(\.altitude).minAndMax()
+					let (west, east) = points.map(\.longitude).minAndMax(),
+					let (low, high) = points.map(\.altitude).minAndMax()
 		else { return nil }
 		
 		return Self.BoundingBox(

@@ -60,15 +60,17 @@ class TurfTests: XCTestCase {
 			topLat: Latitude,
 			leftLong: Longitude,
 			latDelta: Latitude,
-			longDelta: Longitude
+			longDelta: Longitude,
+			file: StaticString = #filePath,
+			line: UInt = #line
 		) throws {
 			let bbox = try XCTUnwrap(Geo2D.bbox(forCollection: coordinates))
 			
 			let expectedOrigin = Coordinate2D(latitude: topLat, longitude: leftLong)
 			
-			XCTAssertEqual(bbox.northWest, expectedOrigin, "Origin")
-			XCTAssertEqual(bbox.height, latDelta, "Latitude delta")
-			XCTAssertEqual(bbox.width, longDelta, "Longitude delta")
+			XCTAssertEqual(bbox.northWest, expectedOrigin, "Origin", file: file, line: line)
+			XCTAssertEqual(bbox.height, latDelta, "Latitude delta", file: file, line: line)
+			XCTAssertEqual(bbox.width, longDelta, "Longitude delta", file: file, line: line)
 		}
 		
 		// Blue: Positive latitudes, positive longitudes
@@ -165,17 +167,17 @@ class TurfTests: XCTestCase {
 		)
 	}
 	
-//	func testLineBBox() throws {
-//		func test(line: Line2D, naiveBBox expected: BoundingBox2D) throws {
-//			let bbox = try XCTUnwrap(line.naiveBBox)
-//			XCTAssertEqual(bbox, expected)
-//		}
-//		
-//		let line1 = Line2D(
-//			start: Point2D(latitude: .min + 30, longitude: .min + 50),
-//			end: Point2D(latitude: .max - 10, longitude: .max - 10)
-//		)
-//		try test(line: line1, naiveBBox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
-//	}
+	func testLineBBox() throws {
+		func test(line: Line2D, naiveBBox expected: BoundingBox2D) throws {
+			let bbox = try XCTUnwrap(line.naiveBBox)
+			XCTAssertEqual(bbox, expected)
+		}
+
+		let line1 = Line2D(
+			start: Point2D(latitude: .min + 30, longitude: .min + 50),
+			end: Point2D(latitude: .max - 10, longitude: .max - 10)
+		)
+		try test(line: line1, naiveBBox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
+	}
 	
 }

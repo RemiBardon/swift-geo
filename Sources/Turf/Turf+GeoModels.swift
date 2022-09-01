@@ -14,16 +14,6 @@ import NonEmpty
 
 // MARK: - Bounding box
 
-// MARK: Points
-
-public func bbox<Point: GeoModels.Point>(forPoint point: Point) -> Point.CoordinateSystem.BoundingBox {
-	return Point.CoordinateSystem.BoundingBox(origin: point, size: .zero)
-}
-
-extension GeoModels.Point {
-	public var bbox: Self.CoordinateSystem.BoundingBox { Turf.bbox(forPoint: self) }
-}
-
 // MARK: MultiPoints
 
 //public func naiveBBox<MultiPoint: GeoModels.MultiPoint>(
