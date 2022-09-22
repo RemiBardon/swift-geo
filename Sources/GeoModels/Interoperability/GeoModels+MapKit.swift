@@ -54,4 +54,13 @@ extension BoundingBox2D {
 	}
 	
 }
+
+extension LineString2D {
+
+	public var mkPolyline: MKPolyline {
+		var points: [CLLocationCoordinate2D] = self.points.map(\.clLocationCoordinate2D)
+		return MKPolyline(coordinates: &points, count: points.count)
+	}
+
+}
 #endif

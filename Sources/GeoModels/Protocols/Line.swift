@@ -24,6 +24,10 @@ extension Line {
 	public init(from: Self.Point, to: Self.Point) {
 		self.init(start: from, end: to)
 	}
+
+	public var vector: Self {
+		return Self(start: .zero, end: self.end - self.start)
+	}
 	
 }
 

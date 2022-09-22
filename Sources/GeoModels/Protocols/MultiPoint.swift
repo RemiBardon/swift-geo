@@ -13,11 +13,10 @@ public protocol MultiPoint: Hashable {
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
 	typealias Point = Self.CoordinateSystem.Point
 	associatedtype Points: NonEmptyProtocol
-		where Points.Collection: NonEmptyProtocol,
-			  Points.Element == Self.Point
+	where Self.Points.Element == Self.Point
 	
-	var points: Points { get }
+	var points: Self.Points { get }
 	
-	init(points: Points)
+	init(points: Self.Points)
 	
 }

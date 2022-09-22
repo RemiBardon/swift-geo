@@ -9,21 +9,22 @@
 import NonEmpty
 
 public protocol MultiLine: GeoModels.MultiPoint
-where Points == AtLeast2<[Point]>
+where Points == AtLeast2<[Self.Point]>
 {
-	
-	associatedtype Line: GeoModels.Line where Line.Point == Point
-	associatedtype Lines: NonEmptyProtocol where Lines.Element == Line
-	
-	var lines: Lines { get }
-	
-	init(lines: Lines)
-	
+
+	typealias Line = Self.CoordinateSystem.Line
+	associatedtype Lines: NonEmptyProtocol
+	where Self.Lines.Element == Self.Line
+
+	var lines: Self.Lines { get }
+
+	init(lines: Self.Lines)
+
 }
 
 extension MultiLine {
-	
-	public var points: Points {
+
+	public var points: Self.Points {
 		Points(
 			lines.first.points.first,
 			lines.first.points.second,

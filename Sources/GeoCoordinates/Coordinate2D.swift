@@ -6,6 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import Foundation
+
 public struct Coordinate2D: Hashable {
 	
 	public typealias X = Longitude
@@ -80,8 +82,24 @@ extension Coordinate2D: Coordinates {
 		self.init(x: Self.X(number), y: Self.Y(number))
 	}
 
+	public static func * (lhs: Self, rhs: Self) -> Self {
+		return Self.init(x: lhs.x * rhs.x, y: lhs.y * rhs.y)
+	}
+
 	public static func / (lhs: Self, rhs: Self) -> Self {
 		return Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
+	}
+
+}
+
+extension Coordinate2D {
+
+	public var description: String {
+		"(\(String(describing: self.x)),\(String(describing: self.y)))"
+	}
+
+	public var debugDescription: String {
+		"(\(String(reflecting: self.x)),\(String(reflecting: self.y)))"
 	}
 
 }

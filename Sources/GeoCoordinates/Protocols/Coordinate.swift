@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Coordinate: BinaryFloatingPoint {
+public protocol Coordinate: BinaryFloatingPoint, CustomStringConvertible, CustomDebugStringConvertible {
 	
 	var value: Double { get set }
 	
@@ -146,6 +146,32 @@ extension Coordinate {
 			exponentBitPattern: exponentBitPattern,
 			significandBitPattern: significandBitPattern
 		))
+	}
+
+	public init<Source>(_ value: Source) where Source: BinaryFloatingPoint {
+		self.init(value: Double(value))
+	}
+
+	public init<Source>(_ value: Source) where Source: BinaryInteger {
+		self.init(value: Double(value))
+	}
+
+	// MARK: CustomStringConvertible
+
+	public var description: String {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		return formatter.string(from: NSNumber(value: self.value)) ?? "\(self.value)"
+	}
+
+	// MARK: CustomDebugStringConvertible
+
+	public var debugDescription: String {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.maximumFractionDigits = 3
+		formatter.locale = .en
+		return formatter.string(from: NSNumber(value: self.value)) ?? "\(self.value)"
 	}
 	
 }

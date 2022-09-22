@@ -21,8 +21,8 @@ public protocol CoordinateSystem {
 		where Self.Line.CoordinateSystem == Self
 //	associatedtype MultiLine: GeoModels.MultiLine
 //		where Self.MultiLine.CoordinateSystem == Self
-//	associatedtype LineString: GeoModels.LineString
-//		where Self.LineString.CoordinateSystem == Self
+	associatedtype LineString: GeoModels.LineString
+		where Self.LineString.CoordinateSystem == Self
 //	associatedtype LinearRing: GeoModels.LinearRing
 //		where Self.LinearRing.CoordinateSystem == Self
 	

@@ -16,7 +16,11 @@ let package = Package(
 		.package(
 			url: "https://github.com/RemiBardon/swift-nonempty",
 			// Last commit to date on https://github.com/RemiBardon/swift-nonempty/compare/nested-nonempty.
-			revision: "d6058befda633b3d9d44b0c99fac52bb7fedd01f"
+			revision: "f951b7bcd4f13586307f53b0de5d1b20976aceab"
+		),
+		.package(
+			url: "https://github.com/pointfreeco/swift-snapshot-testing",
+			.upToNextMajor(from: "1.9.0")
 		),
 	],
 	targets: [
@@ -73,7 +77,10 @@ let package = Package(
 		),
 		.testTarget(
 			name: "TurfTests",
-			dependencies: ["Turf"]
+			dependencies: [
+				"Turf",
+				.product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+			]
 		),
 	]
 )

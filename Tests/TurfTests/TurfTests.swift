@@ -6,11 +6,11 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import GeoModels
 import Turf
 import XCTest
-import GeoModels
 
-class TurfTests: XCTestCase {
+final class TurfTests: XCTestCase {
 	
 	func testNaiveBoundingBoxNeverCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
@@ -178,6 +178,68 @@ class TurfTests: XCTestCase {
 			end: Point2D(latitude: .max - 10, longitude: .max - 10)
 		)
 		try test(line: line1, naiveBBox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
+	}
+
+	@MainActor
+	func testCubicBezier() async throws {
+		var lineString1 = LineString2D(points: .init(
+			.init(x:  0, y:  0),
+			.init(x:  0, y: 10),
+			.init(x: 10, y: 10),
+			.init(x: 10, y:  0)
+		))
+
+		let bezier0 = lineString1.bezier(sharpness: 1, resolution: 1)
+		XCTAssertEqual(bezier0, lineString1)
+
+		let bezier1 = lineString1.bezier(sharpness: 1, resolution: 2)
+		XCTAssertEqual(bezier1, LineString2D(points: .init(
+			.init(x:  0, y:  0),
+			.init(x:  0, y:  5),
+			.init(x:  0, y: 10),
+			.init(x:  5, y: 10),
+			.init(x: 10, y: 10),
+			.init(x: 10, y:  5),
+			.init(x: 10, y:  0)
+		)))
+
+		lineString1.close()
+
+		let bezier10 = lineString1.bezier(sharpness: 1, resolution: 1)
+		XCTAssertEqual(bezier10, lineString1)
+
+		let bezier11 = lineString1.bezier(sharpness: 1, resolution: 2)
+		XCTAssertEqual(bezier11, LineString2D(points: .init(
+			.init(x:  0, y:  0),
+			.init(x:  0, y:  5),
+			.init(x:  0, y: 10),
+			.init(x:  5, y: 10),
+			.init(x: 10, y: 10),
+			.init(x: 10, y:  5),
+			.init(x: 10, y:  0),
+			.init(x:  5, y:  0),
+			.init(x:  0, y:  0)
+		)))
+
+		let bezier20 = lineString1.bezier(sharpness: 0.5, resolution: 10)
+		XCTAssertEqual(String(reflecting: bezier20), """
+		[(0,0),(-0.338,0.55),(-0.6,1.4),(-0.788,2.475),(-0.9,3.7),(-0.938,5),(-0.9,6.3),(-0.787,7.525),\
+		(-0.6,8.6),(-0.338,9.45),(0,10),(0.55,10.338),(1.4,10.6),(2.475,10.788),(3.7,10.9),(5,10.938),\
+		(6.3,10.9),(7.525,10.788),(8.6,10.6),(9.45,10.338),(10,10),(10.338,9.45),(10.6,8.6),\
+		(10.788,7.525),(10.9,6.3),(10.938,5),(10.9,3.7),(10.788,2.475),(10.6,1.4),(10.338,0.55),(10,0),\
+		(9.45,-0.338),(8.6,-0.6),(7.525,-0.788),(6.3,-0.9),(5,-0.938),(3.7,-0.9),(2.475,-0.787),\
+		(1.4,-0.6),(0.55,-0.338),(0,0)]
+		""")
+
+		let bezier21 = lineString1.bezier(sharpness: 0, resolution: 10)
+		XCTAssertEqual(String(reflecting: bezier21), """
+		[(0,0),(-0.675,0.82),(-1.2,1.76),(-1.575,2.79),(-1.8,3.88),(-1.875,5),(-1.8,6.12),\
+		(-1.575,7.21),(-1.2,8.24),(-0.675,9.18),(0,10),(0.82,10.675),(1.76,11.2),(2.79,11.575),\
+		(3.88,11.8),(5,11.875),(6.12,11.8),(7.21,11.575),(8.24,11.2),(9.18,10.675),(10,10),\
+		(10.675,9.18),(11.2,8.24),(11.575,7.21),(11.8,6.12),(11.875,5),(11.8,3.88),(11.575,2.79),\
+		(11.2,1.76),(10.675,0.82),(10,0),(9.18,-0.675),(8.24,-1.2),(7.21,-1.575),(6.12,-1.8),\
+		(5,-1.875),(3.88,-1.8),(2.79,-1.575),(1.76,-1.2),(0.82,-0.675),(0,0)]
+		""")
 	}
 	
 }

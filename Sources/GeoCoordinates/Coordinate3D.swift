@@ -107,12 +107,32 @@ extension Coordinate3D: Coordinates {
 		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))
 	}
 
+	public static func * (lhs: Self, rhs: Self) -> Self {
+		return Self.init(
+			x: lhs.x * rhs.x,
+			y: lhs.y * rhs.y,
+			z: lhs.z * rhs.z
+		)
+	}
+
 	public static func / (lhs: Self, rhs: Self) -> Self {
 		return Self.init(
 			x: lhs.x / rhs.x,
 			y: lhs.y / rhs.y,
 			z: lhs.z / rhs.z
 		)
+	}
+
+}
+
+extension Coordinate3D {
+
+	public var description: String {
+		"(\(String(describing: self.x)),\(String(describing: self.y)),\(String(describing: self.z)))"
+	}
+
+	public var debugDescription: String {
+		"(\(String(reflecting: self.x)),\(String(reflecting: self.y)),\(String(reflecting: self.z)))"
 	}
 
 }

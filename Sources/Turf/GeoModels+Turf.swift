@@ -7,6 +7,7 @@
 //
 
 import GeoModels
+import NonEmpty
 
 // MARK: - Base protocol
 
@@ -60,24 +61,32 @@ public protocol CoordinateSystemAlgebra: GeoModels.CoordinateSystem {
 	where Points.Element == Self.Point
 	
 	static func center(forBBox bbox: Self.BoundingBox) -> Self.Point
-	
+
 	// MARK: Centroid
-	
+
 	/// Calculates the centroid of a polygon using the mean of all vertices.
 	static func naiveCentroid<Points: Collection>(forCollection points: Points) -> Self.Point?
 	where Points.Element == Self.Point
-	
+
+	// MARK: Bézier
+
+	static func bezier(
+		forLineString: Self.LineString,
+		sharpness: Double,
+		resolution: Double
+	) -> Self.LineString
+
 }
 
 // MARK: - Default implementations
 
-extension CoordinateSystemAlgebra {
+public extension CoordinateSystemAlgebra {
 	
-	public static func bbox(forPoint point: Self.Point) -> Self.BoundingBox {
+	static func bbox(forPoint point: Self.Point) -> Self.BoundingBox {
 		return Self.BoundingBox(origin: point, size: .zero)
 	}
 	
-	public static func naiveBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
+	static func naiveBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
 	where MultiPoint: GeoModels.MultiPoint,
 				MultiPoint.Point == Self.Point
 	{
@@ -85,7 +94,7 @@ extension CoordinateSystemAlgebra {
 		?? self.bbox(forPoint: multiPoint.points.first)
 	}
 	
-	public static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
+	static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
 	where MultiPoint: GeoModels.MultiPoint,
 				MultiPoint.Point == Self.Point
 	{
@@ -93,19 +102,34 @@ extension CoordinateSystemAlgebra {
 		?? self.bbox(forPoint: multiPoint.points.first)
 	}
 	
-	public static func naiveCenter<Points: Collection>(forCollection points: Points) -> Self.Point?
+	static func naiveCenter<Points: Collection>(forCollection points: Points) -> Self.Point?
 	where Points.Element == Self.Point
 	{
 		return Self.naiveBBox(forCollection: points)
 			.flatMap(Self.center(forBBox:))
 	}
-	
-	public static func naiveCentroid<Points: Collection>(forCollection points: Points) -> Self.Point?
+
+	static func naiveCentroid<Points: Collection>(forCollection points: Points) -> Self.Point?
 	where Points.Element == Self.Point
 	{
 		guard !points.isEmpty else { return nil }
-		
+
 		return points.sum() / points.count
+	}
+
+	static func pointAlong(line: Self.Line, fraction: Double) -> Self.Point {
+		precondition((Double(0)...Double(1)).contains(fraction))
+		return line.start + ((line.end - line.start) * fraction)
+	}
+
+	static func bezier(
+		forLineString lineString: Self.LineString,
+		sharpness: Double,
+		resolution: Double
+	) -> Self.LineString {
+		let spline = CubicBezierSpline(points: lineString.points, sharpness: sharpness)
+		let points: AtLeast2<[Self.Point]> = spline.curve(resolution: resolution)
+		return Self.LineString(points: points)
 	}
 	
 }
@@ -130,6 +154,35 @@ public extension GeoModels.Line where CoordinateSystem: CoordinateSystemAlgebra 
 		Self.CoordinateSystem.bbox(forMultiPoint: self)
 	}
 
+	var naiveCenter: Self.Point {
+		Self.CoordinateSystem.center(forBBox: self.naiveBBox)
+	}
+
+	var center: Self.Point {
+		Self.CoordinateSystem.center(forBBox: self.bbox)
+	}
+
+}
+
+public extension GeoModels.LineString where CoordinateSystem: CoordinateSystemAlgebra {
+
+	var bbox: Self.CoordinateSystem.BoundingBox {
+		Self.CoordinateSystem.bbox(forMultiPoint: self)
+	}
+
+	func bezier(sharpness: Double, resolution: Double) -> Self {
+		// NOTE: For some reason, this does not compile without type casts.
+		// Cannot convert return expression of type 'Self.CoordinateSystem.LineString' to return type 'Self'
+		// Insert ' as! Self'
+		// Cannot convert value of type 'Self' to expected argument type 'Self.CoordinateSystem.LineString'
+		// Insert ' as! Self.CoordinateSystem.LineString'
+		Self.CoordinateSystem.bezier(
+			forLineString: self as! Self.CoordinateSystem.LineString,
+			sharpness: sharpness,
+			resolution: resolution
+		) as! Self
+	}
+
 }
 
 // MARK: - 2D
@@ -137,7 +190,7 @@ public extension GeoModels.Line where CoordinateSystem: CoordinateSystemAlgebra 
 // MARK: Required methods
 
 extension GeoModels.Geo2D: CoordinateSystemAlgebra {
-	
+
 	public static func naiveBBox<Points: Collection>(forCollection points: Points) -> Self.BoundingBox?
 	where Points.Element == Self.Point
 	{

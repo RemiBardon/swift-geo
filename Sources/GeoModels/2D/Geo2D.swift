@@ -17,7 +17,7 @@ public enum Geo2D: GeoModels.CoordinateSystem {
 //	public typealias MultiPoint = MultiPoint2D
 	public typealias Line = Line2D
 //	public typealias MultiLine = MultiLine2D
-//	public typealias LineString = LineString2D
+	public typealias LineString = LineString2D
 //	public typealias LinearRing = LinearRing2D
 	
 	public typealias BoundingBox = BoundingBox2D
