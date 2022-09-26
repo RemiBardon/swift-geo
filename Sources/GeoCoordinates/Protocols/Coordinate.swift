@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Coordinate: BinaryFloatingPoint, CustomStringConvertible, CustomDebugStringConvertible {
+public protocol Coordinate: BinaryFloatingPoint, CustomStringConvertible, CustomDebugStringConvertible, Zeroable {
 	
 	var value: Double { get set }
 	

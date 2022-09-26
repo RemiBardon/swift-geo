@@ -87,7 +87,7 @@ extension AngularCoordinate {
 	
 }
 
-extension Coordinate2D: GeographicNotation {
+extension WGS84Coordinate2D: GeographicNotation {
 	
 	public func ddNotation(maxDigits: UInt8) -> String {
 		let lat = self.latitude.ddNotation(maxDigits: maxDigits)

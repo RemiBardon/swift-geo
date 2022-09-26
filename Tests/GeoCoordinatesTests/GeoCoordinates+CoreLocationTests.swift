@@ -24,8 +24,8 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 			+ Array(repeating: Longitude.random, count: 8).map { $0() }
 	}
 	
-	static var testCoordinates: [Coordinate2D] {
-		return product(testLatitudes, testLongitudes).map(Coordinate2D.init(latitude:longitude:))
+	static var testCoordinates: [WGS84Coordinate2D] {
+		return product(testLatitudes, testLongitudes).map(WGS84Coordinate2D.init(latitude:longitude:))
 	}
 	
 	func testCoordinate2DFromCoreLocationCoordinate() {
@@ -34,7 +34,7 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 			.map(CLLocationCoordinate2D.init(latitude:longitude:))
 		
 		testValues.forEach { clLocationCoordinate in
-			let coordinate = Coordinate2D(clLocationCoordinate)
+			let coordinate = WGS84Coordinate2D(clLocationCoordinate)
 			
 			XCTAssertEqual(coordinate.latitude.decimalDegrees, clLocationCoordinate.latitude)
 			XCTAssertEqual(coordinate.longitude.decimalDegrees, clLocationCoordinate.longitude)
@@ -47,7 +47,7 @@ final class GeoModelsCoreLocationTests: XCTestCase {
 			.map(CLLocation.init(latitude:longitude:))
 		
 		testValues.forEach { clLocation in
-			let coordinate = Coordinate2D(clLocation)
+			let coordinate = WGS84Coordinate2D(clLocation)
 			
 			XCTAssertEqual(coordinate.latitude.decimalDegrees, clLocation.coordinate.latitude)
 			XCTAssertEqual(coordinate.longitude.decimalDegrees, clLocation.coordinate.longitude)

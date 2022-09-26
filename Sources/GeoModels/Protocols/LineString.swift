@@ -9,7 +9,10 @@
 import Algorithms
 import NonEmpty
 
-public protocol LineString: GeoModels.MultiLine, CustomDebugStringConvertible {
+public protocol LineString<CoordinateSystem>:
+	GeoModels.MultiLine,
+	CustomDebugStringConvertible
+{
 
 	init(points: Points)
 

@@ -6,26 +6,59 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-public struct Coordinate3D: Hashable {
+public protocol Coordinate3D<X, Y, Z>: Coordinates, CompoundDimension {
+
+	associatedtype X: Coordinate
+	associatedtype Y: Coordinate
+	associatedtype Z: Coordinate
+
+	var x: X { get set }
+	var y: Y { get set }
+	var z: Z { get set }
+
+	init(x: X, y: Y, z: Z)
+
+	func offsetBy(dx: X, dy: Y, dz: Z) -> Self
+
+}
+
+public extension Coordinate3D {
+
+	func offsetBy(dx: X = .zero, dy: Y = .zero, dz: Z = .zero) -> Self {
+		self.offsetBy(dx: dx, dy: dy, dz: dz)
+	}
+
+}
+
+public struct WGS84Coordinate3D: Coordinate3D {
 	
 	public typealias X = Longitude
 	public typealias Y = Latitude
 	public typealias Z = Altitude
 	
-	public static var zero: Coordinate3D {
-		Coordinate3D(latitude: .zero, longitude: .zero, altitude: .zero)
+	public static var zero: Self {
+		Self.init(latitude: .zero, longitude: .zero, altitude: .zero)
 	}
 	
 	public var latitude: Latitude
 	public var longitude: Longitude
 	public var altitude: Altitude
-	
-	public var x: X { longitude }
-	public var y: Y { latitude }
-	public var z: Z { altitude }
-	
-	public var withPositiveLongitude: Coordinate3D {
-		Coordinate3D(latitude: latitude, longitude: longitude.positive, altitude: altitude)
+
+	public var x: X {
+		get { longitude }
+		set { longitude = newValue }
+	}
+	public var y: Y {
+		get { latitude }
+		set { latitude = newValue }
+	}
+	public var z: Z {
+		get { altitude }
+		set { altitude = newValue }
+	}
+
+	public var withPositiveLongitude: Self {
+		Self.init(latitude: latitude, longitude: longitude.positive, altitude: altitude)
 	}
 	
 	public init(
@@ -42,26 +75,27 @@ public struct Coordinate3D: Hashable {
 		self.init(latitude: y, longitude: x, altitude: z)
 	}
 	
-	public init(_ coordinate2d: Coordinate2D, altitude: Altitude = .zero) {
+	public init(_ coordinate2d: WGS84Coordinate2D, altitude: Altitude = .zero) {
 		self.init(latitude: coordinate2d.latitude, longitude: coordinate2d.longitude, altitude: altitude)
 	}
 	
-	public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero, dAlt: Altitude = .zero) -> Coordinate3D {
-		Coordinate3D(
+	public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero, dAlt: Altitude = .zero) -> Self {
+		Self.init(
 			latitude: latitude + dLat,
 			longitude: longitude + dLong,
 			altitude: altitude + dAlt
 		)
 	}
-	public func offsetBy(dx: X = .zero, dy: Y = .zero, dz: Z = .zero) -> Coordinate3D {
-		Coordinate3D(x: x + dx, y: y + dy, z: z + dz)
+	public func offsetBy(dx: X, dy: Y, dz: Z) -> Self {
+		Self.init(x: x + dx, y: y + dy, z: z + dz)
 	}
 	
 }
 
 // MARK: - Operators
 
-extension Coordinate3D: AdditiveArithmetic {
+/// ``Foundation/AdditiveArithmetic``
+extension Coordinate3D {
 	
 	public static func + (lhs: Self, rhs: Self) -> Self {
 		return lhs.offsetBy(dx: rhs.x, dy: rhs.y, dz: rhs.z)
@@ -87,9 +121,10 @@ extension Coordinate3D {
 
 // MARK: - Protocol conformances
 
-extension Coordinate3D: CompoundDimension {
+/// ``GeoCoordinates/CompoundDimension``
+extension WGS84Coordinate3D {
 	
-	public typealias LowerDimension = Coordinate2D
+	public typealias LowerDimension = WGS84Coordinate2D
 	
 	public var lowerDimension: Self.LowerDimension {
 		LowerDimension(latitude: latitude, longitude: longitude)
@@ -97,7 +132,8 @@ extension Coordinate3D: CompoundDimension {
 	
 }
 
-extension Coordinate3D: Coordinates {
+/// ``GeoCoordinates/Coordinates``
+extension Coordinate3D {
 
 	public init<N: BinaryFloatingPoint>(repeating number: N) {
 		self.init(x: Self.X(number), y: Self.Y(number), z: Self.Z(number))

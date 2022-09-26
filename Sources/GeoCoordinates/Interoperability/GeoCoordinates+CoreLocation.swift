@@ -9,7 +9,7 @@
 #if canImport(CoreLocation)
 import CoreLocation
 
-extension Coordinate2D {
+extension WGS84Coordinate2D {
 	
 	public var clLocation: CLLocation {
 		CLLocation(latitude: latitude.decimalDegrees, longitude: longitude.decimalDegrees)

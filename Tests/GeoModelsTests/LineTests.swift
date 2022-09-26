@@ -10,6 +10,9 @@ import GeoModels
 import XCTest
 
 final class LineTests: XCTestCase {
+
+	typealias Coordinate2D = WGS842D.Point
+	typealias Line2D = WGS842D.Line
 	
 	func testLine2DCrosses180thMeridian() throws {
 		self.continueAfterFailure = true

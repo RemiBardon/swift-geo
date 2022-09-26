@@ -8,10 +8,9 @@
 
 import GeoCoordinates
 
-public protocol BoundingBox: Hashable, Zeroable {
+public protocol BoundingBox<CoordinateSystem>: Hashable, Zeroable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
-	typealias Coordinates = Self.CoordinateSystem.Coordinates
 	typealias Point = Self.CoordinateSystem.Point
 	typealias Size = Self.CoordinateSystem.Size
 	

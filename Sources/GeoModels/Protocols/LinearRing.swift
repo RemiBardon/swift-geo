@@ -9,7 +9,7 @@
 import Algorithms
 import NonEmpty
 
-public protocol LinearRing: GeoModels.LineString {}
+public protocol LinearRing<CoordinateSystem>: GeoModels.LineString {}
 
 extension LinearRing where Self.Lines.Collection: RangeReplaceableCollection {
 	

@@ -8,7 +8,7 @@
 
 import NonEmpty
 
-public protocol MultiLine: GeoModels.MultiPoint
+public protocol MultiLine<CoordinateSystem>: GeoModels.MultiPoint
 where Points == AtLeast2<[Self.Point]>
 {
 

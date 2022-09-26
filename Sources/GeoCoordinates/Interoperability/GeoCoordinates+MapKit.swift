@@ -9,7 +9,7 @@
 #if canImport(MapKit)
 import MapKit
 
-extension Coordinate2D {
+extension WGS84Coordinate2D {
 
 	public var mkMapPoint: MKMapPoint {
 		MKMapPoint(clLocationCoordinate2D)

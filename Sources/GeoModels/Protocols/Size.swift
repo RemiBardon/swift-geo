@@ -8,9 +8,16 @@
 
 import GeoCoordinates
 
-public protocol Size: Hashable, Zeroable {
-	
+public protocol Size<CoordinateSystem>: Hashable, RawRepresentable, Zeroable {
+
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
-		where Self.CoordinateSystem.Size == Self
-	
+
+	init(rawValue: RawValue)
+
+}
+
+public extension Size where RawValue: Zeroable {
+
+	static var zero: Self { Self.init(rawValue: .zero) }
+
 }

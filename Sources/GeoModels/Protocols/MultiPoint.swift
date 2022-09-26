@@ -8,7 +8,7 @@
 
 import NonEmpty
 
-public protocol MultiPoint: Hashable {
+public protocol MultiPoint<CoordinateSystem>: Hashable {
 	
 	associatedtype CoordinateSystem: GeoModels.CoordinateSystem
 	typealias Point = Self.CoordinateSystem.Point
