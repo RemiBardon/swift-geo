@@ -34,6 +34,14 @@
         "revision" : "f8a9c997c3c1dab4e216a8ec9014e23144cbab37",
         "version" : "1.9.0"
       }
+    },
+    {
+      "identity" : "swift-tagged",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RemiBardon/swift-tagged",
+      "state" : {
+        "revision" : "ecec19de0b88bbc0057c3b7d2f6a0df5e4076f07"
+      }
     }
   ],
   "version" : 2
