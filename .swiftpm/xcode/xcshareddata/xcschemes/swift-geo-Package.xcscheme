@@ -118,6 +118,48 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticGeometry"
+               BuildableName = "GeodeticGeometry"
+               BlueprintName = "GeodeticGeometry"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticDisplay"
+               BuildableName = "GeodeticDisplay"
+               BlueprintName = "GeodeticDisplay"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ValueWithUnit"
+               BuildableName = "ValueWithUnit"
+               BlueprintName = "ValueWithUnit"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -174,6 +216,26 @@
                BlueprintIdentifier = "WGS84Tests"
                BuildableName = "WGS84Tests"
                BlueprintName = "WGS84Tests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticGeometryTests"
+               BuildableName = "GeodeticGeometryTests"
+               BlueprintName = "GeodeticGeometryTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticDisplayTests"
+               BuildableName = "GeodeticDisplayTests"
+               BlueprintName = "GeodeticDisplayTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

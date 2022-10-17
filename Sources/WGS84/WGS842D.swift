@@ -1,0 +1,281 @@
+//
+//  WGS842D.swift
+//  SwiftGeo
+//
+//  Created by Rémi Bardon on 20/03/2022.
+//  Copyright © 2022 Rémi Bardon. All rights reserved.
+//
+
+import GeodeticGeometry
+import NonEmpty
+
+public enum WGS842D: GeometricSystem {
+	
+	public typealias CRS = WGS84Geographic2DCRS
+
+	public struct Point: GeodeticGeometry.Point {
+
+		public typealias CRS = WGS84Geographic2DCRS
+		public typealias Coordinates = Coordinate2D
+		public typealias X = Coordinates.X
+		public typealias Y = Coordinates.Y
+
+		public var coordinates: Coordinate2D
+
+		public init(_ coordinates: Coordinate2D) {
+			self.coordinates = coordinates
+		}
+
+	}
+
+	public struct Size: GeodeticGeometry.Size {
+
+		public typealias CRS = WGS84Geographic2DCRS
+		public typealias GeometricSystem = WGS842D
+		public typealias RawValue = GeometricSystem.Point.Coordinates
+
+		public let rawValue: Self.RawValue
+
+		public var dx: Self.RawValue.X { self.rawValue.x }
+		public var dy: Self.RawValue.Y { self.rawValue.y }
+
+		public init(rawValue: Self.RawValue) {
+			self.rawValue = rawValue
+		}
+
+		public init(dx: Self.RawValue.X, dy: Self.RawValue.Y) {
+			self.init(rawValue: RawValue(x: dx, y: dy))
+		}
+
+	}
+
+//	public struct MultiPoint
+
+	public struct Line: GeodeticGeometry.Line, Hashable {
+
+		public typealias CRS = WGS84Geographic2DCRS
+		public typealias GeometricSystem = WGS842D
+		public typealias Point = GeometricSystem.Point
+
+		public let start: Self.Point
+		public let end: Self.Point
+
+		public var latitudeDelta: Latitude {
+			self.end.latitude - self.start.latitude
+		}
+		public var longitudeDelta: Longitude {
+			self.end.longitude - self.start.longitude
+		}
+		public var minimalLongitudeDelta: Longitude {
+			let delta = self.longitudeDelta
+
+			if delta > .halfRotation {
+				return delta - .fullRotation
+			} else if delta <= -.halfRotation {
+				return delta + .fullRotation
+			} else {
+				return delta
+			}
+		}
+
+		public var crosses180thMeridian: Bool {
+			abs(self.longitudeDelta) > .fullRotation
+		}
+
+		public init(start: Self.Point, end: Self.Point) {
+			self.start = start
+			self.end = end
+		}
+
+	}
+
+//	public typealias MultiLine = WGS84MultiLine2D
+
+	public struct LineString: GeodeticGeometry.LineString, Hashable {
+
+		public typealias CRS = WGS84Geographic2DCRS
+		public typealias GeometricSystem = WGS842D
+		public typealias Point = GeometricSystem.Point
+		public typealias Points = AtLeast2<[Point]>
+		public typealias Line = GeometricSystem.Line
+		public typealias Lines = NonEmpty<[Line]>
+
+		public internal(set) var points: Points
+
+		public init(points: Points) {
+			self.points = points
+		}
+
+		public mutating func append(_ point: Self.Point) {
+			self.points.append(point)
+		}
+
+	}
+	
+//	public typealias LinearRing = WGS84LinearRing2D
+	
+	public struct BoundingBox: Hashable {
+
+		public typealias GeometricSystem = WGS842D
+		public typealias Point = GeometricSystem.Point
+		public typealias Size = GeometricSystem.Size
+
+		public var southWest: Self.Point
+		public var size: Self.Size
+
+		public var dLat: Latitude { self.size.dx }
+		public var dLong: Longitude { self.size.dy }
+
+		public var southLatitude: Latitude {
+			southWest.latitude
+		}
+		public var northLatitude: Latitude {
+			southLatitude + dLat
+		}
+		public var centerLatitude: Latitude {
+			southLatitude + (dLat / 2.0)
+		}
+		public var westLongitude: Longitude {
+			southWest.longitude
+		}
+		public var eastLongitude: Longitude {
+			let longitude = westLongitude + dLong
+
+			if longitude > .halfRotation {
+				return longitude - .fullRotation
+			} else {
+				return longitude
+			}
+		}
+		public var centerLongitude: Longitude {
+			let longitude = westLongitude + (dLong / 2.0)
+
+			if longitude > .halfRotation {
+				return longitude - .fullRotation
+			} else {
+				return longitude
+			}
+		}
+
+		public var northEast: Self.Point {
+			Self.Point.init(.init(latitude: northLatitude, longitude: eastLongitude))
+		}
+		public var northWest: Self.Point {
+			Self.Point.init(.init(latitude: northLatitude, longitude: westLongitude))
+		}
+		public var southEast: Self.Point {
+			Self.Point.init(.init(latitude: southLatitude, longitude: westLongitude))
+		}
+		public var center: Self.Point {
+			Self.Point.init(.init(latitude: centerLatitude, longitude: centerLongitude))
+		}
+
+		public var south: Self.Point {
+			southAtLongitude(centerLongitude)
+		}
+		public var north: Self.Point {
+			northAtLongitude(centerLongitude)
+		}
+		public var west: Self.Point {
+			westAtLatitude(centerLatitude)
+		}
+		public var east: Self.Point {
+			eastAtLatitude(centerLatitude)
+		}
+
+		public var crosses180thMeridian: Bool {
+			westLongitude > eastLongitude
+		}
+
+		public init(southWest: Self.Point, size: Self.Size) {
+			self.southWest = southWest
+			self.size = size
+		}
+
+		public init(
+			southWest: Self.Point,
+			dLat: Latitude,
+			dLong: Longitude
+		) {
+			self.init(
+				southWest: southWest,
+				size: Self.Size(dx: dLat, dy: dLong)
+			)
+		}
+
+		public init(
+			southWest: Self.Point,
+			northEast: Self.Point
+		) {
+			self.init(
+				southWest: southWest,
+				dLat: northEast.latitude - southWest.latitude,
+				dLong: northEast.longitude - southWest.longitude
+			)
+		}
+
+		public func southAtLongitude(_ longitude: Longitude) -> Self.Point {
+			Self.Point.init(.init(latitude: northEast.latitude, longitude: longitude))
+		}
+		public func northAtLongitude(_ longitude: Longitude) -> Self.Point {
+			Self.Point.init(.init(latitude: southWest.latitude, longitude: longitude))
+		}
+		public func westAtLatitude(_ latitude: Latitude) -> Self.Point {
+			Self.Point.init(.init(latitude: latitude, longitude: southWest.longitude))
+		}
+		public func eastAtLatitude(_ latitude: Latitude) -> Self.Point {
+			Self.Point.init(.init(latitude: latitude, longitude: northEast.longitude))
+		}
+
+		public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> Self {
+			Self.init(
+				southWest: southWest.offsetBy(dLat: dLat, dLong: dLong),
+				dLat: self.dLat,
+				dLong: self.dLong
+			)
+		}
+		public func offsetBy(dx: Point.X = .zero, dy: Point.Y = .zero) -> Self {
+			Self.init(
+				southWest: southWest.offsetBy(dx: dx, dy: dy),
+				dLat: self.dLat,
+				dLong: self.dLong
+			)
+		}
+
+	}
+	
+}
+
+extension WGS842D.BoundingBox: GeodeticGeometry.BoundingBox {
+
+	public var origin: Self.Point { self.southWest }
+
+	public init(origin: Self.Point, size: Self.Size) {
+		self.init(southWest: origin, size: size)
+	}
+
+	/// The union of bounding boxes gives a new bounding box that encloses the given two.
+	public func union(_ other: Self) -> Self {
+		// FIXME: Use width and height, because `eastLongitude` can cross the antimeridian
+		Self.init(
+			southWest: Self.Point(.init(
+				latitude: min(self.southLatitude, other.southLatitude),
+				longitude: min(self.westLongitude, other.westLongitude)
+			)),
+			northEast: Self.Point(.init(
+				latitude: max(self.northLatitude, other.northLatitude),
+				longitude: max(self.eastLongitude, other.eastLongitude)
+			))
+		)
+	}
+
+}
+
+extension WGS842D.BoundingBox: CustomDebugStringConvertible {
+
+	public var debugDescription: String {
+		"BBox2D(southWest: (\(String(reflecting: self.southWest))), northEast: (\(String(reflecting: self.northEast))))"
+	}
+
+}
+

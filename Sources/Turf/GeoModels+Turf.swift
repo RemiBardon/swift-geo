@@ -172,10 +172,10 @@ public extension GeoModels.LineString where CoordinateSystem: CoordinateSystemAl
 
 	func bezier(sharpness: Double, resolution: Double) -> Self {
 		// NOTE: For some reason, this does not compile without type casts.
-		// Cannot convert return expression of type 'Self.CoordinateSystem.LineString' to return type 'Self'
+		// Cannot convert return expression of type 'Self.GeometricSystem.LineString' to return type 'Self'
 		// Insert ' as! Self'
-		// Cannot convert value of type 'Self' to expected argument type 'Self.CoordinateSystem.LineString'
-		// Insert ' as! Self.CoordinateSystem.LineString'
+		// Cannot convert value of type 'Self' to expected argument type 'Self.GeometricSystem.LineString'
+		// Insert ' as! Self.GeometricSystem.LineString'
 		Self.CoordinateSystem.bezier(
 			forLineString: self as! Self.CoordinateSystem.LineString,
 			sharpness: sharpness,

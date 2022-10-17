@@ -18,7 +18,7 @@ import NonEmpty
 
 //public func naiveBBox<MultiPoint: GeoModels.MultiPoint>(
 //	forMultiPoint multiPoint: MultiPoint
-//) -> MultiPoint.Point.CoordinateSystem.BoundingBox {
+//) -> MultiPoint.Point.GeometricSystem.BoundingBox {
 //	return naiveBBox(forNonEmptyCollection: multiPoint.points)
 //}
 

@@ -10,7 +10,7 @@ let package = Package(
 		.library(name: "Geodesy", targets: ["Geodesy"]),
 		.library(name: "WGS84", targets: ["WGS84"]),
 		.library(name: "GeoCoordinates", targets: ["GeoCoordinates"]),
-		.library(name: "GeoModels", targets: ["GeoModels"]),
+		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
 		.library(name: "Turf", targets: ["Turf"]),
 	],
 	dependencies: [
@@ -21,11 +21,6 @@ let package = Package(
 			revision: "f951b7bcd4f13586307f53b0de5d1b20976aceab"
 		),
 		.package(
-			url: "https://github.com/RemiBardon/swift-tagged",
-			// Last commit to date on https://github.com/RemiBardon/swift-tagged/compare/floating-point-conformance
-			revision: "ecec19de0b88bbc0057c3b7d2f6a0df5e4076f07"
-		),
-		.package(
 			url: "https://github.com/pointfreeco/swift-snapshot-testing",
 			.upToNextMajor(from: "1.9.0")
 		),
@@ -33,23 +28,20 @@ let package = Package(
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
-		.target(
-			name: "Geodesy",
-			dependencies: [
-				.product(name: "Tagged", package: "swift-tagged"),
-			]
-		),
-		.target(name: "WGS84", dependencies: ["Geodesy"]),
-		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
+		.target(name: "ValueWithUnit"),
+		.target(name: "Geodesy", dependencies: ["ValueWithUnit"]),
 		.target(name: "GeoCoordinates"),
 		.testTarget(name: "GeoCoordinatesTests", dependencies: [
 			"GeoCoordinates",
 			.product(name: "Algorithms", package: "swift-algorithms"),
 		]),
+		.target(name: "GeodeticDisplay", dependencies: ["Geodesy"]),
+		.testTarget(name: "GeodeticDisplayTests", dependencies: ["GeodeticDisplay", "WGS84"]),
 		.target(
-			name: "GeoModels",
+			name: "GeodeticGeometry",
 			dependencies: [
-				"GeoCoordinates",
+				"Geodesy",
+				"GeodeticDisplay",
 				.product(name: "Algorithms", package: "swift-algorithms"),
 				.product(name: "NonEmpty", package: "swift-nonempty"),
 			],
@@ -68,11 +60,13 @@ let package = Package(
 //				]),
 			]
 		),
-		.testTarget(name: "GeoModelsTests", dependencies: ["GeoModels"]),
+		.testTarget(name: "GeodeticGeometryTests", dependencies: ["GeodeticGeometry", "WGS84"]),
+		.target(name: "WGS84", dependencies: ["Geodesy", "GeodeticGeometry"]),
+		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
 		.target(
 			name: "Turf",
 			dependencies: [
-				.target(name: "GeoModels"),
+				.target(name: "GeodeticGeometry"),
 				.product(name: "Algorithms", package: "swift-algorithms"),
 			],
 			swiftSettings: [
@@ -95,7 +89,8 @@ let package = Package(
 			dependencies: [
 				"Turf",
 				.product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-			]
+			],
+			resources: [.copy("__Snapshots__")]
 		),
 	]
 )
