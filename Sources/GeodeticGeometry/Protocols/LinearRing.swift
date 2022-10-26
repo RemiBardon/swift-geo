@@ -11,6 +11,12 @@ import NonEmpty
 
 public protocol LinearRing<Point>: GeodeticGeometry.LineString {}
 
+extension LinearRing {
+
+	public typealias GeometricSystem = Self.Point.GeometricSystem
+
+}
+
 extension LinearRing where Self.Lines.Collection: RangeReplaceableCollection {
 	
 	public init(points: Points) {

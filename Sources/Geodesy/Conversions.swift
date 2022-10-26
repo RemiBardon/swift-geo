@@ -49,7 +49,7 @@ where OldCRS: GeographicCRS & ThreeDimensionsCRS,
 }
 
 public extension ThreeDimensionsCoordinate {
-	func transformed<NewCRS>(to newCRS: NewCRS.Type) -> Coordinate2DOf<NewCRS>
+	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
 	where CRS: GeographicCRS,
 				NewCRS: GeographicCRS & TwoDimensionsCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
@@ -59,7 +59,7 @@ public extension ThreeDimensionsCoordinate {
 }
 
 public extension TwoDimensionsCoordinate {
-	func transformed<NewCRS>(to newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
+	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
 	where CRS: GeographicCRS,
 				NewCRS: GeographicCRS & ThreeDimensionsCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian

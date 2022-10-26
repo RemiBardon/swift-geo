@@ -7,8 +7,9 @@
 //
 
 #if canImport(MapKit)
-import GeoModels
 import MapKit
+import Turf
+import WGS84
 
 public func mkNaiveBBox(for points: [WGS842D.Point]) -> MKMapRect {
 	return WGS842D.naiveBBox(forCollection: points)?.mkMapRect ?? .world

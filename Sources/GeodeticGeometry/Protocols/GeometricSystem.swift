@@ -10,10 +10,12 @@ import Geodesy
 
 public protocol GeometricSystem<CRS> {
 
-	associatedtype CRS: CoordinateReferenceSystem
+	associatedtype CRS: Geodesy.CoordinateReferenceSystem
 
-	associatedtype Point: GeodeticGeometry.Point<CRS>
-	associatedtype Size: GeodeticGeometry.Size<CRS>
+	typealias Coordinates = Point.Coordinates
+	associatedtype Point: GeodeticGeometry.Point<Self>
+	where Point.GeometricSystem == Self
+	associatedtype Size: GeodeticGeometry.Size<Self>
 //	associatedtype MultiPoint: GeodeticGeometry.MultiPoint<Point>
 	associatedtype Line: GeodeticGeometry.Line<Point>
 //	associatedtype MultiLine: GeodeticGeometry.MultiLine<Point>
@@ -23,3 +25,13 @@ public protocol GeometricSystem<CRS> {
 	associatedtype BoundingBox: GeodeticGeometry.BoundingBox<Point>
 
 }
+
+public protocol TwoDimensionsGeometricSystem: GeometricSystem
+where CRS: TwoDimensionsCRS,
+			Point.Coordinates: TwoDimensionsCoordinate
+{}
+
+public protocol ThreeDimensionsGeometricSystem: GeometricSystem
+where CRS: ThreeDimensionsCRS,
+			Point.Coordinates: ThreeDimensionsCoordinate
+{}

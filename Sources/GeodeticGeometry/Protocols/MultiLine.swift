@@ -24,6 +24,8 @@ where Points == AtLeast2<[Self.Point]>
 
 extension MultiLine {
 
+	public typealias GeometricSystem = Self.Point.GeometricSystem
+
 	public var points: Self.Points {
 		Points(
 			lines.first.points.first,

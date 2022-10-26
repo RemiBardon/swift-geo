@@ -7,7 +7,7 @@
 //
 
 import Algorithms
-import GeoModels
+import GeodeticGeometry
 import NonEmpty
 
 // FIXME: Fix formulae so they handle crossing the anti meridian

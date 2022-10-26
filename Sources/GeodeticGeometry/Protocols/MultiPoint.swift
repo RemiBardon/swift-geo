@@ -20,3 +20,9 @@ public protocol MultiPoint<Point>: Hashable {
 	init(points: Self.Points)
 	
 }
+
+extension MultiPoint {
+
+	public typealias GeometricSystem = Self.Point.GeometricSystem
+
+}

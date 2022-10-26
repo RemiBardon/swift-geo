@@ -14,19 +14,27 @@ where Self.Points == AtLeast2<[Self.Point]>
 	
 	var start: Self.Point { get }
 	var end: Self.Point { get }
+
+	var vector: Self { get }
 	
 	init(start: Self.Point, end: Self.Point)
+	init(from: Self.Point.Coordinates, to: Self.Point.Coordinates)
 	
 }
 
 extension Line {
+
+	public typealias GeometricSystem = Self.Point.GeometricSystem
+
+	public var vector: Self {
+		return Self(start: .zero, end: self.end - self.start)
+	}
 	
 	public init(from: Self.Point, to: Self.Point) {
 		self.init(start: from, end: to)
 	}
-
-	public var vector: Self {
-		return Self(start: .zero, end: self.end - self.start)
+	public init(from: Self.Point.Coordinates, to: Self.Point.Coordinates) {
+		self.init(start: .init(from), end: .init(to))
 	}
 	
 }

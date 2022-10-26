@@ -8,19 +8,19 @@
 
 import Foundation
 import ValueWithUnit
+import SwiftGeoToolbox
 
 // MARK: - CoordinateComponent
 
 public protocol CoordinateComponent:
-	RawRepresentable,
+	SafeRawRepresentable,
 	BinaryFloatingPoint,
+	InitializableByNumber,
 	CustomStringConvertible,
 	CustomDebugStringConvertible,
 	Zeroable
 where RawValue: Value
-{
-	init(rawValue: RawValue)
-}
+{}
 
 extension CoordinateComponent {
 

@@ -7,25 +7,31 @@
 //
 
 import Geodesy
+import SwiftGeoToolbox
 
 public protocol BoundingBox<Point>: Hashable, Zeroable {
 	
 	associatedtype Point: GeodeticGeometry.Point
-	associatedtype Size: GeodeticGeometry.Size<Point.Coordinates.CRS>
+	associatedtype Size: GeodeticGeometry.Size<Point.GeometricSystem>
 	
 	var origin: Point { get }
 	var size: Size { get }
 	
 	init(origin: Point, size: Size)
+	init(min: Point, max: Point)
 	
 	func union(_ other: Self) -> Self
 	
 }
 
-extension BoundingBox {
+public extension BoundingBox {
 	
-	public static var zero: Self {
+	static var zero: Self {
 		Self.init(origin: .zero, size: .zero)
+	}
+
+	init(min: Point, max: Point) {
+		self.init(origin: min, size: Size.init(from: min, to: max))
 	}
 	
 }

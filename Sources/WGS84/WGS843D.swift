@@ -237,6 +237,12 @@
 //
 //}
 //
+//public typealias Point3D = WGS843D.Point
+//public typealias Size3D = WGS843D.Size
+//public typealias Line3D = WGS843D.Line
+//public typealias LineString3D = WGS843D.LineString
+//public typealias BoundingBox3D = WGS843D.BoundingBox
+//
 //extension WGS843D.BoundingBox: CustomDebugStringConvertible {
 //
 //	public var debugDescription: String {

@@ -14,8 +14,8 @@ public enum WGS842D: GeometricSystem {
 	public typealias CRS = WGS84Geographic2DCRS
 
 	public struct Point: GeodeticGeometry.Point {
-
-		public typealias CRS = WGS84Geographic2DCRS
+		public typealias CRS = GeometricSystem.CRS
+		public typealias GeometricSystem = WGS842D
 		public typealias Coordinates = Coordinate2D
 		public typealias X = Coordinates.X
 		public typealias Y = Coordinates.Y
@@ -25,28 +25,26 @@ public enum WGS842D: GeometricSystem {
 		public init(_ coordinates: Coordinate2D) {
 			self.coordinates = coordinates
 		}
-
 	}
 
 	public struct Size: GeodeticGeometry.Size {
-
 		public typealias CRS = WGS84Geographic2DCRS
 		public typealias GeometricSystem = WGS842D
-		public typealias RawValue = GeometricSystem.Point.Coordinates
+		public typealias RawValue = GeometricSystem.Coordinates
 
-		public let rawValue: Self.RawValue
+		public let dx: Self.RawValue.X
+		public let dy: Self.RawValue.Y
 
-		public var dx: Self.RawValue.X { self.rawValue.x }
-		public var dy: Self.RawValue.Y { self.rawValue.y }
-
-		public init(rawValue: Self.RawValue) {
-			self.rawValue = rawValue
-		}
+		public var rawValue: Self.RawValue { Self.RawValue.init(x: self.dx, y: self.dy) }
 
 		public init(dx: Self.RawValue.X, dy: Self.RawValue.Y) {
-			self.init(rawValue: RawValue(x: dx, y: dy))
+			self.dx = dx
+			self.dy = dy
 		}
 
+		public init(rawValue: Self.RawValue) {
+			self.init(dx: rawValue.x, dy: rawValue.y)
+		}
 	}
 
 //	public struct MultiPoint
@@ -245,6 +243,12 @@ public enum WGS842D: GeometricSystem {
 	}
 	
 }
+
+public typealias Point2D = WGS842D.Point
+public typealias Size2D = WGS842D.Size
+public typealias Line2D = WGS842D.Line
+public typealias LineString2D = WGS842D.LineString
+public typealias BoundingBox2D = WGS842D.BoundingBox
 
 extension WGS842D.BoundingBox: GeodeticGeometry.BoundingBox {
 

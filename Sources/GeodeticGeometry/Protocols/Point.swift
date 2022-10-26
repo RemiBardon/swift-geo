@@ -7,11 +7,20 @@
 //
 
 import Geodesy
+import SwiftGeoToolbox
+
+//public protocol Coordinates<GeometricSystem>: Geodesy.Coordinates {
+//	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<GeometricSystem.CRS>
+//	where GeometricSystem.Coordinates == Self
+//}
 
 @dynamicMemberLookup
-public protocol Point<CRS>: Hashable, Zeroable, AdditiveArithmetic {
-
-	associatedtype CRS: CoordinateReferenceSystem
+public protocol Point<GeometricSystem>:
+	Hashable, Zeroable, AdditiveArithmetic, MultiplicativeArithmetic, SafeRawRepresentable
+{
+	typealias CRS = GeometricSystem.CRS
+	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<CRS>
+	where GeometricSystem.Point == Self
 	associatedtype Coordinates: Geodesy.Coordinates<CRS>
 
 	var coordinates: Coordinates { get set }
@@ -28,6 +37,16 @@ public extension Point {
 		self.coordinates[keyPath: keyPath]
 	}
 
+	// MARK: RawRepresentable
+
+	var rawValue: Self.Coordinates.RawValue {
+		self.coordinates.rawValue
+	}
+
+	init(rawValue: Self.Coordinates.RawValue) {
+		self.init(.init(rawValue: rawValue))
+	}
+
 	// MARK: AdditiveArithmetic
 
 	static func + (lhs: Self, rhs: Self) -> Self {
@@ -35,6 +54,15 @@ public extension Point {
 	}
 	static func - (lhs: Self, rhs: Self) -> Self {
 		Self(lhs.coordinates - rhs.coordinates)
+	}
+
+	// MARK: MultiplicativeArithmetic
+
+	static func * (lhs: Self, rhs: Self) -> Self {
+		return Self.init(lhs.coordinates * rhs.coordinates)
+	}
+	static func / (lhs: Self, rhs: Self) -> Self {
+		return Self.init(lhs.coordinates / rhs.coordinates)
 	}
 
 }
@@ -69,16 +97,4 @@ public extension Point where Coordinates: ThreeDimensionsCoordinate {
 	) -> Self where Coordinates.CRS: GeographicCRS {
 		self.offsetBy(dx: dLat, dy: dLong, dz: dAlt)
 	}
-}
-
-public struct PointOf<Coordinates: Geodesy.Coordinates>: Point {
-
-	public typealias CRS = Coordinates.CRS
-
-	public var coordinates: Coordinates
-
-	public init(_ coordinates: Coordinates) {
-		self.coordinates = coordinates
-	}
-
 }

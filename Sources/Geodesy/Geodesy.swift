@@ -8,6 +8,7 @@
 
 import Foundation
 import ValueWithUnit
+import SwiftGeoToolbox
 
 // MARK: - General protocols
 
@@ -18,13 +19,30 @@ public protocol EPSGItem {
 
 // MARK: - Coordinates
 
-public protocol Coordinates<CRS>: Hashable, AdditiveArithmetic, Zeroable, CustomStringConvertible, CustomDebugStringConvertible {
+public protocol Coordinates<CRS>:
+	Hashable,
+	AdditiveArithmetic,
+	MultiplicativeArithmetic,
+	Zeroable,
+	SafeRawRepresentable,
+	InitializableByNumber,
+	CustomStringConvertible,
+	CustomDebugStringConvertible
+where RawValue == Components
+{
 	associatedtype CRS: CoordinateReferenceSystem
 	typealias Components = CRS.CoordinateSystem.Values
 
 	var components: Components { get }
 
 	init(components: Components)
+}
+
+public extension Coordinates {
+	var rawValue: RawValue { self.components }
+	init(rawValue: RawValue) {
+		self.init(components: rawValue)
+	}
 }
 
 public extension Coordinates {
@@ -62,12 +80,24 @@ public extension TwoDimensionsCoordinate {
 	init(components: Components) {
 		self.init(x: components.0, y: components.1)
 	}
+	init<Source: BinaryFloatingPoint>(_ value: Source) {
+		self.init(x: .init(value), y: .init(value))
+	}
+	init<Source: BinaryInteger>(_ value: Source) {
+		self.init(x: .init(value), y: .init(value))
+	}
 
 	static func + (lhs: Self, rhs: Self) -> Self {
-		Self(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
+		Self.init(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
 	}
 	static func - (lhs: Self, rhs: Self) -> Self {
-		Self(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+		Self.init(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+	}
+	static func * (lhs: Self, rhs: Self) -> Self {
+		Self.init(x: lhs.x * rhs.x, y: lhs.y * rhs.y)
+	}
+	static func / (lhs: Self, rhs: Self) -> Self {
+		Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
 	}
 
 	func offsetBy(dx: X, dy: Y) -> Self {
@@ -131,12 +161,24 @@ public extension ThreeDimensionsCoordinate {
 	init(components: Components) {
 		self.init(x: components.0, y: components.1, z: components.2)
 	}
+	init<Source: BinaryFloatingPoint>(_ value: Source) {
+		self.init(x: .init(value), y: .init(value), z: .init(value))
+	}
+	init<Source: BinaryInteger>(_ value: Source) {
+		self.init(x: .init(value), y: .init(value), z: .init(value))
+	}
 
 	static func + (lhs: Self, rhs: Self) -> Self {
-		Self(x: lhs.x + rhs.x, y: lhs.y + rhs.y, z: lhs.z + rhs.z)
+		Self.init(x: lhs.x + rhs.x, y: lhs.y + rhs.y, z: lhs.z + rhs.z)
 	}
 	static func - (lhs: Self, rhs: Self) -> Self {
-		Self(x: lhs.x - rhs.x, y: lhs.y - rhs.y, z: lhs.z - rhs.z)
+		Self.init(x: lhs.x - rhs.x, y: lhs.y - rhs.y, z: lhs.z - rhs.z)
+	}
+	static func * (lhs: Self, rhs: Self) -> Self {
+		Self.init(x: lhs.x * rhs.x, y: lhs.y * rhs.y, z: lhs.z * rhs.z)
+	}
+	static func / (lhs: Self, rhs: Self) -> Self {
+		Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y, z: lhs.z / rhs.z)
 	}
 
 	func offsetBy(dx: X, dy: Y, dz: Z) -> Self {

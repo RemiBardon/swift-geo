@@ -23,6 +23,12 @@ public protocol LineString<Point>:
 
 extension LineString {
 
+	public typealias GeometricSystem = Self.Point.GeometricSystem
+
+}
+
+extension LineString {
+
 	public var debugDescription: String { String(reflecting: self) }
 
 }
