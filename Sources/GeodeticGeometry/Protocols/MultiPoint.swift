@@ -9,9 +9,11 @@
 import Geodesy
 import NonEmpty
 
-public protocol MultiPoint<Point>: Hashable {
-	
-	associatedtype Point: GeodeticGeometry.Point
+public protocol MultiPoint<GeometricSystem>: Hashable {
+
+	typealias CRS = GeometricSystem.CRS
+	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<CRS>
+	typealias Point = GeometricSystem.Point
 	associatedtype Points: NonEmptyProtocol
 	where Self.Points.Element == Self.Point
 	

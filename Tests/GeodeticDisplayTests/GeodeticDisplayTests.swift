@@ -16,7 +16,7 @@ final class GeodeticDisplayTests: XCTestCase {
 		XCTAssertEqual(String(describing: coord), "(1.1232456789, -1.1232456789)")
 		XCTAssertEqual(
 			String(reflecting: coord),
-			"[WGS 84 (geographic 2D)](1.1232456789, -1.1232456789)"
+			"<WGS 84 (geographic 2D)>(1.1232456789, -1.1232456789)"
 		)
 		XCTAssertEqual(coord.ddNotation, "1.123246, -1.123246")
 		XCTAssertEqual(coord.dmNotation, "1° 7.395' N, 1° 7.395' W")

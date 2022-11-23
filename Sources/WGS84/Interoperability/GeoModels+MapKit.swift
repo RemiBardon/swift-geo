@@ -6,37 +6,48 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-#if canImport(MapKit)
+#if canImport(MapKit) && canImport(Turf)
 import MapKit
 
-extension Coordinate2D {
+public extension Coordinate2D {
 
-	public var mkMapPoint: MKMapPoint {
+	var mkMapPoint: MKMapPoint {
 		MKMapPoint(clLocationCoordinate2D)
 	}
 
 }
 
-//extension WGS842D.BoundingBox {
-//	
-//	public var mkCoordinateSpan: MKCoordinateSpan {
-//		MKCoordinateSpan(latitudeDelta: height.decimalDegrees, longitudeDelta: width.decimalDegrees)
-//	}
-//	public var mkCoordinateRegion: MKCoordinateRegion {
-//		MKCoordinateRegion(center: center.clLocationCoordinate2D, span: mkCoordinateSpan)
-//	}
-//	
-//	public var mkMapWidth: Double {
+public extension WGS842D.Point {
+
+	var mkMapPoint: MKMapPoint {
+		self.coordinates.mkMapPoint
+	}
+
+}
+
+public extension WGS842D.BoundingBox {
+
+	var mkCoordinateSpan: MKCoordinateSpan {
+		MKCoordinateSpan(
+			latitudeDelta: self.size.height.decimalDegrees,
+			longitudeDelta: self.size.width.decimalDegrees
+		)
+	}
+	var mkCoordinateRegion: MKCoordinateRegion {
+		MKCoordinateRegion(center: center.clLocationCoordinate2D, span: mkCoordinateSpan)
+	}
+
+//	var mkMapWidth: Double {
 //		mkMapWidthAtLatitude(center.latitude)
 //	}
-//	public var mkMapHeight: Double {
+//	var mkMapHeight: Double {
 //		mkMapHeightAtLongitude(center.longitude)
 //	}
-//	
-//	public var mkMapRect: MKMapRect {
+//
+//	var mkMapRect: MKMapRect {
 //		// Avoid center recalculation
 //		let center = self.center
-//		
+//
 //		return MKMapRect(
 //			origin: northWest.mkMapPoint,
 //			size: MKMapSize(
@@ -45,30 +56,30 @@ extension Coordinate2D {
 //			)
 //		)
 //	}
-//	
-//	public func mkMapWidthAtLatitude(_ latitude: Latitude) -> Double {
+//
+//	func mkMapWidthAtLatitude(_ latitude: Self.Point.X) -> Double {
 //		let east = eastAtLatitude(latitude).mkMapPoint
 //		let west = westAtLatitude(latitude).mkMapPoint
-//		
-//		// `east.x > west.x`
+//
+//		assert(east.x > west.x)
 //		return east.x - west.x
 //	}
-//	public func mkMapHeightAtLongitude(_ longitude: Longitude) -> Double {
+//	func mkMapHeightAtLongitude(_ longitude: Self.Point.Y) -> Double {
 //		let south = southAtLongitude(longitude).mkMapPoint
 //		let north = northAtLongitude(longitude).mkMapPoint
-//		
-//		// `south.y > north.y`
+//
+//		assert(south.y > north.y)
 //		return south.y - north.y
 //	}
-//	
-//}
-//
-//extension WGS842D.LineString {
-//
-//	public var mkPolyline: MKPolyline {
-//		var points: [CLLocationCoordinate2D] = self.points.map(\.clLocationCoordinate2D)
-//		return MKPolyline(coordinates: &points, count: points.count)
-//	}
-//
-//}
+
+}
+
+public extension WGS842D.LineString {
+
+	var mkPolyline: MKPolyline {
+		var points: [CLLocationCoordinate2D] = self.points.map(\.clLocationCoordinate2D)
+		return MKPolyline(coordinates: &points, count: points.count)
+	}
+
+}
 #endif

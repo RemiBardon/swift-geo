@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-#if canImport(CoreLocation)
+#if canImport(CoreLocation) && canImport(Turf)
 import CoreLocation
 
 extension Coordinate2D {
@@ -30,5 +30,25 @@ extension Coordinate2D {
 		)
 	}
 	
+}
+
+extension Point2D {
+
+	public var clLocation: CLLocation {
+		self.coordinates.clLocation
+	}
+
+	public var clLocationCoordinate2D: CLLocationCoordinate2D {
+		self.coordinates.clLocationCoordinate2D
+	}
+
+	public init(_ location: CLLocation) {
+		self.init(coordinates: .init(location))
+	}
+
+	public init(_ coordinate: CLLocationCoordinate2D) {
+		self.init(coordinates: .init(coordinate))
+	}
+
 }
 #endif

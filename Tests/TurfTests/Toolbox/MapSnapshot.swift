@@ -6,8 +6,8 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import GeoModels
 import MapKit
+import WGS84
 import XCTest
 
 @MainActor
@@ -23,6 +23,10 @@ func snapshot(
 	mapView.delegate = delegate
 
 	mapView.mapType = mapType
+
+	// Make sure the map is in light mode
+	// Source: <https://developer.apple.com/documentation/appkit/nsappearancecustomization/choosing_a_specific_appearance_for_your_macos_app>
+	mapView.appearance = NSAppearance(named: .aqua)
 
 	var region = lineString.bbox.mkCoordinateRegion
 	region.span.latitudeDelta += 1

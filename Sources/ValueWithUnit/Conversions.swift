@@ -9,12 +9,13 @@
 public extension Value where Unit: AngleUnit {
 	func to<
 		OtherUnit: AngleUnit,
-		Target: Value<RawValue, OtherUnit>
-	>(_ other: OtherUnit) -> Target {
-		if Unit.radians == OtherUnit.radians {
+		Target: Value<OtherUnit>
+	>(_ other: OtherUnit) -> Target where Target.RawValue == Self.RawValue {
+		if Unit.radiansFactor == OtherUnit.radiansFactor {
 			return Target(rawValue: self.rawValue)
 		} else {
-			return Target(rawValue: self.rawValue / RawValue(Unit.radians * OtherUnit.radians))
+			let factor = RawValue(OtherUnit.radiansFactor / Unit.radiansFactor)
+			return Target(rawValue: self.rawValue * factor)
 		}
 	}
 }

@@ -10,6 +10,19 @@ import class Foundation.NumberFormatter
 import class Foundation.NSNumber
 import Geodesy
 
+extension CoordinateComponent {
+
+	public func decimalNotation(maxDigits: UInt8 = 6) -> String {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.maximumFractionDigits = Int(maxDigits)
+		formatter.locale = .en
+		return formatter.string(for: self.rawValue.rawValue)
+				?? String(describing: self.rawValue.rawValue)
+	}
+
+}
+
 extension AngularCoordinateComponent {
 	
 	public var directionChar: Character {

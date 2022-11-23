@@ -47,34 +47,43 @@ public extension Coordinates {
 
 public extension Coordinates {
 	var description: String { String(describing: self.components) }
-	var debugDescription: String { "[\(CRS.epsgName)]\(String(reflecting: self.components))" }
+	var debugDescription: String { "<\(CRS.epsgName)>\(String(reflecting: self.components))" }
 }
 
 // MARK: 2D Coordinates
 
-public extension Coordinates where CRS.CoordinateSystem: TwoDimensionsCS {
-	var x: CRS.CoordinateSystem.Axis1.Value { self.components.0 }
-	var y: CRS.CoordinateSystem.Axis2.Value { self.components.1 }
+public extension Coordinates where CRS: AtLeastTwoDimensionalCRS {
+	typealias X = CRS.CoordinateSystem.Axis1.Value
+	typealias Y = CRS.CoordinateSystem.Axis2.Value
+}
 
-	init(
-		x: CRS.CoordinateSystem.Axis1.Value,
-		y: CRS.CoordinateSystem.Axis2.Value
-	) {
+public extension Coordinates where CRS: TwoDimensionalCRS {
+	var x: X { self.components.0 }
+	var y: Y { self.components.1 }
+
+	init(x: X, y: Y) {
 		self.init(components: (x, y))
 	}
 }
 
-public protocol TwoDimensionsCoordinate<CRS>: Coordinates where CRS: TwoDimensionsCRS {
-	typealias X = CRS.CoordinateSystem.Axis1.Value
-	typealias Y = CRS.CoordinateSystem.Axis2.Value
-	
+public protocol AtLeastTwoDimensionalCoordinate<CRS>: Coordinates
+where CRS: AtLeastTwoDimensionalCRS
+{
 	var x: X { get }
 	var y: Y { get }
-	
+}
+
+public protocol TwoDimensionalCoordinate<CRS>: AtLeastTwoDimensionalCoordinate
+where CRS: TwoDimensionalCRS,
+			Components == (
+				CRS.CoordinateSystem.Axis1.Value,
+				CRS.CoordinateSystem.Axis2.Value
+			)
+{
 	init(x: X, y: Y)
 }
 
-public extension TwoDimensionsCoordinate {
+public extension TwoDimensionalCoordinate {
 	var components: Components { (self.x, self.y) }
 
 	init(components: Components) {
@@ -105,12 +114,26 @@ public extension TwoDimensionsCoordinate {
 	}
 }
 
-public extension TwoDimensionsCoordinate where CRS: GeographicCRS {
+public extension TwoDimensionalCoordinate where CRS: GeographicCRS {
 	var latitude: X { self.x }
 	var longitude: Y { self.y }
+	init(latitude: X, longitude: Y) {
+		self.init(x: latitude, y: longitude)
+	}
 }
 
-public struct Coordinate2DOf<CRS>: TwoDimensionsCoordinate where CRS: TwoDimensionsCRS {
+public extension TwoDimensionalCoordinate
+where CRS: GeographicCRS,
+			// NOTE: For some reason, replacing `CRS.CoordinateSystem.Axis2.Value` by `Self.Y`
+			//       results in a compiler error.
+			CRS.CoordinateSystem.Axis2.Value: AngularCoordinateComponent
+{
+	var withPositiveLongitude: Self {
+		Self.init(latitude: self.latitude, longitude: self.longitude.positive)
+	}
+}
+
+public struct Coordinate2DOf<CRS>: TwoDimensionalCoordinate where CRS: TwoDimensionalCRS {
 	public static var zero: Self { Self(x: .zero, y: .zero) }
 
 	public let x: X
@@ -121,41 +144,43 @@ public struct Coordinate2DOf<CRS>: TwoDimensionsCoordinate where CRS: TwoDimensi
 		self.x = x
 		self.y = y
 	}
-	
-	public init(latitude: X, longitude: Y) {
-		self.init(x: latitude, y: longitude)
-	}
 }
 
 // MARK: 3D Coordinates
 
-public extension Coordinates where CRS.CoordinateSystem: ThreeDimensionsCS {
-	var x: CRS.CoordinateSystem.Axis1.Value { self.components.0 }
-	var y: CRS.CoordinateSystem.Axis2.Value { self.components.1 }
-	var z: CRS.CoordinateSystem.Axis3.Value { self.components.2 }
+public extension Coordinates where CRS: AtLeastThreeDimensionalCRS {
+	typealias Z = CRS.CoordinateSystem.Axis3.Value
+}
 
-	init(
-		x: CRS.CoordinateSystem.Axis1.Value,
-		y: CRS.CoordinateSystem.Axis2.Value,
-		z: CRS.CoordinateSystem.Axis3.Value
-	) {
+public extension Coordinates where CRS: ThreeDimensionalCRS {
+	var x: X { self.components.0 }
+	var y: Y { self.components.1 }
+	var z: Z { self.components.2 }
+
+	init(x: X, y: Y, z: Z) {
 		self.init(components: (x, y, z))
 	}
 }
 
-public protocol ThreeDimensionsCoordinate<CRS>: Coordinates where CRS: ThreeDimensionsCRS {
-	typealias X = CRS.CoordinateSystem.Axis1.Value
-	typealias Y = CRS.CoordinateSystem.Axis2.Value
+public protocol AtLeastThreeDimensionalCoordinate<CRS>: AtLeastTwoDimensionalCoordinate
+where CRS: AtLeastThreeDimensionalCRS
+{
 	typealias Z = CRS.CoordinateSystem.Axis3.Value
-	
-	var x: X { get }
-	var y: Y { get }
 	var z: Z { get }
-	
+}
+
+public protocol ThreeDimensionalCoordinate<CRS>: AtLeastThreeDimensionalCoordinate
+where CRS: ThreeDimensionalCRS,
+			Self.Components == (
+				CRS.CoordinateSystem.Axis1.Value,
+				CRS.CoordinateSystem.Axis2.Value,
+				CRS.CoordinateSystem.Axis3.Value
+			)
+{
 	init(x: X, y: Y, z: Z)
 }
 
-public extension ThreeDimensionsCoordinate {
+public extension ThreeDimensionalCoordinate {
 	var components: Components { (self.x, self.y, self.z) }
 
 	init(components: Components) {
@@ -186,13 +211,31 @@ public extension ThreeDimensionsCoordinate {
 	}
 }
 
-public extension ThreeDimensionsCoordinate where CRS: GeographicCRS {
+public extension ThreeDimensionalCoordinate where CRS: GeographicCRS {
 	var latitude: X { self.x }
 	var longitude: Y { self.y }
 	var altitude: Z { self.z }
+	init(latitude: X, longitude: Y, altitude: Z) {
+		self.init(x: latitude, y: longitude, z: altitude)
+	}
 }
 
-public struct Coordinate3DOf<CRS>: ThreeDimensionsCoordinate where CRS: ThreeDimensionsCRS {
+public extension ThreeDimensionalCoordinate
+where CRS: GeographicCRS,
+			// NOTE: For some reason, replacing `CRS.CoordinateSystem.Axis2.Value` by `Self.Y`
+			//       results in a compiler error.
+			CRS.CoordinateSystem.Axis2.Value: AngularCoordinateComponent
+{
+	var withPositiveLongitude: Self {
+		Self.init(
+			latitude: self.latitude,
+			longitude: self.longitude.positive,
+			altitude: self.altitude
+		)
+	}
+}
+
+public struct Coordinate3DOf<CRS>: ThreeDimensionalCoordinate where CRS: ThreeDimensionalCRS {
 	public static var zero: Self { Self(x: .zero, y: .zero, z: .zero) }
 
 	public let x: X
@@ -218,12 +261,16 @@ public protocol CoordinateReferenceSystem: EPSGItem {
 	associatedtype CoordinateSystem: Geodesy.CoordinateSystem
 }
 
-public protocol TwoDimensionsCRS: CoordinateReferenceSystem
-where CoordinateSystem: TwoDimensionsCS {}
-public protocol ThreeDimensionsCRS: CoordinateReferenceSystem
-where CoordinateSystem: ThreeDimensionsCS {}
+public protocol AtLeastTwoDimensionalCRS: CoordinateReferenceSystem
+where CoordinateSystem: AtLeastTwoDimensionalCS {}
+public protocol TwoDimensionalCRS: AtLeastTwoDimensionalCRS
+where CoordinateSystem: TwoDimensionalCS {}
+public protocol AtLeastThreeDimensionalCRS: AtLeastTwoDimensionalCRS
+where CoordinateSystem: AtLeastThreeDimensionalCS {}
+public protocol ThreeDimensionalCRS: AtLeastThreeDimensionalCRS
+where CoordinateSystem: ThreeDimensionalCS {}
 
-public protocol GeocentricCRS: CoordinateReferenceSystem, ThreeDimensionsCRS {}
+public protocol GeocentricCRS: CoordinateReferenceSystem, ThreeDimensionalCRS {}
 public protocol GeographicCRS: CoordinateReferenceSystem {}
 
 // MARK: - Datum
@@ -285,24 +332,26 @@ public protocol CoordinateSystem: EPSGItem {
 	associatedtype Values
 }
 
-public protocol TwoDimensionsCS: CoordinateSystem
-where Axes == (Axis1, Axis2),
-			Values == (Axis1.Value, Axis2.Value)
-{
+public protocol AtLeastTwoDimensionalCS: CoordinateSystem {
 	associatedtype Axis1: Axis
 	associatedtype Axis2: Axis
 }
 
-public protocol ThreeDimensionsCS: CoordinateSystem
-where Axes == (Axis1, Axis2, Axis3),
-			Values == (Axis1.Value, Axis2.Value, Axis3.Value)
-{
-	associatedtype Axis1: Axis
-	associatedtype Axis2: Axis
+public protocol TwoDimensionalCS: AtLeastTwoDimensionalCS
+where Axes == (Axis1, Axis2),
+			Values == (Axis1.Value, Axis2.Value)
+{}
+
+public protocol AtLeastThreeDimensionalCS: AtLeastTwoDimensionalCS {
 	associatedtype Axis3: Axis
 }
 
-public enum GeocentricCartesian3DCS: ThreeDimensionsCS {
+public protocol ThreeDimensionalCS: AtLeastThreeDimensionalCS
+where Axes == (Axis1, Axis2, Axis3),
+			Values == (Axis1.Value, Axis2.Value, Axis3.Value)
+{}
+
+public enum GeocentricCartesian3DCS: ThreeDimensionalCS {
 	public typealias Axis1 = GeocentricX
 	public typealias Axis2 = GeocentricY
 	public typealias Axis3 = GeocentricZ
@@ -310,7 +359,7 @@ public enum GeocentricCartesian3DCS: ThreeDimensionsCS {
 	public static let epsgCode: Int = 6500
 }
 
-public enum Ellipsoidal3DCS: ThreeDimensionsCS {
+public enum Ellipsoidal3DCS: ThreeDimensionalCS {
 	public typealias Axis1 = GeodeticLatitude
 	public typealias Axis2 = GeodeticLongitude
 	public typealias Axis3 = EllipsoidalHeight
@@ -318,7 +367,7 @@ public enum Ellipsoidal3DCS: ThreeDimensionsCS {
 	public static let epsgCode: Int = 6423
 }
 
-public enum Ellipsoidal2DCS: TwoDimensionsCS {
+public enum Ellipsoidal2DCS: TwoDimensionalCS {
 	public typealias Axis1 = GeodeticLatitude
 	public typealias Axis2 = GeodeticLongitude
 	public static let epsgName: String = "Ellipsoidal 2D CS"
@@ -329,7 +378,7 @@ public enum Ellipsoidal2DCS: TwoDimensionsCS {
 
 public protocol Axis {
 	associatedtype UnitOfMeasurement: Geodesy.UnitOfMeasurement
-	associatedtype Value: CoordinateComponent
+	associatedtype Value: CoordinateComponent<UnitOfMeasurement>
 	static var name: String { get }
 	static var abbreviation: String { get }
 }
@@ -337,6 +386,7 @@ public protocol Axis {
 public enum GeocentricX: Axis {
 	public typealias UnitOfMeasurement = Meter
 	public struct Value: CoordinateComponent {
+		public typealias Unit = Meter
 		public var rawValue: DoubleOf<Meter>
 		public init(rawValue: RawValue) {
 			self.rawValue = rawValue
@@ -349,6 +399,7 @@ public enum GeocentricX: Axis {
 public enum GeocentricY: Axis {
 	public typealias UnitOfMeasurement = Meter
 	public struct Value: CoordinateComponent {
+		public typealias Unit = Meter
 		public var rawValue: DoubleOf<Meter>
 		public init(rawValue: RawValue) {
 			self.rawValue = rawValue
@@ -361,6 +412,7 @@ public enum GeocentricY: Axis {
 public enum GeocentricZ: Axis {
 	public typealias UnitOfMeasurement = Meter
 	public struct Value: CoordinateComponent {
+		public typealias Unit = Meter
 		public var rawValue: DoubleOf<Meter>
 		public init(rawValue: RawValue) {
 			self.rawValue = rawValue
@@ -375,6 +427,7 @@ public enum GeodeticLatitude: Axis {
 	public typealias UnitOfMeasurement = Degree
 
 	public struct Value: AngularCoordinateComponent, RawRepresentable {
+		public typealias Unit = Degree
 		public typealias RawValue = DoubleOf<Degree>
 
 		public static let positiveDirectionChar: Character = "N"
@@ -388,14 +441,6 @@ public enum GeodeticLatitude: Axis {
 		public var decimalDegrees: Double {
 			get { self.rawValue.rawValue }
 			set { self.rawValue.rawValue = newValue }
-		}
-		public var positive: Self {
-			if decimalDegrees < .zero {
-				// `degrees` is negative, so we end up with `180 - |degrees|`
-				return self + Self.fullRotation
-			} else {
-				return self
-			}
 		}
 
 		public init(decimalDegrees: Double) {
@@ -418,6 +463,7 @@ public enum GeodeticLongitude: Axis {
 	public typealias UnitOfMeasurement = Degree
 
 	public struct Value: AngularCoordinateComponent, RawRepresentable {
+		public typealias Unit = Degree
 		public typealias RawValue = DoubleOf<Degree>
 
 		public static let positiveDirectionChar: Character = "E"
@@ -431,14 +477,6 @@ public enum GeodeticLongitude: Axis {
 		public var decimalDegrees: Double {
 			get { self.rawValue.rawValue }
 			set { self.rawValue.rawValue = newValue }
-		}
-		public var positive: Self {
-			if decimalDegrees < .zero {
-				// `degrees` is negative, so we end up with `360 - |degrees|`
-				return self + Self.fullRotation
-			} else {
-				return self
-			}
 		}
 
 		public init(decimalDegrees: Double) {
@@ -460,6 +498,7 @@ public enum EllipsoidalHeight: Axis {
 	public typealias UnitOfMeasurement = Meter
 
 	public struct Value: CoordinateComponent {
+		public typealias Unit = Meter
 		public var rawValue: DoubleOf<Meter>
 		public init(rawValue: RawValue) {
 			self.rawValue = rawValue
@@ -477,7 +516,7 @@ public typealias Altitude = EllipsoidalHeight.Value
 
 // MARK: - Units of Measurement
 
-public protocol UnitOfMeasurement: EPSGItem, Hashable, Sendable {}
+public protocol UnitOfMeasurement: ValueWithUnit.Unit, EPSGItem, Hashable, Sendable {}
 
 extension Meter: Geodesy.UnitOfMeasurement {
 	public static let epsgName: String = "Metre"

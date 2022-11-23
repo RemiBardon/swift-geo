@@ -6,28 +6,28 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+#if canImport(GeodeticGeometry) && canImport(Turf)
 import GeodeticGeometry
 import NonEmpty
+import protocol Turf.GeometricSystemAlgebra
 
-public enum WGS842D: GeometricSystem {
-	
+public enum WGS842D: TwoDimensionalGeometricSystem, GeometricSystemAlgebra {
+
 	public typealias CRS = WGS84Geographic2DCRS
 
 	public struct Point: GeodeticGeometry.Point {
 		public typealias CRS = GeometricSystem.CRS
 		public typealias GeometricSystem = WGS842D
 		public typealias Coordinates = Coordinate2D
-		public typealias X = Coordinates.X
-		public typealias Y = Coordinates.Y
 
 		public var coordinates: Coordinate2D
 
-		public init(_ coordinates: Coordinate2D) {
+		public init(coordinates: Coordinate2D) {
 			self.coordinates = coordinates
 		}
 	}
 
-	public struct Size: GeodeticGeometry.Size {
+	public struct Size: GeodeticGeometry.Size2D {
 		public typealias CRS = WGS84Geographic2DCRS
 		public typealias GeometricSystem = WGS842D
 		public typealias RawValue = GeometricSystem.Coordinates
@@ -156,30 +156,30 @@ public enum WGS842D: GeometricSystem {
 		}
 
 		public var northEast: Self.Point {
-			Self.Point.init(.init(latitude: northLatitude, longitude: eastLongitude))
+			Self.Point(coordinates: .init(latitude: northLatitude, longitude: eastLongitude))
 		}
 		public var northWest: Self.Point {
-			Self.Point.init(.init(latitude: northLatitude, longitude: westLongitude))
+			Self.Point(coordinates: .init(latitude: northLatitude, longitude: westLongitude))
 		}
 		public var southEast: Self.Point {
-			Self.Point.init(.init(latitude: southLatitude, longitude: westLongitude))
+			Self.Point(coordinates: .init(latitude: southLatitude, longitude: westLongitude))
 		}
 		public var center: Self.Point {
-			Self.Point.init(.init(latitude: centerLatitude, longitude: centerLongitude))
+			Self.Point(coordinates: .init(latitude: centerLatitude, longitude: centerLongitude))
 		}
 
-		public var south: Self.Point {
-			southAtLongitude(centerLongitude)
-		}
-		public var north: Self.Point {
-			northAtLongitude(centerLongitude)
-		}
-		public var west: Self.Point {
-			westAtLatitude(centerLatitude)
-		}
-		public var east: Self.Point {
-			eastAtLatitude(centerLatitude)
-		}
+//		public var south: Self.Point {
+//			southAtLongitude(centerLongitude)
+//		}
+//		public var north: Self.Point {
+//			northAtLongitude(centerLongitude)
+//		}
+//		public var west: Self.Point {
+//			westAtLatitude(centerLatitude)
+//		}
+//		public var east: Self.Point {
+//			eastAtLatitude(centerLatitude)
+//		}
 
 		public var crosses180thMeridian: Bool {
 			westLongitude > eastLongitude
@@ -212,33 +212,33 @@ public enum WGS842D: GeometricSystem {
 			)
 		}
 
-		public func southAtLongitude(_ longitude: Longitude) -> Self.Point {
-			Self.Point.init(.init(latitude: northEast.latitude, longitude: longitude))
-		}
-		public func northAtLongitude(_ longitude: Longitude) -> Self.Point {
-			Self.Point.init(.init(latitude: southWest.latitude, longitude: longitude))
-		}
-		public func westAtLatitude(_ latitude: Latitude) -> Self.Point {
-			Self.Point.init(.init(latitude: latitude, longitude: southWest.longitude))
-		}
-		public func eastAtLatitude(_ latitude: Latitude) -> Self.Point {
-			Self.Point.init(.init(latitude: latitude, longitude: northEast.longitude))
-		}
-
-		public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> Self {
-			Self.init(
-				southWest: southWest.offsetBy(dLat: dLat, dLong: dLong),
-				dLat: self.dLat,
-				dLong: self.dLong
-			)
-		}
-		public func offsetBy(dx: Point.X = .zero, dy: Point.Y = .zero) -> Self {
-			Self.init(
-				southWest: southWest.offsetBy(dx: dx, dy: dy),
-				dLat: self.dLat,
-				dLong: self.dLong
-			)
-		}
+//		public func southAtLongitude(_ longitude: Longitude) -> Self.Point {
+//			Self.Point(coordinates: .init(latitude: northEast.latitude, longitude: longitude))
+//		}
+//		public func northAtLongitude(_ longitude: Longitude) -> Self.Point {
+//			Self.Point(coordinates: .init(latitude: southWest.latitude, longitude: longitude))
+//		}
+//		public func westAtLatitude(_ latitude: Latitude) -> Self.Point {
+//			Self.Point(coordinates: .init(latitude: latitude, longitude: southWest.longitude))
+//		}
+//		public func eastAtLatitude(_ latitude: Latitude) -> Self.Point {
+//			Self.Point(coordinates: .init(latitude: latitude, longitude: northEast.longitude))
+//		}
+//
+//		public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> Self {
+//			Self.init(
+//				southWest: southWest.offsetBy(dLat: dLat, dLong: dLong),
+//				dLat: self.dLat,
+//				dLong: self.dLong
+//			)
+//		}
+//		public func offsetBy(dx: Point.X = .zero, dy: Point.Y = .zero) -> Self {
+//			Self.init(
+//				southWest: southWest.offsetBy(dx: dx, dy: dy),
+//				dLat: self.dLat,
+//				dLong: self.dLong
+//			)
+//		}
 
 	}
 	
@@ -258,20 +258,20 @@ extension WGS842D.BoundingBox: GeodeticGeometry.BoundingBox {
 		self.init(southWest: origin, size: size)
 	}
 
-	/// The union of bounding boxes gives a new bounding box that encloses the given two.
-	public func union(_ other: Self) -> Self {
-		// FIXME: Use width and height, because `eastLongitude` can cross the antimeridian
-		Self.init(
-			southWest: Self.Point(.init(
-				latitude: min(self.southLatitude, other.southLatitude),
-				longitude: min(self.westLongitude, other.westLongitude)
-			)),
-			northEast: Self.Point(.init(
-				latitude: max(self.northLatitude, other.northLatitude),
-				longitude: max(self.eastLongitude, other.eastLongitude)
-			))
-		)
-	}
+//	/// The union of bounding boxes gives a new bounding box that encloses the given two.
+//	public func union(_ other: Self) -> Self {
+//		// FIXME: Use width and height, because `eastLongitude` can cross the antimeridian
+//		Self.init(
+//			southWest: Self.Point(coordinates: .init(
+//				latitude: min(self.southLatitude, other.southLatitude),
+//				longitude: min(self.westLongitude, other.westLongitude)
+//			)),
+//			northEast: Self.Point(coordinates: .init(
+//				latitude: max(self.northLatitude, other.northLatitude),
+//				longitude: max(self.eastLongitude, other.eastLongitude)
+//			))
+//		)
+//	}
 
 }
 
@@ -282,4 +282,4 @@ extension WGS842D.BoundingBox: CustomDebugStringConvertible {
 	}
 
 }
-
+#endif

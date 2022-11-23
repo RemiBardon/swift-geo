@@ -16,22 +16,24 @@ public protocol GeometricSystem<CRS> {
 	associatedtype Point: GeodeticGeometry.Point<Self>
 	where Point.GeometricSystem == Self
 	associatedtype Size: GeodeticGeometry.Size<Self>
-//	associatedtype MultiPoint: GeodeticGeometry.MultiPoint<Point>
-	associatedtype Line: GeodeticGeometry.Line<Point>
-//	associatedtype MultiLine: GeodeticGeometry.MultiLine<Point>
-	associatedtype LineString: GeodeticGeometry.LineString<Point>
-//	associatedtype LinearRing: GeodeticGeometry.LinearRing<Point>
+//	associatedtype MultiPoint: GeodeticGeometry.MultiPoint<Self>
+	associatedtype Line: GeodeticGeometry.Line<Self>
+//	associatedtype MultiLine: GeodeticGeometry.MultiLine<Self>
+	associatedtype LineString: GeodeticGeometry.LineString<Self>
+//	associatedtype LinearRing: GeodeticGeometry.LinearRing<Self>
 
-	associatedtype BoundingBox: GeodeticGeometry.BoundingBox<Point>
+	associatedtype BoundingBox: GeodeticGeometry.BoundingBox<Self>
 
 }
 
-public protocol TwoDimensionsGeometricSystem: GeometricSystem
-where CRS: TwoDimensionsCRS,
-			Point.Coordinates: TwoDimensionsCoordinate
+public protocol TwoDimensionalGeometricSystem: GeometricSystem
+where CRS: TwoDimensionalCRS,
+			Point.Coordinates: TwoDimensionalCoordinate,
+			Size: Size2D
 {}
 
-public protocol ThreeDimensionsGeometricSystem: GeometricSystem
-where CRS: ThreeDimensionsCRS,
-			Point.Coordinates: ThreeDimensionsCoordinate
+public protocol ThreeDimensionalGeometricSystem: GeometricSystem
+where CRS: ThreeDimensionalCRS,
+			Point.Coordinates: ThreeDimensionalCoordinate,
+			Size: Size3D
 {}

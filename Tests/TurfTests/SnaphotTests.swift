@@ -6,9 +6,9 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import GeoModels
 import SnapshotTesting
 import Turf
+import WGS84
 import XCTest
 
 final class SnapshotTests: XCTestCase {
@@ -19,7 +19,7 @@ final class SnapshotTests: XCTestCase {
 
 	@MainActor
 	func testCubicBezier() async throws {
-		let square = LineString2D(points: .init(
+		let square = LineString2D(coordinates: .init(
 			.init(x:  0, y:  0),
 			.init(x:  0, y: 10),
 			.init(x: 10, y: 10),
@@ -40,12 +40,12 @@ final class SnapshotTests: XCTestCase {
 		let snap13 = try await snapshot(squareBezier3)
 		assertSnapshot(matching: snap13, as: .image(precision: 0.99), named: "squareBezier3")
 
-		let route = LineString2D(points: .init(
+		let route = LineString2D(coordinates: .init(
 			.init(latitude: 48.864716, longitude:  2.394014), // Paris
 			.init(latitude: 47.218102, longitude: -1.552800), // Nantes
 			.init(latitude: 44.836151, longitude: -0.580816), // Bordeaux
 			.init(latitude: 48.580002, longitude:  7.750000), // Strasbourg
-			.init(latitude: 50.629250, longitude:  3.057256) // Lille
+			.init(latitude: 50.629250, longitude:  3.057256)  // Lille
 		)).closed()
 		let snap20 = try await snapshot(route)
 		assertSnapshot(matching: snap20, as: .image(precision: 0.99), named: "route")

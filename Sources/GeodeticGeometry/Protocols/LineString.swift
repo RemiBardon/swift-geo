@@ -10,26 +10,26 @@ import Algorithms
 import GeodeticDisplay
 import NonEmpty
 
-public protocol LineString<Point>:
+public protocol LineString<GeometricSystem>:
 	GeodeticGeometry.MultiLine,
+	CustomStringConvertible,
 	CustomDebugStringConvertible
 {
 
 	init(points: Points)
+	init(coordinates: AtLeast2<[Self.Point.Coordinates]>)
 
 	mutating func append(_ point: Point)
 
 }
 
-extension LineString {
+public extension LineString {
 
-	public typealias GeometricSystem = Self.Point.GeometricSystem
-
-}
-
-extension LineString {
-
-	public var debugDescription: String { String(reflecting: self) }
+	init(coordinates: AtLeast2<[Self.Point.Coordinates]>) {
+		let points1: NonEmpty<[Self.Point]> = coordinates.map(Self.Point.init(coordinates:))
+		let points2 = try! Self.Points.init(from: points1)
+		self.init(points: points2)
+	}
 
 }
 
@@ -50,11 +50,19 @@ extension LineString {
 
 }
 
-extension LineString where Self.Point: GeographicNotation {
+extension LineString {
 
+	public var description: String {
+		let descriptions: [String] = self.points.map { p in
+			String(describing: p.coordinates)
+		}
+		return "[\(descriptions.joined(separator: ", "))]"
+	}
 	public var debugDescription: String {
-		let descriptions: [String] = self.points.map { "\(String(reflecting: $0))" }
-		return "[\(descriptions.joined(separator: ","))]"
+		let descriptions: [String] = self.points.map { p in
+			String(reflecting: p.coordinates.components)
+		}
+		return "<LineString | \(CRS.epsgName)>[\(descriptions.joined(separator: ","))]"
 	}
 
 }

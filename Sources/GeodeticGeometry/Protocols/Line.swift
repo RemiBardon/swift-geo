@@ -8,7 +8,7 @@
 
 import NonEmpty
 
-public protocol Line<Point>: GeodeticGeometry.MultiPoint
+public protocol Line<GeometricSystem>: GeodeticGeometry.MultiPoint
 where Self.Points == AtLeast2<[Self.Point]>
 {
 	
@@ -24,8 +24,6 @@ where Self.Points == AtLeast2<[Self.Point]>
 
 extension Line {
 
-	public typealias GeometricSystem = Self.Point.GeometricSystem
-
 	public var vector: Self {
 		return Self(start: .zero, end: self.end - self.start)
 	}
@@ -34,7 +32,7 @@ extension Line {
 		self.init(start: from, end: to)
 	}
 	public init(from: Self.Point.Coordinates, to: Self.Point.Coordinates) {
-		self.init(start: .init(from), end: .init(to))
+		self.init(start: .init(coordinates: from), end: .init(coordinates: to))
 	}
 	
 }

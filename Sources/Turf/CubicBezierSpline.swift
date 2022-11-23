@@ -3,49 +3,19 @@
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 01/09/2022.
+//  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
 import Algorithms
 import GeodeticGeometry
 import NonEmpty
+import SwiftGeoToolbox
 
-fileprivate func pointAlong<Line: GeodeticGeometry.Line>(
-	line: Line,
-	fraction: Double
-) -> Line.GeometricSystem.Coordinates {
-	precondition((Double(0)...Double(1)).contains(fraction))
-	return line.start.coordinates + fraction * line.vector.end.coordinates
-}
-
-fileprivate func pointInQuadCurve<Coordinates: GeodeticGeometry.Coordinates>(
-	_ p0: Coordinates,
-	_ p1: Coordinates,
-	_ p2: Coordinates,
-	fraction: Double
-) -> Coordinates {
-	typealias Line = Coordinates.GeometricSystem.Line
-	let a = pointAlong(line: Line(from: p0, to: p1), fraction: fraction)
-	let b = pointAlong(line: Line(from: p1, to: p2), fraction: fraction)
-	return pointAlong(line: Line(from: a, to: b), fraction: fraction)
-}
-
-fileprivate func pointInCubicCurve<Coordinates: GeodeticGeometry.Coordinates>(
-	_ p0: Coordinates,
-	_ p1: Coordinates,
-	_ p2: Coordinates,
-	_ p3: Coordinates,
-	fraction: Double
-) -> Coordinates {
-	typealias Line = Coordinates.GeometricSystem.Line
-	let a = pointInQuadCurve(p0, p1, p2, fraction: fraction)
-	let b = pointInQuadCurve(p1, p2, p3, fraction: fraction)
-	return pointAlong(line: Line(from: a, to: b), fraction: fraction)
-}
-
-struct CubicBezierSpline<Point: GeodeticGeometry.Point>
-where Point.GeometricSystem: GeometricSystemAlgebra
+struct CubicBezierSpline<GeometricSystem: GeometricSystemAlgebra>
 {
-	typealias Coordinates = Point.Coordinates
+	typealias Coordinates = GeometricSystem.Coordinates
+	typealias Point = GeometricSystem.Point
+	typealias Line = GeometricSystem.Line
 
 	let controls: [(p0: Coordinates, c0: Coordinates, c1: Coordinates, p1: Coordinates)]
 
@@ -60,10 +30,7 @@ where Point.GeometricSystem: GeometricSystemAlgebra
 		precondition(sharpness >= 0, "Sharpness must be >= 0 (was \(sharpness))")
 		precondition(sharpness <= 1, "Sharpness must be <= 1 (was \(sharpness))")
 
-		typealias Line = Point.GeometricSystem.Line
-		typealias Coordinates = Point.Coordinates
-
-		let lastLine = Line(from: points[points.count - 2], to: points[points.count - 1])
+		let lastLine = Line.init(from: points[points.count - 2], to: points[points.count - 1])
 		let lineAfterEnd: Line
 		var previousLine: Line
 		do {
@@ -82,33 +49,31 @@ where Point.GeometricSystem: GeometricSystemAlgebra
 		var lines = points.adjacentPairs().map(Line.init(from:to:))
 		lines.append(lineAfterEnd)
 		self.controls = lines.adjacentPairs().map { (line: Line, nextLine: Line) in
-				defer { previousLine = line }
+			defer { previousLine = line }
 
-				let previousCenter = previousLine.center
-				let center = line.center
-				let nextCenter = nextLine.center
-				let point = line.start.coordinates
-				let nextPoint = line.end.coordinates
+			let previousCenter = previousLine.center
+			let center = line.center
+			let nextCenter = nextLine.center
+			let point = line.start.coordinates
+			let nextPoint = line.end.coordinates
 
-				let dir1 = Line(from: previousCenter, to: center).vector.center
-				let dir2 = Line(from: nextCenter, to: center).vector.center
+			let dir1 = Line(from: previousCenter, to: center).vector.center
+			let dir2 = Line(from: nextCenter, to: center).vector.center
 
-				let ratio: Double = (1 - sharpness)
-				let control1 = point + ratio * dir1
-				let control2 = nextPoint + ratio * dir2
+			let ratio: Double = (1 - sharpness)
+			let control1 = point + ratio * dir1
+			let control2 = nextPoint + ratio * dir2
 
-				return (p0: point, c0: control1, c1: control2, p1: nextPoint)
-			}
+			return (p0: point, c0: control1, c1: control2, p1: nextPoint)
+		}
 	}
 
-	func curve(resolution: Double) -> AtLeast2<[Point.Coordinates]> {
-		typealias Coordinates = Point.Coordinates
-
+	func curve(resolution: Double) -> AtLeast2<[Coordinates]> {
 		precondition(resolution >= 1, "Resolution must be >= 1 (was \(resolution))")
 
 		var points: [Coordinates] = self.controls.flatMap { controls -> [Coordinates] in
-			stride(from: 0.0, to: 1.0, by: 1 / resolution).map { fraction -> Coordinates in
-				pointInCubicCurve(
+			stride(from: 0.0, to: 1.0, by: 1.0 / resolution).map { fraction -> Coordinates in
+				Self.pointInCubicCurve(
 					controls.p0,
 					controls.c0,
 					controls.c1,
@@ -119,6 +84,38 @@ where Point.GeometricSystem: GeometricSystemAlgebra
 		}
 		points.append(self.controls.last!.p1)
 		return try! AtLeast2(points)
+	}
+
+	static func pointBetween(
+		_ p1: Coordinates,
+		and p2: Coordinates,
+		fraction: Double
+	) -> Coordinates {
+		precondition((Double(0.0)...Double(1.0)).contains(fraction))
+		return p1 + Coordinates(fraction) * (p2 - p1)
+	}
+
+	static func pointInQuadCurve(
+		_ p0: Coordinates,
+		_ p1: Coordinates,
+		_ p2: Coordinates,
+		fraction: Double
+	) -> Coordinates {
+		let a = pointBetween(p0, and: p1, fraction: fraction)
+		let b = pointBetween(p1, and: p2, fraction: fraction)
+		return pointBetween(a, and: b, fraction: fraction)
+	}
+
+	static func pointInCubicCurve(
+		_ p0: Coordinates,
+		_ p1: Coordinates,
+		_ p2: Coordinates,
+		_ p3: Coordinates,
+		fraction: Double
+	) -> Coordinates {
+		let a = pointInQuadCurve(p0, p1, p2, fraction: fraction)
+		let b = pointInQuadCurve(p1, p2, p3, fraction: fraction)
+		return pointBetween(a, and: b, fraction: fraction)
 	}
 
 }

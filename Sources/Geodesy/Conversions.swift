@@ -25,8 +25,8 @@ public protocol ReversibleConversion: Conversion {
 // MARK: EPSG 9659 (Geographic 3D to 2D conversions)
 
 public enum EPSG9659<OldCRS, NewCRS>: ReversibleConversion
-where OldCRS: GeographicCRS & ThreeDimensionsCRS,
-			NewCRS: GeographicCRS & TwoDimensionsCRS,
+where OldCRS: GeographicCRS & ThreeDimensionalCRS,
+			NewCRS: GeographicCRS & TwoDimensionalCRS,
 			NewCRS.Datum.PrimeMeridian == OldCRS.Datum.PrimeMeridian
 {
 	// FIXME: Static stored properties not supported in generic types
@@ -36,32 +36,52 @@ where OldCRS: GeographicCRS & ThreeDimensionsCRS,
 	/// Geographic 3D to 2D conversion.
 	///
 	/// <https://drive.tiny.cloud/1/4m326iu12oa8re9cjiadxonharclteqb4mumfxj71zsttwkx/5e0ec79e-49fa-4e7a-acca-3d6f6c989877> section 4.1.4
-	public static func apply<C1: Coordinates<OldCRS>, C2: Coordinates<NewCRS>>(on coordinate: C1) -> C2 {
+	public static func apply<
+		C1: Coordinates<OldCRS>,
+		C2: Coordinates<NewCRS>
+	>(on coordinate: C1) -> C2 {
 		return C2.init(x: .init(coordinate.x), y: .init(coordinate.y))
 	}
 
 	/// Geographic 2D to 3D conversion.
 	///
 	/// <https://drive.tiny.cloud/1/4m326iu12oa8re9cjiadxonharclteqb4mumfxj71zsttwkx/5e0ec79e-49fa-4e7a-acca-3d6f6c989877> section 4.1.1
-	public static func unapply<C1: Coordinates<OldCRS>, C2: Coordinates<NewCRS>>(from coordinate: C2) -> C1 {
+	public static func unapply<
+		C1: Coordinates<OldCRS>,
+		C2: Coordinates<NewCRS>
+	>(from coordinate: C2) -> C1 {
 		return C1.init(x: .init(Double(coordinate.x)), y: .init(coordinate.y), z: .init(0.0))
 	}
 }
 
-public extension ThreeDimensionsCoordinate {
+public extension ThreeDimensionalCoordinate {
 	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
 	where CRS: GeographicCRS,
-				NewCRS: GeographicCRS & TwoDimensionsCRS,
+				NewCRS: GeographicCRS & TwoDimensionalCRS,
+				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
+	{
+		EPSG9659<CRS, NewCRS>.apply(on: self)
+	}
+	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinate2DOf<NewCRS>
+	where CRS: GeographicCRS,
+				NewCRS: GeographicCRS & TwoDimensionalCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
 	{
 		EPSG9659<CRS, NewCRS>.apply(on: self)
 	}
 }
 
-public extension TwoDimensionsCoordinate {
+public extension TwoDimensionalCoordinate {
 	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
 	where CRS: GeographicCRS,
-				NewCRS: GeographicCRS & ThreeDimensionsCRS,
+				NewCRS: GeographicCRS & ThreeDimensionalCRS,
+				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
+	{
+		EPSG9659<NewCRS, CRS>.unapply(from: self)
+	}
+	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
+	where CRS: GeographicCRS,
+				NewCRS: GeographicCRS & ThreeDimensionalCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
 	{
 		EPSG9659<NewCRS, CRS>.unapply(from: self)
@@ -71,8 +91,8 @@ public extension TwoDimensionsCoordinate {
 // MARK: EPSG 9602 (Geographic/geocentric conversions)
 
 public enum EPSG9602<OldCRS, NewCRS>: ReversibleConversion
-where OldCRS: GeographicCRS & ThreeDimensionsCRS,
-			NewCRS: GeocentricCRS & ThreeDimensionsCRS,
+where OldCRS: GeographicCRS & ThreeDimensionalCRS,
+			NewCRS: GeocentricCRS & ThreeDimensionalCRS,
 			NewCRS.Datum.PrimeMeridian == OldCRS.Datum.PrimeMeridian
 {
 	// FIXME: Static stored properties not supported in generic types
@@ -83,7 +103,10 @@ where OldCRS: GeographicCRS & ThreeDimensionsCRS,
 	///
 	/// <https://epsg.org/coord-operation-method_9602/Geographic-geocentric-conversions.html>
 	/// <https://drive.tiny.cloud/1/4m326iu12oa8re9cjiadxonharclteqb4mumfxj71zsttwkx/5e0ec79e-49fa-4e7a-acca-3d6f6c989877> page 101
-	public static func apply<C1: Coordinates<OldCRS>, C2: Coordinates<NewCRS>>(on coordinate: C1) -> C2 {
+	public static func apply<
+		C1: Coordinates<OldCRS>,
+		C2: Coordinates<NewCRS>
+	>(on coordinate: C1) -> C2 {
 		// φ and λ are respectively the latitude and longitude (related to Greenwich) of the point
 		let φ = Double(coordinate.x).toRadians
 		let λ = Double(coordinate.y).toRadians
@@ -107,7 +130,10 @@ where OldCRS: GeographicCRS & ThreeDimensionsCRS,
 	///
 	/// <https://epsg.org/coord-operation-method_9602/Geographic-geocentric-conversions.html>
 	/// <https://drive.tiny.cloud/1/4m326iu12oa8re9cjiadxonharclteqb4mumfxj71zsttwkx/5e0ec79e-49fa-4e7a-acca-3d6f6c989877> page 101
-	public static func unapply<C1: Coordinates<OldCRS>, C2: Coordinates<NewCRS>>(from coordinate: C2) -> C1 {
+	public static func unapply<
+		C1: Coordinates<OldCRS>,
+		C2: Coordinates<NewCRS>
+	>(from coordinate: C2) -> C1 {
 		let x = Double(coordinate.x)
 		let y = Double(coordinate.y)
 		let z = Double(coordinate.z)
@@ -135,18 +161,18 @@ where OldCRS: GeographicCRS & ThreeDimensionsCRS,
 	}
 }
 
-public extension ThreeDimensionsCoordinate {
-	func transformed<NewCRS>(to newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
+public extension ThreeDimensionalCoordinate {
+	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
 	where CRS: GeographicCRS,
-				NewCRS: GeocentricCRS & ThreeDimensionsCRS,
+				NewCRS: GeocentricCRS & ThreeDimensionalCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
 	{
 		EPSG9602<CRS, NewCRS>.apply(on: self)
 	}
 
-	func transformed<NewCRS>(to newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
+	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinate3DOf<NewCRS>
 	where CRS: GeocentricCRS,
-				NewCRS: GeographicCRS & ThreeDimensionsCRS,
+				NewCRS: GeographicCRS & ThreeDimensionalCRS,
 				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
 	{
 		EPSG9602<NewCRS, CRS>.unapply(from: self)

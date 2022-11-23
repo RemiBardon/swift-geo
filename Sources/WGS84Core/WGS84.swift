@@ -16,7 +16,7 @@ public typealias Coordinate3D = Coordinate3DOf<WGS84Geographic3DCRS>
 // MARK: - Coordinate Reference System (CRS/SRS)
 
 /// <https://epsg.org/crs_4326/WGS-84.html>
-public enum WGS84Geographic2DCRS: GeographicCRS, TwoDimensionsCRS {
+public enum WGS84Geographic2DCRS: GeographicCRS, TwoDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = Ellipsoidal2DCS
 
@@ -27,7 +27,7 @@ public enum WGS84Geographic2DCRS: GeographicCRS, TwoDimensionsCRS {
 public typealias EPSG4326 = WGS84Geographic2DCRS
 
 /// <https://epsg.org/crs_4979/WGS-84.html>
-public enum WGS84Geographic3DCRS: GeographicCRS, ThreeDimensionsCRS {
+public enum WGS84Geographic3DCRS: GeographicCRS, ThreeDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = Ellipsoidal3DCS
 
@@ -38,7 +38,7 @@ public enum WGS84Geographic3DCRS: GeographicCRS, ThreeDimensionsCRS {
 public typealias EPSG4979 = WGS84Geographic3DCRS
 
 /// <https://epsg.org/crs_4978/WGS-84.html>
-public enum WGS84GeocentricCRS: GeocentricCRS, ThreeDimensionsCRS {
+public enum WGS84GeocentricCRS: GeocentricCRS, ThreeDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = GeocentricCartesian3DCS
 
@@ -84,7 +84,7 @@ public enum EPSG7030: ReferenceEllipsoid {
 
 // MARK: - Coordinate System (CS)
 
-public enum GeocentricCartesian3DCS: ThreeDimensionsCS {
+public enum GeocentricCartesian3DCS: ThreeDimensionalCS {
 	public typealias Axis1 = GeocentricX
 	public typealias Axis2 = GeocentricY
 	public typealias Axis3 = GeocentricZ
@@ -94,7 +94,7 @@ public enum GeocentricCartesian3DCS: ThreeDimensionsCS {
 
 public typealias EPSG6500 = GeocentricCartesian3DCS
 
-public enum Ellipsoidal3DCS: ThreeDimensionsCS {
+public enum Ellipsoidal3DCS: ThreeDimensionalCS {
 	public typealias Axis1 = GeodeticLatitude
 	public typealias Axis2 = GeodeticLongitude
 	public typealias Axis3 = EllipsoidalHeight
@@ -104,7 +104,7 @@ public enum Ellipsoidal3DCS: ThreeDimensionsCS {
 
 public typealias EPSG6423 = Ellipsoidal3DCS
 
-public enum Ellipsoidal2DCS: TwoDimensionsCS {
+public enum Ellipsoidal2DCS: TwoDimensionalCS {
 	public typealias Axis1 = GeodeticLatitude
 	public typealias Axis2 = GeodeticLongitude
 	public static let epsgName: String = "Ellipsoidal 2D CS"

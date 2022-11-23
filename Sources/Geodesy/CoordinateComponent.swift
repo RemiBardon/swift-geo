@@ -12,189 +12,193 @@ import SwiftGeoToolbox
 
 // MARK: - CoordinateComponent
 
-public protocol CoordinateComponent:
+public protocol CoordinateComponent<Unit>:
 	SafeRawRepresentable,
 	BinaryFloatingPoint,
 	InitializableByNumber,
 	CustomStringConvertible,
 	CustomDebugStringConvertible,
 	Zeroable
-where RawValue: Value
-{}
+where RawValue: ValueWithUnit.Value<Unit>
+{
+	associatedtype Unit: ValueWithUnit.Unit
+}
 
-extension CoordinateComponent {
+public extension CoordinateComponent {
 
-	internal var _rawValue: RawValue.RawValue { self.rawValue.rawValue }
-	
 	// MARK: ExpressibleByFloatLiteral
-	
-	public init(floatLiteral value: Double) {
+
+	init(floatLiteral value: Double) {
 		self.init(value)
 	}
-	
+
 	// MARK: ExpressibleByIntegerLiteral
-	
-	public init(integerLiteral value: Int) {
-		self.init(Double(value))
+
+	init(integerLiteral value: Int) {
+		self.init(rawValue: RawValue(value))
 	}
-	
+
 	// MARK: FloatingPoint
-	
-	public static var nan: Self { Self(Double.nan) }
-	public static var signalingNaN: Self { Self(Double.signalingNaN) }
-	public static var infinity: Self { Self(Double.infinity) }
-	public static var greatestFiniteMagnitude: Self { Self(Double.greatestFiniteMagnitude) }
-	public static var pi: Self { Self(Double.pi) }
-	
-	public static var leastNormalMagnitude: Self { Self(Double.leastNormalMagnitude) }
-	public static var leastNonzeroMagnitude: Self { Self(Double.leastNonzeroMagnitude) }
-	
-	public var exponent: Double.Exponent { Double(self._rawValue).exponent }
-	public var sign: FloatingPointSign { Double(self._rawValue).sign }
-	public var significand: Self { Self(Double(self._rawValue).significand) }
-	public var ulp: Self { Self(Double(self._rawValue).ulp) }
-	
-	public var nextUp: Self { Self(Double(self._rawValue).nextUp) }
-	
-	public var isNormal: Bool { Double(self._rawValue).isNormal }
-	public var isFinite: Bool { Double(self._rawValue).isFinite }
-	public var isZero: Bool { Double(self._rawValue).isZero }
-	public var isSubnormal: Bool { Double(self._rawValue).isSubnormal }
-	public var isInfinite: Bool { Double(self._rawValue).isInfinite }
-	public var isNaN: Bool { Double(self._rawValue).isNaN }
-	public var isSignalingNaN: Bool { Double(self._rawValue).isSignalingNaN }
-	public var isCanonical: Bool { Double(self._rawValue).isCanonical }
-	
-	public init(sign: FloatingPointSign, exponent: Int, significand: Self) {
-		self.init(Double(sign: sign, exponent: exponent, significand: Double(significand._rawValue)))
+
+	static var nan: Self { Self(RawValue.nan) }
+	static var signalingNaN: Self { Self(RawValue.signalingNaN) }
+	static var infinity: Self { Self(RawValue.infinity) }
+	static var greatestFiniteMagnitude: Self { Self(RawValue.greatestFiniteMagnitude) }
+	static var pi: Self { Self(RawValue.pi) }
+
+	static var leastNormalMagnitude: Self { Self(RawValue.leastNormalMagnitude) }
+	static var leastNonzeroMagnitude: Self { Self(RawValue.leastNonzeroMagnitude) }
+
+	var exponent: RawValue.Exponent { self.rawValue.exponent }
+	var sign: FloatingPointSign { self.rawValue.sign }
+	var significand: Self { Self(self.rawValue.significand) }
+	var ulp: Self { Self(self.rawValue.ulp) }
+
+	var nextUp: Self { Self(self.rawValue.nextUp) }
+
+	var isNormal: Bool { self.rawValue.isNormal }
+	var isFinite: Bool { self.rawValue.isFinite }
+	var isZero: Bool { self.rawValue.isZero }
+	var isSubnormal: Bool { self.rawValue.isSubnormal }
+	var isInfinite: Bool { self.rawValue.isInfinite }
+	var isNaN: Bool { self.rawValue.isNaN }
+	var isSignalingNaN: Bool { self.rawValue.isSignalingNaN }
+	var isCanonical: Bool { self.rawValue.isCanonical }
+
+	init(sign: FloatingPointSign, exponent: RawValue.Exponent, significand: Self) {
+		self.init(rawValue: RawValue(sign: sign, exponent: exponent, significand: significand.rawValue))
 	}
-	
-	public static func / (lhs: Self, rhs: Self) -> Self {
-		Self(Double(lhs._rawValue) / Double(rhs._rawValue))
+
+	static func / (lhs: Self, rhs: Self) -> Self {
+		Self.init(rawValue: lhs.rawValue / rhs.rawValue)
 	}
-	public static func /= (lhs: inout Self, rhs: Self) {
+	static func /= (lhs: inout Self, rhs: Self) {
 		lhs = lhs / rhs
 	}
-	
-	public func isEqual(to other: Self) -> Bool {
-		Double(self._rawValue) == Double(other._rawValue)
+
+	func isEqual(to other: Self) -> Bool {
+		self.rawValue == other.rawValue
 	}
-	public func isLess(than other: Self) -> Bool {
-		Double(self._rawValue) < Double(other._rawValue)
+	func isLess(than other: Self) -> Bool {
+		self.rawValue < other.rawValue
 	}
-	public func isLessThanOrEqualTo(_ other: Self) -> Bool {
-		Double(self._rawValue) <= Double(other._rawValue)
+	func isLessThanOrEqualTo(_ other: Self) -> Bool {
+		self.rawValue <= other.rawValue
 	}
-	
-	public mutating func addProduct(_ lhs: Self, _ rhs: Self) {
-		self += Self(Double(lhs._rawValue) * Double(rhs._rawValue))
+
+	mutating func addProduct(_ lhs: Self, _ rhs: Self) {
+		self += Self.init(rawValue: lhs.rawValue * rhs.rawValue)
 	}
-	public mutating func formRemainder(dividingBy other: Self) {
-		self = Self(Double(self._rawValue).remainder(dividingBy: Double(other._rawValue)))
+	mutating func formRemainder(dividingBy other: Self) {
+		self = Self.init(rawValue: self.rawValue.remainder(dividingBy: other.rawValue))
 	}
-	public mutating func formTruncatingRemainder(dividingBy other: Self) {
-		self = Self(Double(self._rawValue).truncatingRemainder(dividingBy: Double(other._rawValue)))
+	mutating func formTruncatingRemainder(dividingBy other: Self) {
+		self = Self.init(rawValue: self.rawValue.truncatingRemainder(dividingBy: other.rawValue))
 	}
-	public mutating func formSquareRoot() {
-		self = Self(Double(self._rawValue).squareRoot())
+	mutating func formSquareRoot() {
+		self = Self.init(rawValue: self.rawValue.squareRoot())
 	}
-	public mutating func round(_ rule: FloatingPointRoundingRule) {
-		self = Self(Double(self._rawValue).rounded(rule))
+	mutating func round(_ rule: FloatingPointRoundingRule) {
+		self = Self.init(rawValue: self.rawValue.rounded(rule))
 	}
-	
+
 	// MARK: Numeric
-	
-	public static func * (lhs: Self, rhs: Self) -> Self {
-		Self(Double(lhs._rawValue) * Double(rhs._rawValue))
+
+	static func * (lhs: Self, rhs: Self) -> Self {
+		Self.init(rawValue: lhs.rawValue * rhs.rawValue)
 	}
-	public static func *= (lhs: inout Self, rhs: Self) {
+	static func *= (lhs: inout Self, rhs: Self) {
 		lhs = lhs * rhs
 	}
-	
-	public var magnitude: Self { Self(Double(self._rawValue).magnitude) }
-	
-	public init?<T>(exactly source: T) where T: BinaryInteger {
-		guard let value = Double(exactly: source) else { return nil }
-		self.init(value)
+
+	var magnitude: Self { Self.init(rawValue: self.rawValue.magnitude) }
+
+	init?<T>(exactly source: T) where T: BinaryInteger {
+		guard let value = RawValue(exactly: source) else { return nil }
+		self.init(rawValue: value)
 	}
-	
+
 	// MARK: AdditiveArithmetic
-	
-	public static var zero: Self { Self(Double.zero) }
-	
+
+	static var zero: Self { Self.init(rawValue: RawValue.zero) }
+
 	// MARK: Strideable
-	
-	public static func + (lhs: Self, rhs: Self) -> Self {
-		return Self(Double(lhs._rawValue) + Double(rhs._rawValue))
+
+	static func + (lhs: Self, rhs: Self) -> Self {
+		return Self.init(rawValue: lhs.rawValue + rhs.rawValue)
 	}
-	
-	public static func - (lhs: Self, rhs: Self) -> Self {
-		return Self(Double(lhs._rawValue) - Double(rhs._rawValue))
+
+	static func - (lhs: Self, rhs: Self) -> Self {
+		return Self.init(rawValue: lhs.rawValue - rhs.rawValue)
 	}
-	
-	public func advanced(by n: Double.Stride) -> Self {
-		return Self(Double(self._rawValue).advanced(by: n))
+
+	func advanced(by n: RawValue.Stride) -> Self {
+		return Self.init(rawValue: self.rawValue.advanced(by: n))
 	}
-	
-	public func distance(to other: Self) -> Double.Stride {
-		return Double(self._rawValue).distance(to: Double(other._rawValue))
+
+	func distance(to other: Self) -> RawValue.Stride {
+		return self.rawValue.distance(to: other.rawValue)
 	}
-	
+
 	// MARK: BinaryFloatingPoint
-	
-	public static var exponentBitCount: Int { Double.exponentBitCount }
-	public static var significandBitCount: Int { Double.significandBitCount }
-	
-	public var binade: Self { Self(Double(self._rawValue).binade) }
-	public var exponentBitPattern: Double.RawExponent { Double(self._rawValue).exponentBitPattern }
-	public var significandBitPattern: Double.RawSignificand {
-		Double(self._rawValue).significandBitPattern
+
+	static var exponentBitCount: Int { RawValue.exponentBitCount }
+	static var significandBitCount: Int { RawValue.significandBitCount }
+
+	var binade: Self { Self.init(rawValue: self.rawValue.binade) }
+	var exponentBitPattern: RawValue.RawExponent { self.rawValue.exponentBitPattern }
+	var significandBitPattern: RawValue.RawSignificand {
+		self.rawValue.significandBitPattern
 	}
-	public var significandWidth: Int { Double(self._rawValue).significandWidth }
-	
-	public init(
+	var significandWidth: Int { self.rawValue.significandWidth }
+
+	init(
 		sign: FloatingPointSign,
-		exponentBitPattern: Double.RawExponent,
-		significandBitPattern: Double.RawSignificand
+		exponentBitPattern: RawValue.RawExponent,
+		significandBitPattern: RawValue.RawSignificand
 	) {
-		self.init(Double(
+		self.init(rawValue: RawValue(
 			sign: sign,
 			exponentBitPattern: exponentBitPattern,
 			significandBitPattern: significandBitPattern
 		))
 	}
 
-	public init<Source>(_ value: Source) where Source: BinaryFloatingPoint {
+	init<Source>(_ value: Source) where Source: BinaryFloatingPoint {
 		self.init(rawValue: .init(rawValue: .init(value)))
 	}
 
-	public init<Source>(_ value: Source) where Source: BinaryInteger {
+	init<Source>(_ value: Source) where Source: BinaryInteger {
 		self.init(rawValue: .init(rawValue: .init(value)))
 	}
 
 	// MARK: CustomStringConvertible
 
-	public var description: String {
+	var description: String {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .decimal
-		return formatter.string(for: self._rawValue) ?? "\(self._rawValue)"
+		formatter.maximumFractionDigits = 9
+		formatter.locale = .en
+		return formatter.string(for: Double(self))
+			?? "\(self.rawValue.rawValue)"
 	}
 
 	// MARK: CustomDebugStringConvertible
 
-	public var debugDescription: String {
+	var debugDescription: String {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .decimal
 		formatter.maximumFractionDigits = 99
 		formatter.locale = .en
-		return formatter.string(for: self._rawValue) ?? "\(self._rawValue)"
+		return formatter.string(for: Double(self))
+			?? "\(self.rawValue.rawValue)"
 	}
 	
 }
 
 // MARK: - ValidatableCoordinateComponent
 
-public protocol ValidatableCoordinateComponent: CoordinateComponent {
+public protocol ValidatableCoordinateComponent<Unit>: CoordinateComponent {
 
 	static var min: Self { get }
 	static var max: Self { get }
@@ -229,19 +233,23 @@ extension ValidatableCoordinateComponent where Self.RawSignificand: FixedWidthIn
 // MARK: - AngularCoordinateComponent
 
 /// - Todo: Create custom struct that handles cycling in an interval.
-public protocol AngularCoordinateComponent: ValidatableCoordinateComponent {
+public protocol AngularCoordinateComponent<Unit>: ValidatableCoordinateComponent
+where Unit: AngleUnit
+{
 
 	static var fullRotation: Self { get }
 	static var halfRotation: Self { get }
 
-	/// "N" or "E" depending on axis
+	/// `"N"` or `"E"` depending on axis.
 	static var positiveDirectionChar: Character { get }
 
-	/// "S" or "W" depending on axis
+	/// `"S"` or `"W"` depending on axis.
 	static var negativeDirectionChar: Character { get }
 
 	var decimalDegrees: Double { get set }
 	var radians: Double { get set }
+
+	var positive: Self { get }
 
 	init(decimalDegrees: Double)
 	init(radians: Double)
@@ -254,7 +262,7 @@ public extension AngularCoordinateComponent {
 	static var max: Self { halfRotation }
 
 	var valid: Self {
-		if isValid {
+		if self.isValid {
 			return self
 		} else {
 			let remainder = self.truncatingRemainder(dividingBy: Self.fullRotation)
@@ -267,9 +275,19 @@ public extension AngularCoordinateComponent {
 			}
 		}
 	}
+
 	var radians: Double {
 		get { self.decimalDegrees * .pi / 180.0 }
 		set { self.decimalDegrees = newValue * 180.0 / .pi }
+	}
+
+	var positive: Self {
+		if self.rawValue < .zero {
+			// `self.rawValue` is negative, so we end up with `Self.fullRotation - |self.rawValue|`
+			return self + Self.fullRotation
+		} else {
+			return self
+		}
 	}
 
 	init(radians: Double) {

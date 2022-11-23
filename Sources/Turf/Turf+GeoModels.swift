@@ -65,7 +65,7 @@ import NonEmpty
 //{
 //	guard let bbox = Turf.naiveBBox(forCollection: points) else { return nil }
 //	
-//	if bbox.twoDimensions.width > Longitude.halfRotation {
+//	if bbox.TwoDimensional.width > Longitude.halfRotation {
 //		let offsetCoords = points.map(\.withPositiveLongitude)
 //		
 //		return Turf.bbox(forCollection: offsetCoords)
@@ -103,7 +103,7 @@ import NonEmpty
 //{
 //	let bbox = Turf.naiveBBox(forMultiPoint: cluster)
 //	
-//	if bbox.twoDimensions.width > Longitude.halfRotation {
+//	if bbox.TwoDimensional.width > Longitude.halfRotation {
 //		let offsetCoords = cluster.points.map(\.withPositiveLongitude)
 //		
 //		return Turf.naiveBBox(forCollection: offsetCoords) ?? Turf.bbox(forPoint: cluster.points.first)

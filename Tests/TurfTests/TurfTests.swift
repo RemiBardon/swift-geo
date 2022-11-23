@@ -6,16 +6,17 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import GeoModels
+import Geodesy
 import Turf
+import WGS84
 import XCTest
 
 final class TurfTests: XCTestCase {
 	
-	func testNaiveBoundingBoxNeverCrosses180thMeridian() throws {
+	func testNaiveBBoxNeverCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let naiveBBox = try XCTUnwrap(Geo2D.naiveBBox(forCollection: coordinates))
-			XCTAssertEqual(naiveBBox.crosses180thMeridian, crosses, String(reflecting: naiveBBox))
+			let bbox = try XCTUnwrap(WGS842D.bbox(forCollection: coordinates))
+			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
 		}
 		
 		// Green: Across the world
@@ -33,9 +34,9 @@ final class TurfTests: XCTestCase {
 		], crosses: false)
 	}
 	
-	func testBoundingBoxCrosses180thMeridian() throws {
+	func testGeographicBBoxCrosses180thMeridian() throws {
 		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(Geo2D.bbox(forCollection: coordinates))
+			let bbox = try XCTUnwrap(WGS842D.geographicBBox(forCollection: coordinates))
 			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
 		}
 		
@@ -54,23 +55,23 @@ final class TurfTests: XCTestCase {
 		], crosses: true)
 	}
 	
-	func testBBox() throws {
+	func testGeographicBBox() throws {
 		func test(
 			coordinates: [Coordinate2D],
-			topLat: Latitude,
-			leftLong: Longitude,
-			latDelta: Latitude,
-			longDelta: Longitude,
+			bottomLat: Coordinate2D.X,
+			leftLong: Coordinate2D.Y,
+			latDelta: Coordinate2D.X,
+			longDelta: Coordinate2D.Y,
 			file: StaticString = #filePath,
 			line: UInt = #line
 		) throws {
-			let bbox = try XCTUnwrap(Geo2D.bbox(forCollection: coordinates))
+			let bbox = try XCTUnwrap(WGS842D.geographicBBox(forCollection: coordinates))
 			
-			let expectedOrigin = Coordinate2D(latitude: topLat, longitude: leftLong)
+			let expectedOrigin = Coordinate2D(latitude: bottomLat, longitude: leftLong)
 			
-			XCTAssertEqual(bbox.northWest, expectedOrigin, "Origin", file: file, line: line)
-			XCTAssertEqual(bbox.height, latDelta, "Latitude delta", file: file, line: line)
-			XCTAssertEqual(bbox.width, longDelta, "Longitude delta", file: file, line: line)
+			XCTAssertEqual(bbox.origin.coordinates, expectedOrigin, "Origin", file: file, line: line)
+			XCTAssertEqual(bbox.dLat, latDelta, "Latitude delta", file: file, line: line)
+			XCTAssertEqual(bbox.dLong, longDelta, "Longitude delta", file: file, line: line)
 		}
 		
 		// Blue: Positive latitudes, positive longitudes
@@ -82,7 +83,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: 35, longitude: 50),
 				.init(latitude: 10, longitude: 35),
 			],
-			topLat: 45,
+			bottomLat: 10,
 			leftLong: 10,
 			latDelta: 35,
 			longDelta: 40
@@ -95,7 +96,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: -20, longitude:   5),
 				.init(latitude: -10, longitude: -15),
 			],
-			topLat: 15,
+			bottomLat: -20,
 			leftLong: -30,
 			latDelta: 35,
 			longDelta: 40
@@ -107,7 +108,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: 70, longitude: -15),
 				.init(latitude: 65, longitude:  10),
 			],
-			topLat: 80,
+			bottomLat: 65,
 			leftLong: -15,
 			latDelta: 15,
 			longDelta: 35
@@ -122,7 +123,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: -40, longitude: -110),
 				.init(latitude: -15, longitude: -100),
 			],
-			topLat: -15,
+			bottomLat: -50,
 			leftLong: -110,
 			latDelta: 35,
 			longDelta: 35
@@ -135,7 +136,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: -40, longitude: 85),
 				.init(latitude: -15, longitude: 95),
 			],
-			topLat: -10,
+			bottomLat: -40,
 			leftLong: 65,
 			latDelta: 30,
 			longDelta: 30
@@ -148,7 +149,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: -80, longitude: -175),
 				.init(latitude: -85, longitude:  145),
 			],
-			topLat: -65,
+			bottomLat: -85,
 			leftLong: 145,
 			latDelta: 20,
 			longDelta: (-170 + .fullRotation) - 145
@@ -160,7 +161,7 @@ final class TurfTests: XCTestCase {
 				.init(latitude: -15, longitude: -170),
 				.init(latitude: -10, longitude:  160),
 			],
-			topLat: 15,
+			bottomLat: -15,
 			leftLong: 160,
 			latDelta: 30,
 			longDelta: 40
@@ -168,8 +169,8 @@ final class TurfTests: XCTestCase {
 	}
 	
 	func testLineBBox() throws {
-		func test(line: Line2D, naiveBBox expected: BoundingBox2D) throws {
-			let bbox = try XCTUnwrap(line.naiveBBox)
+		func test(line: Line2D, bbox expected: BoundingBox2D) throws {
+			let bbox = try XCTUnwrap(line.bbox)
 			XCTAssertEqual(bbox, expected)
 		}
 
@@ -177,12 +178,12 @@ final class TurfTests: XCTestCase {
 			start: Point2D(latitude: .min + 30, longitude: .min + 50),
 			end: Point2D(latitude: .max - 10, longitude: .max - 10)
 		)
-		try test(line: line1, naiveBBox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
+		try test(line: line1, bbox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
 	}
 
 	@MainActor
 	func testCubicBezier() async throws {
-		var lineString1 = LineString2D(points: .init(
+		var lineString1 = LineString2D(coordinates: .init(
 			.init(x:  0, y:  0),
 			.init(x:  0, y: 10),
 			.init(x: 10, y: 10),
@@ -193,7 +194,7 @@ final class TurfTests: XCTestCase {
 		XCTAssertEqual(bezier0, lineString1)
 
 		let bezier1 = lineString1.bezier(sharpness: 1, resolution: 2)
-		XCTAssertEqual(bezier1, LineString2D(points: .init(
+		XCTAssertEqual(bezier1, LineString2D(coordinates: .init(
 			.init(x:  0, y:  0),
 			.init(x:  0, y:  5),
 			.init(x:  0, y: 10),
@@ -209,7 +210,7 @@ final class TurfTests: XCTestCase {
 		XCTAssertEqual(bezier10, lineString1)
 
 		let bezier11 = lineString1.bezier(sharpness: 1, resolution: 2)
-		XCTAssertEqual(bezier11, LineString2D(points: .init(
+		XCTAssertEqual(bezier11, LineString2D(coordinates: .init(
 			.init(x:  0, y:  0),
 			.init(x:  0, y:  5),
 			.init(x:  0, y: 10),
@@ -220,25 +221,37 @@ final class TurfTests: XCTestCase {
 			.init(x:  5, y:  0),
 			.init(x:  0, y:  0)
 		)))
+	}
+
+	func testCubicBezierDescriptions() {
+		let lineString1 = LineString2D(coordinates: .init(
+			.init(x:  0, y:  0),
+			.init(x:  0, y: 10),
+			.init(x: 10, y: 10),
+			.init(x: 10, y:  0)
+		)).closed()
 
 		let bezier20 = lineString1.bezier(sharpness: 0.5, resolution: 10)
 		XCTAssertEqual(String(reflecting: bezier20), """
-		[(0,0),(-0.338,0.55),(-0.6,1.4),(-0.788,2.475),(-0.9,3.7),(-0.938,5),(-0.9,6.3),(-0.787,7.525),\
-		(-0.6,8.6),(-0.338,9.45),(0,10),(0.55,10.338),(1.4,10.6),(2.475,10.788),(3.7,10.9),(5,10.938),\
-		(6.3,10.9),(7.525,10.788),(8.6,10.6),(9.45,10.338),(10,10),(10.338,9.45),(10.6,8.6),\
-		(10.788,7.525),(10.9,6.3),(10.938,5),(10.9,3.7),(10.788,2.475),(10.6,1.4),(10.338,0.55),(10,0),\
-		(9.45,-0.338),(8.6,-0.6),(7.525,-0.788),(6.3,-0.9),(5,-0.938),(3.7,-0.9),(2.475,-0.787),\
-		(1.4,-0.6),(0.55,-0.338),(0,0)]
+		<LineString | WGS 84 (geographic 2D)>\
+		[(0, 0),(-0.3375, 0.55),(-0.6, 1.4),(-0.7875, 2.475),(-0.9, 3.7),(-0.9375, 5),(-0.9, 6.3),\
+		(-0.7875, 7.525),(-0.6, 8.6),(-0.3375, 9.45),(0, 10),(0.55, 10.3375),(1.4, 10.6),\
+		(2.475, 10.7875),(3.7, 10.9),(5, 10.9375),(6.3, 10.9),(7.525, 10.7875),(8.6, 10.6),\
+		(9.45, 10.3375),(10, 10),(10.3375, 9.45),(10.6, 8.6),(10.7875, 7.525),(10.9, 6.3),\
+		(10.9375, 5),(10.9, 3.7),(10.7875, 2.475),(10.6, 1.4),(10.3375, 0.55),(10, 0),(9.45, -0.3375),\
+		(8.6, -0.6),(7.525, -0.7875),(6.3, -0.9),(5, -0.9375),(3.7, -0.9),(2.475, -0.7875),\
+		(1.4, -0.6),(0.55, -0.3375),(0, 0)]
 		""")
 
 		let bezier21 = lineString1.bezier(sharpness: 0, resolution: 10)
 		XCTAssertEqual(String(reflecting: bezier21), """
-		[(0,0),(-0.675,0.82),(-1.2,1.76),(-1.575,2.79),(-1.8,3.88),(-1.875,5),(-1.8,6.12),\
-		(-1.575,7.21),(-1.2,8.24),(-0.675,9.18),(0,10),(0.82,10.675),(1.76,11.2),(2.79,11.575),\
-		(3.88,11.8),(5,11.875),(6.12,11.8),(7.21,11.575),(8.24,11.2),(9.18,10.675),(10,10),\
-		(10.675,9.18),(11.2,8.24),(11.575,7.21),(11.8,6.12),(11.875,5),(11.8,3.88),(11.575,2.79),\
-		(11.2,1.76),(10.675,0.82),(10,0),(9.18,-0.675),(8.24,-1.2),(7.21,-1.575),(6.12,-1.8),\
-		(5,-1.875),(3.88,-1.8),(2.79,-1.575),(1.76,-1.2),(0.82,-0.675),(0,0)]
+		<LineString | WGS 84 (geographic 2D)>\
+		[(0, 0),(-0.675, 0.82),(-1.2, 1.76),(-1.575, 2.79),(-1.8, 3.88),(-1.875, 5),(-1.8, 6.12),\
+		(-1.575, 7.21),(-1.2, 8.24),(-0.675, 9.18),(0, 10),(0.82, 10.675),(1.76, 11.2),(2.79, 11.575),\
+		(3.88, 11.8),(5, 11.875),(6.12, 11.8),(7.21, 11.575),(8.24, 11.2),(9.18, 10.675),(10, 10),\
+		(10.675, 9.18),(11.2, 8.24),(11.575, 7.21),(11.8, 6.12),(11.875, 5),(11.8, 3.88),\
+		(11.575, 2.79),(11.2, 1.76),(10.675, 0.82),(10, 0),(9.18, -0.675),(8.24, -1.2),(7.21, -1.575),\
+		(6.12, -1.8),(5, -1.875),(3.88, -1.8),(2.79, -1.575),(1.76, -1.2),(0.82, -0.675),(0, 0)]
 		""")
 	}
 	

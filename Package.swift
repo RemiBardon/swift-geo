@@ -3,6 +3,7 @@
 
 import PackageDescription
 
+#warning("TODO: Remove Turf dependency from WGS84")
 let package = Package(
 	name: "swift-geo",
 	platforms: [
@@ -12,7 +13,6 @@ let package = Package(
 		// Products define the executables and libraries a package produces, and make them visible to other packages.
 		.library(name: "Geodesy", targets: ["Geodesy"]),
 		.library(name: "WGS84", targets: ["WGS84"]),
-		.library(name: "GeoCoordinates", targets: ["GeoCoordinates"]),
 		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
 		.library(name: "Turf", targets: ["Turf"]),
 	],
@@ -31,17 +31,14 @@ let package = Package(
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
-		.target(name: "ValueWithUnit"),
 		.target(name: "SwiftGeoToolbox"),
+		.target(name: "ValueWithUnit", dependencies: ["SwiftGeoToolbox"]),
 		.target(name: "Geodesy", dependencies: [
 			"ValueWithUnit",
 			"SwiftGeoToolbox",
 		]),
-		.target(name: "GeoCoordinates"),
-		.testTarget(name: "GeoCoordinatesTests", dependencies: [
-			"GeoCoordinates",
-			.product(name: "Algorithms", package: "swift-algorithms"),
-		]),
+		.target(name: "WGS84Core", dependencies: ["Geodesy"]),
+		.testTarget(name: "GeodesyTests", dependencies: ["Geodesy", "WGS84Core"]),
 		.target(name: "GeodeticDisplay", dependencies: ["Geodesy"]),
 		.testTarget(name: "GeodeticDisplayTests", dependencies: ["GeodeticDisplay", "WGS84"]),
 		.target(
@@ -69,7 +66,7 @@ let package = Package(
 			]
 		),
 		.testTarget(name: "GeodeticGeometryTests", dependencies: ["GeodeticGeometry", "WGS84"]),
-		.target(name: "WGS84", dependencies: ["Geodesy", "GeodeticGeometry"]),
+		.target(name: "WGS84", dependencies: ["GeodeticGeometry", "Turf", "WGS84Core"]),
 		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
 		.target(
 			name: "Turf",
@@ -96,6 +93,7 @@ let package = Package(
 			name: "TurfTests",
 			dependencies: [
 				"Turf",
+				"WGS84",
 				.product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
 			],
 			resources: [.copy("__Snapshots__")]

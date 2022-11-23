@@ -9,13 +9,7 @@
 import Algorithms
 import NonEmpty
 
-public protocol LinearRing<Point>: GeodeticGeometry.LineString {}
-
-extension LinearRing {
-
-	public typealias GeometricSystem = Self.Point.GeometricSystem
-
-}
+public protocol LinearRing<GeometricSystem>: GeodeticGeometry.LineString {}
 
 extension LinearRing where Self.Lines.Collection: RangeReplaceableCollection {
 	

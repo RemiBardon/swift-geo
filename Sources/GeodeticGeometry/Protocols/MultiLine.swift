@@ -8,11 +8,11 @@
 
 import NonEmpty
 
-public protocol MultiLine<Point>: GeodeticGeometry.MultiPoint
+public protocol MultiLine<GeometricSystem>: GeodeticGeometry.MultiPoint
 where Points == AtLeast2<[Self.Point]>
 {
 
-	associatedtype Line: GeodeticGeometry.Line<Point>
+	typealias Line = GeometricSystem.Line
 	associatedtype Lines: NonEmptyProtocol
 	where Self.Lines.Element == Self.Line
 
@@ -23,8 +23,6 @@ where Points == AtLeast2<[Self.Point]>
 }
 
 extension MultiLine {
-
-	public typealias GeometricSystem = Self.Point.GeometricSystem
 
 	public var points: Self.Points {
 		Points(
