@@ -29,7 +29,6 @@ public protocol GeometricSystemAlgebra: GeodeticGeometry.GeometricSystem {
 	static func bbox<C: Collection>(forCollection coordinates: C) -> Self.BoundingBox?
 	where C.Element == Self.Coordinates
 
-	#warning("Change `BoundingBox` so it stores `Coordinates` and not `Point`s")
 	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of points.
 	/// - Warning: This does not take into account the curvature of the Earth.
@@ -104,7 +103,7 @@ public protocol GeometricSystemAlgebra: GeodeticGeometry.GeometricSystem {
 public extension GeometricSystemAlgebra {
 	
 	static func bbox(forPoint point: Self.Point) -> Self.BoundingBox {
-		return Self.BoundingBox(origin: point, size: .zero)
+		return Self.BoundingBox(origin: point.coordinates, size: .zero)
 	}
 
 	static func bbox<C: Collection>(forCollection coordinates: C) -> Self.BoundingBox?
@@ -140,11 +139,6 @@ public extension GeometricSystemAlgebra {
 	{
 		return Self.bbox(forCollection: points)
 			.flatMap(Self.center(forBBox:))
-	}
-
-	static func center(forBBox bbox: Self.BoundingBox) -> Self.Coordinates {
-		let offset: Size = bbox.size / 2
-		return bbox.origin.offsetBy(offset).coordinates
 	}
 
 	static func centroid<Points: Collection>(forCollection points: Points) -> Self.Coordinates?
@@ -238,8 +232,8 @@ public extension TwoDimensionalGeometricSystem {
 		else { return nil }
 
 		return Self.BoundingBox(
-			min: .init(coordinates: .init(x: minX, y: minY)),
-			max: .init(coordinates: .init(x: maxX, y: maxY))
+			min: .init(x: minX, y: minY),
+			max: .init(x: maxX, y: maxY)
 		)
 	}
 	
@@ -406,12 +400,12 @@ extension ThreeDimensionalGeometricSystem {
 		else { return nil }
 
 		return Self.BoundingBox(
-			min: Self.Point(rawValue: (minX, minY, minZ)),
-			max: Self.Point(rawValue: (maxX, maxY, maxZ))
+			min: Self.Coordinates(rawValue: (minX, minY, minZ)),
+			max: Self.Coordinates(rawValue: (maxX, maxY, maxZ))
 		)
 	}
 	
-	public static func center(forBBox bbox: Self.BoundingBox) -> Self.Point
+	public static func center(forBBox bbox: Self.BoundingBox) -> Self.Coordinates
 	where Self.Size.RawValue == Self.Coordinates
 	{
 		return bbox.origin.offsetBy(

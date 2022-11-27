@@ -113,10 +113,8 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 	public struct BoundingBox: Hashable {
 
 		public typealias GeometricSystem = WGS842D
-		public typealias Point = GeometricSystem.Point
-		public typealias Size = GeometricSystem.Size
 
-		public var southWest: Self.Point
+		public var southWest: Self.Coordinates
 		public var size: Self.Size
 
 		public var dLat: Latitude { self.size.dx }
@@ -153,29 +151,29 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 			}
 		}
 
-		public var northEast: Self.Point {
-			Self.Point(coordinates: .init(latitude: northLatitude, longitude: eastLongitude))
+		public var northEast: Self.Coordinates {
+			Self.Coordinates(latitude: northLatitude, longitude: eastLongitude)
 		}
-		public var northWest: Self.Point {
-			Self.Point(coordinates: .init(latitude: northLatitude, longitude: westLongitude))
+		public var northWest: Self.Coordinates {
+			Self.Coordinates(latitude: northLatitude, longitude: westLongitude)
 		}
-		public var southEast: Self.Point {
-			Self.Point(coordinates: .init(latitude: southLatitude, longitude: westLongitude))
+		public var southEast: Self.Coordinates {
+			Self.Coordinates(latitude: southLatitude, longitude: westLongitude)
 		}
-		public var center: Self.Point {
-			Self.Point(coordinates: .init(latitude: centerLatitude, longitude: centerLongitude))
+		public var center: Self.Coordinates {
+			Self.Coordinates(latitude: centerLatitude, longitude: centerLongitude)
 		}
 
-//		public var south: Self.Point {
+//		public var south: Self.Coordinates {
 //			southAtLongitude(centerLongitude)
 //		}
-//		public var north: Self.Point {
+//		public var north: Self.Coordinates {
 //			northAtLongitude(centerLongitude)
 //		}
-//		public var west: Self.Point {
+//		public var west: Self.Coordinates {
 //			westAtLatitude(centerLatitude)
 //		}
-//		public var east: Self.Point {
+//		public var east: Self.Coordinates {
 //			eastAtLatitude(centerLatitude)
 //		}
 
@@ -183,13 +181,13 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 			westLongitude > eastLongitude
 		}
 
-		public init(southWest: Self.Point, size: Self.Size) {
+		public init(southWest: Self.Coordinates, size: Self.Size) {
 			self.southWest = southWest
 			self.size = size
 		}
 
 		public init(
-			southWest: Self.Point,
+			southWest: Self.Coordinates,
 			dLat: Latitude,
 			dLong: Longitude
 		) {
@@ -200,8 +198,8 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 		}
 
 		public init(
-			southWest: Self.Point,
-			northEast: Self.Point
+			southWest: Self.Coordinates,
+			northEast: Self.Coordinates
 		) {
 			self.init(
 				southWest: southWest,
@@ -210,17 +208,17 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 			)
 		}
 
-//		public func southAtLongitude(_ longitude: Longitude) -> Self.Point {
-//			Self.Point(coordinates: .init(latitude: northEast.latitude, longitude: longitude))
+//		public func southAtLongitude(_ longitude: Longitude) -> Self.Coordinates {
+//			Self.Coordinates(latitude: northEast.latitude, longitude: longitude)
 //		}
-//		public func northAtLongitude(_ longitude: Longitude) -> Self.Point {
-//			Self.Point(coordinates: .init(latitude: southWest.latitude, longitude: longitude))
+//		public func northAtLongitude(_ longitude: Longitude) -> Self.Coordinates {
+//			Self.Coordinates(latitude: southWest.latitude, longitude: longitude)
 //		}
-//		public func westAtLatitude(_ latitude: Latitude) -> Self.Point {
-//			Self.Point(coordinates: .init(latitude: latitude, longitude: southWest.longitude))
+//		public func westAtLatitude(_ latitude: Latitude) -> Self.Coordinates {
+//			Self.Coordinates(latitude: latitude, longitude: southWest.longitude)
 //		}
-//		public func eastAtLatitude(_ latitude: Latitude) -> Self.Point {
-//			Self.Point(coordinates: .init(latitude: latitude, longitude: northEast.longitude))
+//		public func eastAtLatitude(_ latitude: Latitude) -> Self.Coordinates {
+//			Self.Coordinates(latitude: latitude, longitude: northEast.longitude)
 //		}
 //
 //		public func offsetBy(dLat: Latitude = .zero, dLong: Longitude = .zero) -> Self {
@@ -230,7 +228,7 @@ public enum WGS842D: TwoDimensionalGeometricSystem {
 //				dLong: self.dLong
 //			)
 //		}
-//		public func offsetBy(dx: Point.X = .zero, dy: Point.Y = .zero) -> Self {
+//		public func offsetBy(dx: Coordinates.X = .zero, dy: Coordinates.Y = .zero) -> Self {
 //			Self.init(
 //				southWest: southWest.offsetBy(dx: dx, dy: dy),
 //				dLat: self.dLat,
@@ -250,9 +248,9 @@ public typealias BoundingBox2D = WGS842D.BoundingBox
 
 extension WGS842D.BoundingBox: GeodeticGeometry.BoundingBox {
 
-	public var origin: Self.Point { self.southWest }
+	public var origin: Self.Coordinates { self.southWest }
 
-	public init(origin: Self.Point, size: Self.Size) {
+	public init(origin: Self.Coordinates, size: Self.Size) {
 		self.init(southWest: origin, size: size)
 	}
 

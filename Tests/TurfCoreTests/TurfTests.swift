@@ -70,7 +70,7 @@ final class TurfTests: XCTestCase {
 			
 			let expectedOrigin = Coordinate2D(latitude: bottomLat, longitude: leftLong)
 			
-			XCTAssertEqual(bbox.origin.coordinates, expectedOrigin, "Origin", file: file, line: line)
+			XCTAssertEqual(bbox.origin, expectedOrigin, "Origin", file: file, line: line)
 			XCTAssertEqual(bbox.dLat, latDelta, "Latitude delta", file: file, line: line)
 			XCTAssertEqual(bbox.dLong, longDelta, "Longitude delta", file: file, line: line)
 		}
@@ -179,7 +179,10 @@ final class TurfTests: XCTestCase {
 			start: Point2D(latitude: .min + 30, longitude: .min + 50),
 			end: Point2D(latitude: .max - 10, longitude: .max - 10)
 		)
-		try test(line: line1, bbox: BoundingBox2D(southWest: line1.start, northEast: line1.end))
+		try test(line: line1, bbox: BoundingBox2D(
+			southWest: line1.start.coordinates,
+			northEast: line1.end.coordinates
+		))
 	}
 
 	@MainActor

@@ -20,7 +20,7 @@ public protocol Size<GeometricSystem>:
 	typealias CRS = GeometricSystem.CRS
 	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem
 
-	init(from: GeometricSystem.Point, to: GeometricSystem.Point)
+	init(from: GeometricSystem.Coordinates, to: GeometricSystem.Coordinates)
 }
 
 public extension Size where RawValue: Zeroable {
@@ -40,8 +40,8 @@ public extension Size where RawValue: InitializableByFloatingPoint {
 }
 
 public extension Size where RawValue == GeometricSystem.Point.Coordinates {
-	init(from: GeometricSystem.Point, to: GeometricSystem.Point) {
-		self.init(rawValue: to.coordinates - from.coordinates)
+	init(from: GeometricSystem.Coordinates, to: GeometricSystem.Coordinates) {
+		self.init(rawValue: to - from)
 	}
 }
 

@@ -13,14 +13,14 @@ public protocol BoundingBox<GeometricSystem>: Hashable, Zeroable {
 
 	typealias CRS = GeometricSystem.CRS
 	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<CRS>
-	typealias Point = GeometricSystem.Point
+	typealias Coordinates = GeometricSystem.Coordinates
 	typealias Size = GeometricSystem.Size
 	
-	var origin: Point { get }
+	var origin: Coordinates { get }
 	var size: Size { get }
 	
-	init(origin: Point, size: Size)
-	init(min: Point, max: Point)
+	init(origin: Coordinates, size: Size)
+	init(min: Coordinates, max: Coordinates)
 
 	#warning("TODO: Reimplement `BoundingBox.union(_ other: Self)`")
 	/// The union of bounding boxes gives a new bounding box that encloses the given two.
@@ -34,7 +34,7 @@ public extension BoundingBox {
 		Self.init(origin: .zero, size: .zero)
 	}
 
-	init(min: Point, max: Point) {
+	init(min: Coordinates, max: Coordinates) {
 		self.init(origin: min, size: Size.init(from: min, to: max))
 	}
 	

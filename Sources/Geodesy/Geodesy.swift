@@ -33,15 +33,21 @@ where RawValue == Components
 	associatedtype CRS: CoordinateReferenceSystem
 	typealias Components = CRS.CoordinateSystem.Values
 
-	var components: Components { get }
+	var components: Self.Components { get }
 
-	init(components: Components)
+	init(components: Self.Components)
+
+	func offsetBy(_ components: Self.Components) -> Self
+	func offsetBy(_ other: Self) -> Self
 }
 
 public extension Coordinates {
 	var rawValue: RawValue { self.components }
 	init(rawValue: RawValue) {
 		self.init(components: rawValue)
+	}
+	func offsetBy(_ other: Self) -> Self {
+		self.offsetBy(other.components)
 	}
 }
 
@@ -109,8 +115,11 @@ public extension TwoDimensionalCoordinate {
 		Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
 	}
 
+	func offsetBy(_ components: Self.Components) -> Self {
+		self.offsetBy(dx: components.0, dy: components.1)
+	}
 	func offsetBy(dx: X, dy: Y) -> Self {
-		Self(x: self.x + dx, y: self.y + dy)
+		Self.init(x: self.x + dx, y: self.y + dy)
 	}
 }
 
@@ -206,6 +215,9 @@ public extension ThreeDimensionalCoordinate {
 		Self.init(x: lhs.x / rhs.x, y: lhs.y / rhs.y, z: lhs.z / rhs.z)
 	}
 
+	func offsetBy(_ components: Self.Components) -> Self {
+		self.offsetBy(dx: components.0, dy: components.1, dz: components.2)
+	}
 	func offsetBy(dx: X, dy: Y, dz: Z) -> Self {
 		Self(x: self.x + dx, y: self.y + dy, z: self.z + dz)
 	}

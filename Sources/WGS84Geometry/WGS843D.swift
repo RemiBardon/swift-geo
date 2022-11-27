@@ -97,19 +97,15 @@ public enum WGS843D: ThreeDimensionalGeometricSystem {
 //	public struct LinearRing
 
 	public struct BoundingBox: GeodeticGeometry.BoundingBox {
-
 		public typealias GeometricSystem = WGS843D
-		public typealias Point = GeometricSystem.Point
-		public typealias Size = GeometricSystem.Size
 
-		public var origin: Self.Point
+		public var origin: Self.Coordinates
 		public var size: Self.Size
 
-		public init(origin: Point, size: Size) {
+		public init(origin: Self.Coordinates, size: Size) {
 			self.origin = origin
 			self.size = size
 		}
-
 	}
 
 }
