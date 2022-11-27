@@ -7,6 +7,7 @@
 //
 
 //import NonEmpty
+import protocol GeodeticGeometry.BoundingBox
 
 public protocol Boundable {
 	

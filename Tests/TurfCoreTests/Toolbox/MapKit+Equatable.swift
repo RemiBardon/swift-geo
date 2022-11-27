@@ -9,17 +9,19 @@
 #if canImport(MapKit)
 import MapKit
 
+// NOTE: This file defines conformance to external protocol on external types, which is usually bad.
+//       In this special case it's okay, as this target is a test target.
+//       `Equatable` conformances allow us to use `XCTAssertEquals` and `XCTAssertNotEqual`,
+//       which is very handy.
+
 extension MKCoordinateRegion: Equatable {
-	
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		return lhs.center == rhs.center
 		&& lhs.span == rhs.span
 	}
-	
 }
 
 extension MKCoordinateSpan: Equatable {
-	
 	public static func == (lhs: Self, rhs: Self) -> Bool {
 		// Deltas are considered equal if there's less than 1.1112m between them.
 		// This equals to 0.00001° along the equator.
@@ -28,30 +30,23 @@ extension MKCoordinateSpan: Equatable {
 		let longitudeEqual = lhs.longitudeDelta.distance(to: rhs.longitudeDelta) < 0.000_01
 		return latitudeEqual && longitudeEqual
 	}
-	
 }
 
 extension MKMapPoint: Equatable {
-	
 	public static func == (lhs: MKMapPoint, rhs: MKMapPoint) -> Bool {
 		return MKMapPointEqualToPoint(lhs, rhs)
 	}
-	
 }
 
 extension MKMapSize: Equatable {
-	
 	public static func == (lhs: MKMapSize, rhs: MKMapSize) -> Bool {
 		return MKMapSizeEqualToSize(lhs, rhs)
 	}
-	
 }
 
 extension MKMapRect: Equatable {
-	
 	public static func == (lhs: MKMapRect, rhs: MKMapRect) -> Bool {
 		return MKMapRectEqualToRect(lhs, rhs)
 	}
-	
 }
 #endif
