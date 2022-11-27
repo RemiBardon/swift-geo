@@ -8,8 +8,8 @@
 
 #if canImport(MapKit)
 import MapKit
-import Turf
-import WGS84
+import TurfMapKit
+import WGS84Core
 import XCTest
 
 class TurfMapKitTests: XCTestCase {

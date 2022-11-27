@@ -7,7 +7,7 @@
 //
 
 import MapKit
-import WGS84
+import WGS84Geometry
 import XCTest
 
 @MainActor

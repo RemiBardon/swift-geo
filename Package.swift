@@ -3,14 +3,14 @@
 
 import PackageDescription
 
-#warning("TODO: Remove Turf dependency from WGS84")
 let package = Package(
 	name: "swift-geo",
 	platforms: [
-		.macOS(.v10_15)
+		.macOS(.v10_15),
 	],
 	products: [
-		// Products define the executables and libraries a package produces, and make them visible to other packages.
+		// Products define the executables and libraries a package produces,
+		// and make them visible to other packages.
 		.library(name: "Geodesy", targets: ["Geodesy"]),
 		.library(name: "WGS84", targets: ["WGS84"]),
 		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
@@ -29,18 +29,29 @@ let package = Package(
 		),
 	],
 	targets: [
-		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
-		// Targets can depend on other targets in this package, and on products in packages this package depends on.
+		// Targets are the basic building blocks of a package.
+		// A target can define a module or a test suite.
+		// Targets can depend on other targets in this package,
+		// and on products in packages this package depends on.
+
+		// 🧰 A toolbox with a few shared protocols, shared by most targets
 		.target(name: "SwiftGeoToolbox"),
+
+		// 📏 Values with units (angles, lengths…)
 		.target(name: "ValueWithUnit", dependencies: ["SwiftGeoToolbox"]),
+
+		// 🌍 Definition of types representing geodesy concepts
 		.target(name: "Geodesy", dependencies: [
 			"ValueWithUnit",
 			"SwiftGeoToolbox",
 		]),
-		.target(name: "WGS84Core", dependencies: ["Geodesy"]),
 		.testTarget(name: "GeodesyTests", dependencies: ["Geodesy", "WGS84Core"]),
+
+		// 📽️ Representing values in different ways
 		.target(name: "GeodeticDisplay", dependencies: ["Geodesy"]),
-		.testTarget(name: "GeodeticDisplayTests", dependencies: ["GeodeticDisplay", "WGS84"]),
+		.testTarget(name: "GeodeticDisplayTests", dependencies: ["GeodeticDisplay", "WGS84Core"]),
+
+		// 📐 Geometric systems on geodetic types
 		.target(
 			name: "GeodeticGeometry",
 			dependencies: [
@@ -65,11 +76,12 @@ let package = Package(
 //				]),
 			]
 		),
-		.testTarget(name: "GeodeticGeometryTests", dependencies: ["GeodeticGeometry", "WGS84"]),
-		.target(name: "WGS84", dependencies: ["GeodeticGeometry", "Turf", "WGS84Core"]),
-		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
+		.testTarget(name: "GeodeticGeometryTests", dependencies: ["GeodeticGeometry", "WGS84Geometry"]),
+
+		// 📐 Geometry on geodetic types
+		.target(name: "Turf", dependencies: ["TurfCore", "TurfMapKit"]),
 		.target(
-			name: "Turf",
+			name: "TurfCore",
 			dependencies: [
 				.target(name: "GeodeticGeometry"),
 				.product(name: "Algorithms", package: "swift-algorithms"),
@@ -90,14 +102,21 @@ let package = Package(
 			]
 		),
 		.testTarget(
-			name: "TurfTests",
+			name: "TurfCoreTests",
 			dependencies: [
 				"Turf",
-				"WGS84",
+				"WGS84Turf", // Unfortunately, this depends on `Turf`
 				.product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
 			],
 			resources: [.copy("__Snapshots__")]
 		),
-		.target(name: "TurfMapKit", dependencies: ["Turf", "WGS84"]),
+		.target(name: "TurfMapKit", dependencies: ["TurfCore", "WGS84Geometry"]),
+
+		// 🗺️ World Geodetic System standard
+		.target(name: "WGS84", dependencies: ["WGS84Core", "WGS84Geometry", "WGS84Turf"]),
+		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
+		.target(name: "WGS84Core", dependencies: ["Geodesy", "GeodeticDisplay"]),
+		.target(name: "WGS84Geometry", dependencies: ["WGS84Core", "GeodeticGeometry"]),
+		.target(name: "WGS84Turf", dependencies: ["WGS84Geometry", "Turf"]),
 	]
 )

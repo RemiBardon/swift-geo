@@ -7,8 +7,9 @@
 //
 
 import Geodesy
-import Turf
-import WGS84
+import TurfCore
+import WGS84Core
+import WGS84Geometry
 import XCTest
 
 final class TurfTests: XCTestCase {

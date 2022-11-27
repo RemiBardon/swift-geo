@@ -1,12 +1,11 @@
 //
-//  Display.swift
+//  WGS84+Display.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 24/08/2021.
 //  Copyright © 2021 Rémi Bardon. All rights reserved.
 //
 
-#if canImport(GeodeticDisplay)
 import GeodeticDisplay
 
 extension Coordinate2D: GeographicNotation {
@@ -55,4 +54,3 @@ extension Coordinate3D: GeographicNotation {
 	}
 
 }
-#endif

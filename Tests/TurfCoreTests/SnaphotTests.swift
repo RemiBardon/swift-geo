@@ -8,7 +8,8 @@
 
 import SnapshotTesting
 import Turf
-import WGS84
+import WGS84Core
+import WGS84Geometry
 import XCTest
 
 final class SnapshotTests: XCTestCase {

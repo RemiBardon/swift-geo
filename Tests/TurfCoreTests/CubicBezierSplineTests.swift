@@ -7,8 +7,8 @@
 //
 
 import SwiftGeoToolbox
-@testable import struct Turf.CubicBezierSpline
-import WGS84
+@testable import struct TurfCore.CubicBezierSpline
+import WGS84Turf
 import XCTest
 
 final class CubicBezierSplineTests: XCTestCase {

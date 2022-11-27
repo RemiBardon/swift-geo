@@ -6,6 +6,5 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-@_exported import WGS84Core
-@_exported import WGS84Geometry
-@_exported import WGS84Turf
+@_exported import TurfCore
+@_exported import TurfMapKit

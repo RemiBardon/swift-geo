@@ -6,12 +6,10 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-#if canImport(GeodeticGeometry) && canImport(Turf)
 import GeodeticGeometry
 import NonEmpty
-import protocol Turf.GeometricSystemAlgebra
 
-public enum WGS842D: TwoDimensionalGeometricSystem, GeometricSystemAlgebra {
+public enum WGS842D: TwoDimensionalGeometricSystem {
 
 	public typealias CRS = WGS84Geographic2DCRS
 
@@ -282,4 +280,3 @@ extension WGS842D.BoundingBox: CustomDebugStringConvertible {
 	}
 
 }
-#endif

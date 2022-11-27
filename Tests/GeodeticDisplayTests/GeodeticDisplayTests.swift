@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import WGS84
+import WGS84Core
 import XCTest
 
 final class GeodeticDisplayTests: XCTestCase {

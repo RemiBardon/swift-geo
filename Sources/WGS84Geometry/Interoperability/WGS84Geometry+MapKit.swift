@@ -1,21 +1,13 @@
 //
-//  WGS84+MapKit.swift
+//  WGS84Geometry+MapKit.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 02/02/2022.
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-#if canImport(MapKit) && canImport(Turf)
+#if canImport(MapKit)
 import MapKit
-
-public extension Coordinate2D {
-
-	var mkMapPoint: MKMapPoint {
-		MKMapPoint(clLocationCoordinate2D)
-	}
-
-}
 
 public extension WGS842D.Point {
 

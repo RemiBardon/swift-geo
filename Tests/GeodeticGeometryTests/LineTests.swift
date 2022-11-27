@@ -7,7 +7,7 @@
 //
 
 import GeodeticGeometry
-import WGS84
+import WGS84Geometry
 import XCTest
 
 //final class LineTests: XCTestCase {
