@@ -14,22 +14,25 @@ public protocol Iterable<Element> {
 	func makeIterator() -> Iterator
 }
 
-public protocol NonEmptyIterable<Base>: Iterable {
+public protocol NonEmptyIterable<Base>: Iterable
+where Iterator == NonEmptyIterator<Base>
+{
 	associatedtype Base: NonEmptyProtocol
-	func makeIterator() -> NonEmptyIterator<Base>
 }
 
 public struct NonEmptyIterator<Base: NonEmptyProtocol>: IteratorProtocol {
-	private let _first: Base.Element
+	public typealias Element = Base.Element
+
+	private let _first: Element
 	private var base: Base.Iterator
 	private var firstElementAccessed: Bool = false
 
-	init(base: Base) {
+	public init(base: Base) {
 		self._first = base.first
 		self.base = base.makeIterator()
 	}
 
-	public mutating func first() -> Base.Element {
+	public mutating func first() -> Element {
 		if self.firstElementAccessed {
 			return self._first
 		} else {
@@ -39,7 +42,13 @@ public struct NonEmptyIterator<Base: NonEmptyProtocol>: IteratorProtocol {
 			return self._first
 		}
 	}
-	public mutating func next() -> Base.Element? {
+	public mutating func next() -> Element? {
 		self.base.next()
 	}
 }
+
+// MARK: - Standard types conformances
+
+extension Array: Iterable {}
+extension Set: Iterable {}
+extension Slice: Iterable {}

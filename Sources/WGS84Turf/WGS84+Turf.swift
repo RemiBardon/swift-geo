@@ -7,9 +7,13 @@
 //
 
 import SwiftGeoToolbox
+import TurfCore
 import protocol Turf.GeometricSystemAlgebra
 import enum WGS84Geometry.WGS842D
 import enum WGS84Geometry.WGS843D
+
+extension WGS842D.BoundingBox: Boundable {}
+extension WGS842D.Point: Boundable {}
 
 extension WGS842D: GeometricSystemAlgebra {
 	public static func center(forBBox bbox: Self.BoundingBox) -> Self.Coordinates {
@@ -17,4 +21,5 @@ extension WGS842D: GeometricSystemAlgebra {
 		return bbox.origin.offsetBy(offset.rawValue)
 	}
 }
+
 extension WGS843D: GeometricSystemAlgebra {}

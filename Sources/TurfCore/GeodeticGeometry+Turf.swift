@@ -19,12 +19,6 @@ public extension GeometricSystemAlgebra {
 		Self.BoundingBox(origin: point.coordinates, size: .zero)
 	}
 
-	static func bbox<C>(forNonEmptyCollection elements: C) -> Self.BoundingBox
-	where C: NonEmptyProtocol, C.Element: Boundable<Self.BoundingBox>
-	{
-		Self.bbox(forCollection: elements) ?? elements.first.bbox
-	}
-
 	static func bbox<Iterator>(forIterator iterator: inout Iterator) -> Self.BoundingBox?
 	where Iterator: IteratorProtocol, Iterator.Element: Boundable<Self.BoundingBox>
 	{
@@ -40,8 +34,8 @@ public extension GeometricSystemAlgebra {
 
 	static func bbox<S>(
 		forNonEmptyIterator iterator: inout NonEmptyIterator<S>
-	) -> Self.BoundingBox?
-	where S: Sequence, S.Element: Boundable<Self.BoundingBox>
+	) -> Self.BoundingBox
+	where S.Element: Boundable<Self.BoundingBox>
 	{
 		var bbox: Self.BoundingBox = iterator.first().bbox
 		while let element = iterator.next() {
@@ -50,11 +44,18 @@ public extension GeometricSystemAlgebra {
 		return bbox
 	}
 
-	static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-	where MultiPoint: GeodeticGeometry.MultiPoint,
-				MultiPoint.Points.Element: Boundable<Self.BoundingBox>
+	static func bbox<C>(forIterable elements: C) -> Self.BoundingBox?
+	where C: Iterable, C.Element: Boundable<Self.BoundingBox>
 	{
-		Self.bbox(forCollection: multiPoint.points) ?? multiPoint.points.first.bbox
+		var iterator = elements.makeIterator()
+		return Self.bbox(forIterator: &iterator)
+	}
+
+	static func bbox<C>(forNonEmptyIterable elements: C) -> Self.BoundingBox
+	where C: NonEmptyIterable, C.Element: Boundable<Self.BoundingBox>
+	{
+		var iterator = elements.makeIterator()
+		return Self.bbox(forIterator: &iterator) ?? iterator.first().bbox
 	}
 
 	static func geographicBBox<C: Collection>(forCollection coordinates: C) -> Self.BoundingBox?
@@ -70,12 +71,12 @@ public extension GeometricSystemAlgebra {
 		return self.geographicBBox(forCollection: multiPoint.points)
 			?? self.bbox(forPoint: multiPoint.points.first)
 	}
-	
-	static func center<Points: Collection>(forCollection points: Points) -> Self.Coordinates?
-	where Points.Element == Self.Point
+
+
+	static func center<C>(forIterable elements: C) -> Self.Coordinates?
+	where C: Iterable, C.Element == Self.Point
 	{
-		return Self.bbox(forCollection: points)
-			.flatMap(Self.center(forBBox:))
+		Self.bbox(forIterable: elements).flatMap(Self.center(forBBox:))
 	}
 
 	static func centroid<Points: Collection>(forCollection points: Points) -> Self.Coordinates?

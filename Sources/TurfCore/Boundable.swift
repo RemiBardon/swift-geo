@@ -6,7 +6,6 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-//import NonEmpty
 import GeodeticGeometry
 
 public protocol Boundable<BoundingBox> {
@@ -31,41 +30,27 @@ extension GeodeticGeometry.Point where Self.Coordinates: Boundable {
 	public var bbox: Self.Coordinates.BoundingBox { self.coordinates.bbox }
 }
 
-extension GeodeticGeometry.Line where Self.GeometricSystem: GeometricSystemAlgebra {
-	public var bbox: Self.GeometricSystem.BoundingBox {
-		Self.GeometricSystem.bbox(forCollection: self.points)
+// MARK: Iterable types
+
+extension Iterable
+where Self.Element: Boundable,
+			Self.Element.BoundingBox.GeometricSystem: GeometricSystemAlgebra,
+			Self.Element.BoundingBox == Self.Element.BoundingBox.GeometricSystem.BoundingBox
+{
+	public var bbox: Self.Element.BoundingBox? {
+		Self.Element.BoundingBox.GeometricSystem.bbox(forIterable: self)
 	}
 }
 
-//extension Line2D: Boundable {
-//	
-//	public var bbox: BoundingBox2D {
-//		Turf.naiveBBox(forCollection: self.points) ?? BoundingBox2D(southWest: self.points.first, width: .zero, height: .zero)
-//	}
-//	
-//}
-//
-//extension Line3D: Boundable {
-//	
-//	public var bbox: BoundingBox3D {
-//		Turf.naiveBBox(forNonEmptyCollection: self.points)
-//	}
-//	
-//}
-//
-//extension BoundingBox2D: Boundable {
-//	
-//	public var bbox: BoundingBox2D { self }
-//	
-//}
-//
-//extension BoundingBox3D: Boundable {
-//	
-//	public var bbox: BoundingBox3D { self }
-//	
-//}
-
-// MARK: Sequences
+extension NonEmptyIterable
+where Self.Element: Boundable,
+			Self.Element.BoundingBox.GeometricSystem: GeometricSystemAlgebra,
+			Self.Element.BoundingBox == Self.Element.BoundingBox.GeometricSystem.BoundingBox
+{
+	public var bbox: Self.Element.BoundingBox {
+		Self.Element.BoundingBox.GeometricSystem.bbox(forNonEmptyIterable: self)
+	}
+}
 
 extension Sequence where Self.Element: Boundable, Self.Element.BoundingBox: Boundable {
 	public var bbox: Self.Element.BoundingBox {

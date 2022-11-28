@@ -13,27 +13,46 @@ import ValueWithUnit
 
 #warning("TODO: Replace all the `bbox` by one or two using `Boundable`")
 
-public protocol GeometricSystemAlgebra: GeodeticGeometry.GeometricSystem {
+public protocol GeometricSystemAlgebra: GeodeticGeometry.GeometricSystem
+where Self.BoundingBox: Boundable<Self.BoundingBox>,
+			Self.Point: Boundable<Self.BoundingBox>
+{
 
 	// MARK: Bounding box
 
-	static func bbox(forPoint point: Self.Point) -> Self.BoundingBox
+	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+	/// enclosing a cluster of geometrical elements.
+	/// - Warning: This does not take into account the curvature of the Earth.
+	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
+	static func bbox<Iterator>(forIterator iterator: inout Iterator) -> Self.BoundingBox?
+	where Iterator: IteratorProtocol, Iterator.Element: Boundable<Self.BoundingBox>
 
 	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of geometrical elements.
 	/// - Warning: This does not take into account the curvature of the Earth.
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
-	static func bbox<C>(forCollection elements: C) -> Self.BoundingBox?
-	where C: Collection, C.Element: Boundable
+	static func bbox<Base>(
+		forNonEmptyIterator iterator: inout NonEmptyIterator<Base>
+	) -> Self.BoundingBox
+	where Base.Element: Boundable<Self.BoundingBox>
 
 	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of geometrical elements.
 	/// - Warning: This does not take into account the curvature of the Earth.
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
-	static func bbox<C>(forNonEmptyCollection elements: C) -> Self.BoundingBox
-	where C: NonEmptyProtocol, C.Element: Boundable
+	static func bbox<C>(forIterable elements: C) -> Self.BoundingBox?
+	where C: Iterable, C.Element: Boundable<Self.BoundingBox>
+
+	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
+	/// enclosing a cluster of geometrical elements.
+	/// - Warning: This does not take into account the curvature of the Earth.
+	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
+	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
+	static func bbox<C>(forNonEmptyIterable elements: C) -> Self.BoundingBox
+	where C: NonEmptyIterable, C.Element: Boundable<Self.BoundingBox>
 
 	/// Returns a naive [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
 	/// enclosing a cluster of points.
