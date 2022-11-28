@@ -12,189 +12,29 @@ import SwiftGeoToolbox
 
 // MARK: - CoordinateComponent
 
-public protocol CoordinateComponent<Unit>:
-	SafeRawRepresentable,
-	BinaryFloatingPoint,
-	InitializableByNumber,
-	CustomStringConvertible,
-	CustomDebugStringConvertible,
-	Zeroable
-where RawValue: ValueWithUnit.Value<Unit>
-{
-	associatedtype Unit: ValueWithUnit.Unit
-}
+public typealias CoordinateComponent = ValueWithUnit.Value
 
-public extension CoordinateComponent {
+//	// MARK: CustomStringConvertible
+//
+//	var description: String {
+//		let formatter = NumberFormatter()
+//		formatter.numberStyle = .decimal
+//		formatter.maximumFractionDigits = 9
+//		formatter.locale = .en
+//		return formatter.string(for: Double(self))
+//			?? "\(self.rawValue.rawValue)"
+//	}
 
-	// MARK: ExpressibleByFloatLiteral
-
-	init(floatLiteral value: Double) {
-		self.init(value)
-	}
-
-	// MARK: ExpressibleByIntegerLiteral
-
-	init(integerLiteral value: Int) {
-		self.init(rawValue: RawValue(value))
-	}
-
-	// MARK: FloatingPoint
-
-	static var nan: Self { Self(RawValue.nan) }
-	static var signalingNaN: Self { Self(RawValue.signalingNaN) }
-	static var infinity: Self { Self(RawValue.infinity) }
-	static var greatestFiniteMagnitude: Self { Self(RawValue.greatestFiniteMagnitude) }
-	static var pi: Self { Self(RawValue.pi) }
-
-	static var leastNormalMagnitude: Self { Self(RawValue.leastNormalMagnitude) }
-	static var leastNonzeroMagnitude: Self { Self(RawValue.leastNonzeroMagnitude) }
-
-	var exponent: RawValue.Exponent { self.rawValue.exponent }
-	var sign: FloatingPointSign { self.rawValue.sign }
-	var significand: Self { Self(self.rawValue.significand) }
-	var ulp: Self { Self(self.rawValue.ulp) }
-
-	var nextUp: Self { Self(self.rawValue.nextUp) }
-
-	var isNormal: Bool { self.rawValue.isNormal }
-	var isFinite: Bool { self.rawValue.isFinite }
-	var isZero: Bool { self.rawValue.isZero }
-	var isSubnormal: Bool { self.rawValue.isSubnormal }
-	var isInfinite: Bool { self.rawValue.isInfinite }
-	var isNaN: Bool { self.rawValue.isNaN }
-	var isSignalingNaN: Bool { self.rawValue.isSignalingNaN }
-	var isCanonical: Bool { self.rawValue.isCanonical }
-
-	init(sign: FloatingPointSign, exponent: RawValue.Exponent, significand: Self) {
-		self.init(rawValue: RawValue(sign: sign, exponent: exponent, significand: significand.rawValue))
-	}
-
-	static func / (lhs: Self, rhs: Self) -> Self {
-		Self.init(rawValue: lhs.rawValue / rhs.rawValue)
-	}
-	static func /= (lhs: inout Self, rhs: Self) {
-		lhs = lhs / rhs
-	}
-
-	func isEqual(to other: Self) -> Bool {
-		self.rawValue == other.rawValue
-	}
-	func isLess(than other: Self) -> Bool {
-		self.rawValue < other.rawValue
-	}
-	func isLessThanOrEqualTo(_ other: Self) -> Bool {
-		self.rawValue <= other.rawValue
-	}
-
-	mutating func addProduct(_ lhs: Self, _ rhs: Self) {
-		self += Self.init(rawValue: lhs.rawValue * rhs.rawValue)
-	}
-	mutating func formRemainder(dividingBy other: Self) {
-		self = Self.init(rawValue: self.rawValue.remainder(dividingBy: other.rawValue))
-	}
-	mutating func formTruncatingRemainder(dividingBy other: Self) {
-		self = Self.init(rawValue: self.rawValue.truncatingRemainder(dividingBy: other.rawValue))
-	}
-	mutating func formSquareRoot() {
-		self = Self.init(rawValue: self.rawValue.squareRoot())
-	}
-	mutating func round(_ rule: FloatingPointRoundingRule) {
-		self = Self.init(rawValue: self.rawValue.rounded(rule))
-	}
-
-	// MARK: Numeric
-
-	static func * (lhs: Self, rhs: Self) -> Self {
-		Self.init(rawValue: lhs.rawValue * rhs.rawValue)
-	}
-	static func *= (lhs: inout Self, rhs: Self) {
-		lhs = lhs * rhs
-	}
-
-	var magnitude: Self { Self.init(rawValue: self.rawValue.magnitude) }
-
-	init?<T>(exactly source: T) where T: BinaryInteger {
-		guard let value = RawValue(exactly: source) else { return nil }
-		self.init(rawValue: value)
-	}
-
-	// MARK: AdditiveArithmetic
-
-	static var zero: Self { Self.init(rawValue: RawValue.zero) }
-
-	// MARK: Strideable
-
-	static func + (lhs: Self, rhs: Self) -> Self {
-		return Self.init(rawValue: lhs.rawValue + rhs.rawValue)
-	}
-
-	static func - (lhs: Self, rhs: Self) -> Self {
-		return Self.init(rawValue: lhs.rawValue - rhs.rawValue)
-	}
-
-	func advanced(by n: RawValue.Stride) -> Self {
-		return Self.init(rawValue: self.rawValue.advanced(by: n))
-	}
-
-	func distance(to other: Self) -> RawValue.Stride {
-		return self.rawValue.distance(to: other.rawValue)
-	}
-
-	// MARK: BinaryFloatingPoint
-
-	static var exponentBitCount: Int { RawValue.exponentBitCount }
-	static var significandBitCount: Int { RawValue.significandBitCount }
-
-	var binade: Self { Self.init(rawValue: self.rawValue.binade) }
-	var exponentBitPattern: RawValue.RawExponent { self.rawValue.exponentBitPattern }
-	var significandBitPattern: RawValue.RawSignificand {
-		self.rawValue.significandBitPattern
-	}
-	var significandWidth: Int { self.rawValue.significandWidth }
-
-	init(
-		sign: FloatingPointSign,
-		exponentBitPattern: RawValue.RawExponent,
-		significandBitPattern: RawValue.RawSignificand
-	) {
-		self.init(rawValue: RawValue(
-			sign: sign,
-			exponentBitPattern: exponentBitPattern,
-			significandBitPattern: significandBitPattern
-		))
-	}
-
-	init<Source>(_ value: Source) where Source: BinaryFloatingPoint {
-		self.init(rawValue: .init(rawValue: .init(value)))
-	}
-
-	init<Source>(_ value: Source) where Source: BinaryInteger {
-		self.init(rawValue: .init(rawValue: .init(value)))
-	}
-
-	// MARK: CustomStringConvertible
-
-	var description: String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = 9
-		formatter.locale = .en
-		return formatter.string(for: Double(self))
-			?? "\(self.rawValue.rawValue)"
-	}
-
-	// MARK: CustomDebugStringConvertible
-
-	var debugDescription: String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = 99
-		formatter.locale = .en
-		return formatter.string(for: Double(self))
-			?? "\(self.rawValue.rawValue)"
-	}
-	
-}
+//	// MARK: CustomDebugStringConvertible
+//
+//	var debugDescription: String {
+//		let formatter = NumberFormatter()
+//		formatter.numberStyle = .decimal
+//		formatter.maximumFractionDigits = 99
+//		formatter.locale = .en
+//		return formatter.string(for: Double(self))
+//			?? "\(self.rawValue.rawValue)"
+//	}
 
 // MARK: - ValidatableCoordinateComponent
 
