@@ -7,20 +7,36 @@
 //
 
 //import NonEmpty
-import protocol GeodeticGeometry.BoundingBox
+import GeodeticGeometry
 
-public protocol Boundable {
-	
-	associatedtype BoundingBox: GeodeticGeometry.BoundingBox
-	
+public protocol Boundable<BoundingBox> {
+	associatedtype BoundingBox: GeodeticGeometry.BoundingBox & Boundable
+
 	var bbox: BoundingBox { get }
-	
+
+	func union(_ other: Self) -> Self
 }
 
-//extension Coordinate2D: Boundable {}
-//
-//extension Coordinate3D: Boundable {}
-//
+// MARK: - Default implementations
+
+// MARK: Bounding box
+
+extension GeodeticGeometry.BoundingBox {
+	public var bbox: Self { self }
+}
+
+// MARK: Shapes
+
+extension GeodeticGeometry.Point where Self.Coordinates: Boundable {
+	public var bbox: Self.Coordinates.BoundingBox { self.coordinates.bbox }
+}
+
+extension GeodeticGeometry.Line where Self.GeometricSystem: GeometricSystemAlgebra {
+	public var bbox: Self.GeometricSystem.BoundingBox {
+		Self.GeometricSystem.bbox(forCollection: self.points)
+	}
+}
+
 //extension Line2D: Boundable {
 //	
 //	public var bbox: BoundingBox2D {
@@ -49,27 +65,10 @@ public protocol Boundable {
 //	
 //}
 
-// Extension of protocol 'Collection' cannot have an inheritance clause
-//extension Collection: Boundable where Element: Boundable {
-//
-//	public var bbox: Element.BoundingBox {
-//		self.reduce(.zero, { $0.union($1.bbox) })
-//	}
-//
-//}
+// MARK: Sequences
 
-//extension Array: Boundable where Element: Boundable {
-//
-//	public var bbox: Element.BoundingBox {
-//		self.reduce(.zero, { $0.union($1.bbox) })
-//	}
-//
-//}
-//
-//extension Set: Boundable where Element: Boundable {
-//
-//	public var bbox: Element.BoundingBox {
-//		self.reduce(.zero, { $0.union($1.bbox) })
-//	}
-//
-//}
+extension Sequence where Self.Element: Boundable, Self.Element.BoundingBox: Boundable {
+	public var bbox: Self.Element.BoundingBox {
+		self.reduce(.zero, { $0.union($1.bbox) })
+	}
+}

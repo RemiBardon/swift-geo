@@ -6,15 +6,14 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import Geodesy
-import NonEmpty
+import protocol NonEmpty.NonEmptyProtocol
 
 public protocol MultiPoint<GeometricSystem>: Hashable {
 
-	typealias CRS = GeometricSystem.CRS
-	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<CRS>
-	typealias Point = GeometricSystem.Point
-	associatedtype Points: NonEmptyProtocol
+	typealias CRS = Self.GeometricSystem.CRS
+	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<Self.CRS>
+	typealias Point = Self.GeometricSystem.Point
+	associatedtype Points: NonEmpty.NonEmptyProtocol
 	where Self.Points.Element == Self.Point
 	
 	var points: Self.Points { get }
@@ -24,7 +23,7 @@ public protocol MultiPoint<GeometricSystem>: Hashable {
 }
 
 extension MultiPoint {
-
+	// Type alias defined so we can declare a `Point` associated type
+	// and `GeometricSystem` is inferred.
 	public typealias GeometricSystem = Self.Point.GeometricSystem
-
 }
