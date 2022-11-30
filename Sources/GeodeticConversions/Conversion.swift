@@ -1,5 +1,5 @@
 //
-//  Conversions.swift
+//  Conversion.swift
 //  SwiftGeo
 //
 //  Created by Rémi Bardon on 01/10/2022.
@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Geodesy
+import WGS84Core
 
 public protocol Conversion<C1, C2> {
 	associatedtype C1: Coordinates
@@ -48,38 +50,6 @@ where C1: ThreeDimensionalCoordinates,
 	/// <https://drive.tiny.cloud/1/4m326iu12oa8re9cjiadxonharclteqb4mumfxj71zsttwkx/5e0ec79e-49fa-4e7a-acca-3d6f6c989877> section 4.1.1
 	public static func unapply(from coordinate: C2) -> C1 {
 		return .init(x: .init(Double(coordinate.x)), y: .init(coordinate.y), z: .init(0.0))
-	}
-}
-
-public extension ThreeDimensionalCoordinates where CRS: GeographicCRS {
-	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
-	where C: TwoDimensionalCoordinates,
-				NewCRS: GeographicCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9659<Self, C>.apply(on: self)
-	}
-	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinates2D<NewCRS>
-	where NewCRS: GeographicCRS & TwoDimensionalCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9659<Self, Coordinates2D<NewCRS>>.apply(on: self)
-	}
-}
-
-public extension TwoDimensionalCoordinates where CRS: GeographicCRS {
-	func transformed<NewCRS, C: Coordinates<NewCRS>>(to _: C.Type) -> C
-	where C: ThreeDimensionalCoordinates,
-				NewCRS: GeographicCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9659<C, Self>.unapply(from: self)
-	}
-	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinates3D<NewCRS>
-	where NewCRS: GeographicCRS & ThreeDimensionalCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9659<Coordinates3D<NewCRS>, Self>.unapply(from: self)
 	}
 }
 
@@ -155,24 +125,6 @@ where C1: ThreeDimensionalCoordinates,
 		let h = (p / cos(φ)) - ν
 
 		return .init(x: .init(φ.fromRadians), y: .init(λ.fromRadians), z: .init(h))
-	}
-}
-
-public extension ThreeDimensionalCoordinates {
-	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinates3D<NewCRS>
-	where CRS: GeographicCRS,
-				NewCRS: GeocentricCRS & ThreeDimensionalCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9602<Self, Coordinates3D<NewCRS>>.apply(on: self)
-	}
-
-	func transformed<NewCRS>(toCRS newCRS: NewCRS.Type) -> Coordinates3D<NewCRS>
-	where CRS: GeocentricCRS,
-				NewCRS: GeographicCRS & ThreeDimensionalCRS,
-				NewCRS.Datum.PrimeMeridian == CRS.Datum.PrimeMeridian
-	{
-		EPSG9602<Coordinates3D<NewCRS>, Self>.unapply(from: self)
 	}
 }
 

@@ -10,8 +10,8 @@ import Geodesy
 
 // MARK: - Coordinates
 
-public typealias Coordinate2D = Coordinate2DOf<WGS84Geographic2DCRS>
-public typealias Coordinate3D = Coordinate3DOf<WGS84Geographic3DCRS>
+public typealias Coordinate2D = WGS84Geographic2DCRS.Coordinates
+public typealias Coordinate3D = WGS84Geographic3DCRS.Coordinates
 
 // MARK: - Coordinate Reference System (CRS/SRS)
 
@@ -19,6 +19,7 @@ public typealias Coordinate3D = Coordinate3DOf<WGS84Geographic3DCRS>
 public enum WGS84Geographic2DCRS: GeographicCRS, TwoDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = Ellipsoidal2DCS
+	public typealias Coordinates = Coordinates2DOf<Self>
 
 	public static let epsgName: String = "WGS 84 (geographic 2D)"
 	public static let epsgCode: Int = 4326
@@ -30,6 +31,7 @@ public typealias EPSG4326 = WGS84Geographic2DCRS
 public enum WGS84Geographic3DCRS: GeographicCRS, ThreeDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = Ellipsoidal3DCS
+	public typealias Coordinates = Coordinates3DOf<Self>
 
 	public static let epsgName: String = "WGS 84 (geographic 3D)"
 	public static let epsgCode: Int = 4979
@@ -41,6 +43,7 @@ public typealias EPSG4979 = WGS84Geographic3DCRS
 public enum WGS84GeocentricCRS: GeocentricCRS, ThreeDimensionalCRS {
 	public typealias Datum = WGS84Ensemble
 	public typealias CoordinateSystem = GeocentricCartesian3DCS
+	public typealias Coordinates = Coordinates3DOf<Self>
 
 	public static let epsgName: String = "WGS 84 (geocentric)"
 	public static let epsgCode: Int = 4978
@@ -81,34 +84,3 @@ public enum EPSG7030: ReferenceEllipsoid {
 	public static let semiMajorAxis: Double = 6378137
 	public static let inverseFlattening: Double = 298.257_223_563
 }
-
-// MARK: - Coordinate System (CS)
-
-public enum GeocentricCartesian3DCS: ThreeDimensionalCS {
-	public typealias Axis1 = GeocentricX
-	public typealias Axis2 = GeocentricY
-	public typealias Axis3 = GeocentricZ
-	public static let epsgName: String = "Cartesian 3D CS (geocentric)"
-	public static let epsgCode: Int = 6500
-}
-
-public typealias EPSG6500 = GeocentricCartesian3DCS
-
-public enum Ellipsoidal3DCS: ThreeDimensionalCS {
-	public typealias Axis1 = GeodeticLatitude
-	public typealias Axis2 = GeodeticLongitude
-	public typealias Axis3 = EllipsoidalHeight
-	public static let epsgName: String = "Ellipsoidal 3D CS"
-	public static let epsgCode: Int = 6423
-}
-
-public typealias EPSG6423 = Ellipsoidal3DCS
-
-public enum Ellipsoidal2DCS: TwoDimensionalCS {
-	public typealias Axis1 = GeodeticLatitude
-	public typealias Axis2 = GeodeticLongitude
-	public static let epsgName: String = "Ellipsoidal 2D CS"
-	public static let epsgCode: Int = 6422
-}
-
-public typealias EPSG6422 = Ellipsoidal2DCS

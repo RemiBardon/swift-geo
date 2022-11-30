@@ -188,6 +188,34 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticConversions"
+               BuildableName = "GeodeticConversions"
+               BlueprintName = "GeodeticConversions"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WGS84Conversions"
+               BuildableName = "WGS84Conversions"
+               BlueprintName = "WGS84Conversions"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -254,6 +282,16 @@
                BlueprintIdentifier = "TurfCoreTests"
                BuildableName = "TurfCoreTests"
                BlueprintName = "TurfCoreTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticConversionsTests"
+               BuildableName = "GeodeticConversionsTests"
+               BlueprintName = "GeodeticConversionsTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

@@ -12,6 +12,7 @@ let package = Package(
 		// Products define the executables and libraries a package produces,
 		// and make them visible to other packages.
 		.library(name: "Geodesy", targets: ["Geodesy"]),
+		.library(name: "GeodeticConversions", targets: ["GeodeticConversions"]),
 		.library(name: "WGS84", targets: ["WGS84"]),
 		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
 		.library(name: "Turf", targets: ["Turf"]),
@@ -113,10 +114,23 @@ let package = Package(
 		.target(name: "TurfMapKit", dependencies: ["TurfCore", "WGS84Geometry"]),
 
 		// 🗺️ World Geodetic System standard
-		.target(name: "WGS84", dependencies: ["WGS84Core", "WGS84Geometry", "WGS84Turf"]),
+		.target(name: "WGS84", dependencies: [
+			"WGS84Core",
+			"WGS84Conversions",
+			"WGS84Geometry",
+			"WGS84Turf",
+		]),
 		.testTarget(name: "WGS84Tests", dependencies: ["WGS84"]),
 		.target(name: "WGS84Core", dependencies: ["Geodesy", "GeodeticDisplay"]),
+		.target(name: "WGS84Conversions", dependencies: ["WGS84Core", "GeodeticConversions"]),
 		.target(name: "WGS84Geometry", dependencies: ["WGS84Core", "GeodeticGeometry"]),
 		.target(name: "WGS84Turf", dependencies: ["WGS84Geometry", "Turf"]),
+
+		// 🎭 Conversions from one Coordinate Reference System to another
+		.target(name: "GeodeticConversions", dependencies: ["Geodesy", "WGS84Core"]),
+		.testTarget(name: "GeodeticConversionsTests", dependencies: [
+			"GeodeticConversions",
+			"WGS84Conversions",
+		]),
 	]
 )

@@ -17,7 +17,9 @@ public protocol Value<Unit>:
 	MultiplicativeArithmetic,
 	Zeroable,
 	SafeRawRepresentable,
-	InitializableByNumber
+	InitializableByNumber,
+	CustomStringConvertible,
+	CustomDebugStringConvertible
 where RawValue: BinaryFloatingPoint
 {
 	associatedtype Unit: ValueWithUnit.Unit
@@ -25,14 +27,16 @@ where RawValue: BinaryFloatingPoint
 
 public extension Value {
 
-	// MARK: ExpressibleByFloatLiteral
+	// MARK: CustomStringConvertible & CustomDebugStringConvertible
+
+	var description: String { String(describing: self.rawValue) }
+	var debugDescription: String { String(reflecting: self.rawValue) }
+
+	// MARK: ExpressibleByFloatLiteral & ExpressibleByIntegerLiteral
 
 	init(floatLiteral value: Double) {
 		self.init(value)
 	}
-
-	// MARK: ExpressibleByIntegerLiteral
-
 	init(integerLiteral value: Int) {
 		self.init(Double(value))
 	}
@@ -201,8 +205,14 @@ public extension Value where Unit: AngleUnit {
 public extension Value where Unit == Radian {
 	var radians: Double { Double(self.rawValue) }
 }
+extension Value where Unit == Radian {
+	var debugDescription: String { "\(self.rawValue)rad" }
+}
 public extension Value where Unit == Degree {
 	var degrees: Double { Double(self.rawValue) }
+}
+extension Value where Unit == Degree {
+	var debugDescription: String { "\(self.rawValue)°" }
 }
 
 public struct Radian: AngleUnit {
@@ -216,8 +226,11 @@ public struct Degree: AngleUnit {
 
 public protocol LengthUnit: Unit {
 	/// Value in meters equal to `1` `Self`.
-  static var metersFactor: Double { get }
+	static var metersFactor: Double { get }
 }
 public struct Meter: LengthUnit {
-  public static let metersFactor: Double = 1
+	public static let metersFactor: Double = 1
+}
+extension Value where Unit == Meter {
+	var debugDescription: String { "\(self.rawValue)m" }
 }

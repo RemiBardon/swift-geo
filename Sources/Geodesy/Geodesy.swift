@@ -46,7 +46,7 @@ where CRS: TwoDimensionalCRS
 	init(x: X, y: Y)
 }
 
-public struct Coordinates2D<CRS>: TwoDimensionalCoordinates
+public struct Coordinates2DOf<CRS>: TwoDimensionalCoordinates
 where CRS: TwoDimensionalCRS
 {
 	public typealias X = CRS.CoordinateSystem.Axis1.Value
@@ -71,12 +71,12 @@ where CRS: TwoDimensionalCRS
 }
 
 // Zeroable
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	static var zero: Self { Self.init(x: .zero, y: .zero) }
 }
 
 // AdditiveArithmetic
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	static func + (lhs: Self, rhs: Self) -> Self {
 		Self.init(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
 	}
@@ -85,7 +85,7 @@ public extension Coordinates2D {
 	}
 }
 // MultiplicativeArithmetic
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	static func * (lhs: Self, rhs: Self) -> Self {
 		Self.init(x: lhs.x * rhs.x, y: lhs.y * rhs.y)
 	}
@@ -95,25 +95,25 @@ public extension Coordinates2D {
 }
 
 // InitializableByInteger
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	init<Source: BinaryInteger>(_ value: Source) {
 		self.init(x: .init(value), y: .init(value))
 	}
 }
 // InitializableByFloatingPoint
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	init<Source: BinaryFloatingPoint>(_ value: Source) {
 		self.init(x: .init(value), y: .init(value))
 	}
 }
 
 // CustomStringConvertible & CustomDebugStringConvertible
-public extension Coordinates2D {
+public extension Coordinates2DOf {
 	var description: String { String(describing: self.components) }
 	var debugDescription: String { String(reflecting: self.components) }
 }
 
-public extension Coordinates2D where CRS: GeographicCRS {
+public extension Coordinates2DOf where CRS: GeographicCRS {
 	var latitude: X { self.x }
 	var longitude: Y { self.y }
 	init(latitude: X, longitude: Y) {
@@ -121,7 +121,7 @@ public extension Coordinates2D where CRS: GeographicCRS {
 	}
 }
 
-public extension Coordinates2D
+public extension Coordinates2DOf
 where CRS: GeographicCRS,
 			Self.Y: AngularCoordinateComponent
 {
@@ -147,7 +147,7 @@ where CRS: ThreeDimensionalCRS
 	init(x: X, y: Y, z: Z)
 }
 
-public struct Coordinates3D<CRS: ThreeDimensionalCRS>: ThreeDimensionalCoordinates {
+public struct Coordinates3DOf<CRS: ThreeDimensionalCRS>: ThreeDimensionalCoordinates {
 	public typealias X = CRS.CoordinateSystem.Axis1.Value
 	public typealias Y = CRS.CoordinateSystem.Axis2.Value
 	public typealias Z = CRS.CoordinateSystem.Axis3.Value
@@ -174,12 +174,12 @@ public struct Coordinates3D<CRS: ThreeDimensionalCRS>: ThreeDimensionalCoordinat
 }
 
 // Zeroable
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	static var zero: Self { Self.init(x: .zero, y: .zero, z: .zero) }
 }
 
 // AdditiveArithmetic
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	static func + (lhs: Self, rhs: Self) -> Self {
 		Self.init(x: lhs.x + rhs.x, y: lhs.y + rhs.y, z: lhs.z + rhs.z)
 	}
@@ -188,7 +188,7 @@ public extension Coordinates3D {
 	}
 }
 // MultiplicativeArithmetic
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	static func * (lhs: Self, rhs: Self) -> Self {
 		Self.init(x: lhs.x * rhs.x, y: lhs.y * rhs.y, z: lhs.z * rhs.z)
 	}
@@ -198,20 +198,20 @@ public extension Coordinates3D {
 }
 
 // InitializableByInteger
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	init<Source: BinaryInteger>(_ value: Source) {
 		self.init(x: .init(value), y: .init(value), z: .init(value))
 	}
 }
 // InitializableByFloatingPoint
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	init<Source: BinaryFloatingPoint>(_ value: Source) {
 		self.init(x: .init(value), y: .init(value), z: .init(value))
 	}
 }
 
 // CustomStringConvertible & CustomDebugStringConvertible
-public extension Coordinates3D {
+public extension Coordinates3DOf {
 	var description: String { String(describing: self.components) }
 	var debugDescription: String { String(reflecting: self.components) }
 }
@@ -344,6 +344,7 @@ public enum GeocentricCartesian3DCS: ThreeDimensionalCS, GeocentricCS {
 	public static let epsgName: String = "Cartesian 3D CS (geocentric)"
 	public static let epsgCode: Int = 6500
 }
+public typealias EPSG6500 = GeocentricCartesian3DCS
 
 public enum Ellipsoidal3DCS: ThreeDimensionalCS, GeographicCS {
 	public typealias Axis1 = GeodeticLatitude
@@ -352,6 +353,7 @@ public enum Ellipsoidal3DCS: ThreeDimensionalCS, GeographicCS {
 	public static let epsgName: String = "Ellipsoidal 3D CS"
 	public static let epsgCode: Int = 6423
 }
+public typealias EPSG6423 = Ellipsoidal3DCS
 
 public enum Ellipsoidal2DCS: TwoDimensionalCS, GeographicCS {
 	public typealias Axis1 = GeodeticLatitude
@@ -359,6 +361,7 @@ public enum Ellipsoidal2DCS: TwoDimensionalCS, GeographicCS {
 	public static let epsgName: String = "Ellipsoidal 2D CS"
 	public static let epsgCode: Int = 6422
 }
+public typealias EPSG6422 = Ellipsoidal2DCS
 
 // MARK: Axes
 
