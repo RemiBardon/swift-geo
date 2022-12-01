@@ -9,7 +9,7 @@
 #if canImport(MapKit)
 import MapKit
 
-public extension WGS842D.Point {
+public extension Point2D {
 
 	var mkMapPoint: MKMapPoint {
 		self.coordinates.mkMapPoint
@@ -17,7 +17,7 @@ public extension WGS842D.Point {
 
 }
 
-public extension WGS842D.BoundingBox {
+public extension BoundingBox2D {
 
 	var mkCoordinateSpan: MKCoordinateSpan {
 		MKCoordinateSpan(
@@ -66,7 +66,7 @@ public extension WGS842D.BoundingBox {
 
 }
 
-public extension WGS842D.LineString {
+public extension LineString2D {
 
 	var mkPolyline: MKPolyline {
 		var points: [CLLocationCoordinate2D] = self.points.map(\.clLocationCoordinate2D)

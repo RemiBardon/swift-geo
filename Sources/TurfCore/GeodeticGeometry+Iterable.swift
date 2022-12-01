@@ -7,7 +7,7 @@
 
 import GeodeticGeometry
 
-public extension MultiPoint {
+public extension MultiPointProtocol {
 	func makeIterator() -> NonEmptyIterator<Self.Points> {
 		NonEmptyIterator(base: self.points)
 	}

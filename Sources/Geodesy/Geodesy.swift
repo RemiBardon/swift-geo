@@ -20,7 +20,7 @@ public protocol EPSGItem {
 // MARK: - Coordinates
 
 public protocol Coordinates<CRS>:
-	Equatable,
+	Hashable,
 	Zeroable,
 	AdditiveArithmetic,
 	MultiplicativeArithmetic,
@@ -29,20 +29,33 @@ public protocol Coordinates<CRS>:
 	CustomDebugStringConvertible
 {
 	associatedtype CRS: Geodesy.CoordinateReferenceSystem
+	associatedtype Components
+
+	var components: Components { get set }
+
+	init(components: Components)
+}
+
+// CustomStringConvertible & CustomDebugStringConvertible
+public extension Coordinates {
+	var description: String { String(describing: self.components) }
+	var debugDescription: String {
+		"<\(Self.CRS.epsgName)>\(String(reflecting: self.components))"
+	}
 }
 
 // MARK: 2D Coordinates
 
-public protocol TwoDimensionalCoordinates<CRS>: Geodesy.Coordinates
-where CRS: TwoDimensionalCRS
-{
+public protocol AtLeastTwoDimensionalCoordinates<CRS>: Geodesy.Coordinates
+where CRS: AtLeastTwoDimensionalCRS {
 	associatedtype X: CoordinateComponent
 	associatedtype Y: CoordinateComponent
 
 	var x: X { get set }
 	var y: Y { get set }
-	var components: (X, Y) { get set }
-
+}
+public protocol TwoDimensionalCoordinates<CRS>: AtLeastTwoDimensionalCoordinates
+where Components == (X, Y) {
 	init(x: X, y: Y)
 }
 
@@ -67,6 +80,9 @@ where CRS: TwoDimensionalCRS
 		#warning("TODO: Perform validations")
 		self.x = x
 		self.y = y
+	}
+	public init(components: (X, Y)) {
+		self.init(x: components.0, y: components.1)
 	}
 }
 
@@ -107,12 +123,6 @@ public extension Coordinates2DOf {
 	}
 }
 
-// CustomStringConvertible & CustomDebugStringConvertible
-public extension Coordinates2DOf {
-	var description: String { String(describing: self.components) }
-	var debugDescription: String { String(reflecting: self.components) }
-}
-
 public extension Coordinates2DOf where CRS: GeographicCRS {
 	var latitude: X { self.x }
 	var longitude: Y { self.y }
@@ -123,7 +133,7 @@ public extension Coordinates2DOf where CRS: GeographicCRS {
 
 public extension Coordinates2DOf
 where CRS: GeographicCRS,
-			Self.Y: AngularCoordinateComponent
+			Y: AngularCoordinateComponent
 {
 	var withPositiveLongitude: Self {
 		Self.init(latitude: self.latitude, longitude: self.longitude.positive)
@@ -132,18 +142,14 @@ where CRS: GeographicCRS,
 
 // MARK: 3D Coordinates
 
-public protocol ThreeDimensionalCoordinates<CRS>: Geodesy.Coordinates
-where CRS: ThreeDimensionalCRS
-{
-	associatedtype X: CoordinateComponent
-	associatedtype Y: CoordinateComponent
+public protocol AtLeastThreeDimensionalCoordinates<CRS>: AtLeastTwoDimensionalCoordinates
+where CRS: AtLeastTwoDimensionalCRS {
 	associatedtype Z: CoordinateComponent
 
-	var x: X { get set }
-	var y: Y { get set }
 	var z: Z { get set }
-	var components: (X, Y, Z) { get set }
-
+}
+public protocol ThreeDimensionalCoordinates<CRS>: AtLeastThreeDimensionalCoordinates
+where Components == (X, Y, Z) {
 	init(x: X, y: Y, z: Z)
 }
 
@@ -170,6 +176,9 @@ public struct Coordinates3DOf<CRS: ThreeDimensionalCRS>: ThreeDimensionalCoordin
 		self.x = x
 		self.y = y
 		self.z = z
+	}
+	public init(components: (X, Y, Z)) {
+		self.init(x: components.0, y: components.1, z: components.2)
 	}
 }
 
@@ -210,12 +219,6 @@ public extension Coordinates3DOf {
 	}
 }
 
-// CustomStringConvertible & CustomDebugStringConvertible
-public extension Coordinates3DOf {
-	var description: String { String(describing: self.components) }
-	var debugDescription: String { String(reflecting: self.components) }
-}
-
 public extension ThreeDimensionalCoordinates where CRS: GeographicCRS {
 	var latitude: X { self.x }
 	var longitude: Y { self.y }
@@ -227,7 +230,7 @@ public extension ThreeDimensionalCoordinates where CRS: GeographicCRS {
 
 public extension ThreeDimensionalCoordinates
 where CRS: GeographicCRS,
-			Self.Y: AngularCoordinateComponent
+			Y: AngularCoordinateComponent
 {
 	var withPositiveLongitude: Self {
 		Self.init(
@@ -247,13 +250,17 @@ public protocol CoordinateReferenceSystem: EPSGItem {
 }
 
 public protocol AtLeastTwoDimensionalCRS: CoordinateReferenceSystem
-where CoordinateSystem: AtLeastTwoDimensionalCS {}
+where CoordinateSystem: AtLeastTwoDimensionalCS,
+			Coordinates: AtLeastTwoDimensionalCoordinates
+{}
 public protocol TwoDimensionalCRS: AtLeastTwoDimensionalCRS
 where CoordinateSystem: TwoDimensionalCS,
 			Coordinates: TwoDimensionalCoordinates
 {}
 public protocol AtLeastThreeDimensionalCRS: AtLeastTwoDimensionalCRS
-where CoordinateSystem: AtLeastThreeDimensionalCS {}
+where CoordinateSystem: AtLeastThreeDimensionalCS,
+			Coordinates: AtLeastThreeDimensionalCoordinates
+{}
 public protocol ThreeDimensionalCRS: AtLeastThreeDimensionalCRS
 where CoordinateSystem: ThreeDimensionalCS,
 			Coordinates: ThreeDimensionalCoordinates

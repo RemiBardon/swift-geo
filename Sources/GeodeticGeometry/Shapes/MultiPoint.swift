@@ -6,24 +6,36 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import protocol NonEmpty.NonEmptyProtocol
+import Geodesy
+import NonEmpty
 
-public protocol MultiPoint<GeometricSystem>: Hashable {
+// MARK: - Protocol
 
-	typealias CRS = Self.GeometricSystem.CRS
-	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem<Self.CRS>
-	typealias Point = Self.GeometricSystem.Point
-	associatedtype Points: NonEmpty.NonEmptyProtocol
+public protocol MultiPointProtocol<CRS>: Hashable {
+	associatedtype CRS: Geodesy.CoordinateReferenceSystem
+	typealias Point = GeodeticGeometry.Point<CRS>
+	associatedtype Points: NonEmptyProtocol
 	where Self.Points.Element == Self.Point
-	
+
 	var points: Self.Points { get }
-	
+
 	init(points: Self.Points)
-	
 }
 
-extension MultiPoint {
-	// Type alias defined so we can declare a `Point` associated type
-	// and `GeometricSystem` is inferred.
-	public typealias GeometricSystem = Self.Point.GeometricSystem
+// MARK: - Implementation
+
+public struct MultiPoint<CRS>: MultiPointProtocol
+where CRS: Geodesy.CoordinateReferenceSystem {
+	public typealias Point = GeodeticGeometry.Point<CRS>
+	public typealias Points = NonEmpty<[Self.Point]>
+
+	public var points: Self.Points
+
+	public init(points: Self.Points) {
+		self.points = points
+	}
+	public init(coordinates: NonEmpty<[Self.Point.Coordinates]>) {
+		let points: [Self.Point] = coordinates.map(Self.Point.init(coordinates:))
+		self.init(points: try! Self.Points(points))
+	}
 }

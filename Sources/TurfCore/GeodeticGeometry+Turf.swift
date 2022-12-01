@@ -65,7 +65,7 @@ public extension GeometricSystemAlgebra {
 	}
 	
 	static func geographicBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-	where MultiPoint: GeodeticGeometry.MultiPoint,
+	where MultiPoint: GeodeticGeometry.MultiPointProtocol,
 				MultiPoint.Point == Self.Point
 	{
 		return self.geographicBBox(forCollection: multiPoint.points)

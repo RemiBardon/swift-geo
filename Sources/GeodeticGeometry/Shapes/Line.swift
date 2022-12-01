@@ -6,40 +6,35 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
+import Geodesy
 import NonEmpty
 
-public protocol Line<GeometricSystem>: GeodeticGeometry.MultiPoint
-where Self.Points == AtLeast2<[Self.Point]>
-{
-	
-	var start: Self.Point { get }
-	var end: Self.Point { get }
+// MARK: - Protocol
 
-	var vector: Self { get }
+public struct Line<CRS: Geodesy.CoordinateReferenceSystem>: Hashable {
+	public typealias Point = GeodeticGeometry.Point<CRS>
+	public typealias Points = AtLeast2<[Self.Point]>
 	
-	init(start: Self.Point, end: Self.Point)
-	init(from: Self.Point.Coordinates, to: Self.Point.Coordinates)
-	
-}
+	public var start: Self.Point
+	public var end: Self.Point
 
-extension Line {
+	public var vector: Vector<CRS> { Vector(from: start, to: end) }
 
-	public var vector: Self {
-		return Self(start: .zero, end: self.end - self.start)
+	public init(start: Self.Point, end: Self.Point) {
+		self.start = start
+		self.end = end
 	}
-	
 	public init(from: Self.Point, to: Self.Point) {
 		self.init(start: from, end: to)
 	}
 	public init(from: Self.Point.Coordinates, to: Self.Point.Coordinates) {
 		self.init(start: .init(coordinates: from), end: .init(coordinates: to))
 	}
-	
 }
 
-// MARK: GeoModels.MultiPoint
+// MARK: - Implementation
 
-extension Line {
+extension Line: GeodeticGeometry.MultiPointProtocol {
 	
 	public var points: Self.Points { Self.Points(start, end) }
 	

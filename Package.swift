@@ -6,7 +6,8 @@ import PackageDescription
 let package = Package(
 	name: "swift-geo",
 	platforms: [
-		.macOS(.v10_15),
+		// TODO: Support `.macOS(.v10_15)` again by using a backwards compatile logging system
+		.macOS(.v11),
 	],
 	products: [
 		// Products define the executables and libraries a package produces,
@@ -127,7 +128,11 @@ let package = Package(
 		.target(name: "WGS84Turf", dependencies: ["WGS84Geometry", "Turf"]),
 
 		// 🎭 Conversions from one Coordinate Reference System to another
-		.target(name: "GeodeticConversions", dependencies: ["Geodesy", "WGS84Core"]),
+		.target(name: "GeodeticConversions", dependencies: [
+			"Geodesy",
+			"GeodeticGeometry",
+			"WGS84Core",
+		]),
 		.testTarget(name: "GeodeticConversionsTests", dependencies: [
 			"GeodeticConversions",
 			"WGS84Conversions",

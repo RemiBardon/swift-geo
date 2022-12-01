@@ -60,7 +60,7 @@ where Self.BoundingBox: Boundable<Self.BoundingBox>,
 	/// - Warning: This is a naive implementation, not taking into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 0°E).
 	static func bbox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-	where MultiPoint: GeodeticGeometry.MultiPoint,
+	where MultiPoint: GeodeticGeometry.MultiPointProtocol,
 				MultiPoint.Point == Self.Point
 
 	/// Returns the [bounding box](https://en.wikipedia.org/wiki/Minimum_bounding_box)
@@ -85,7 +85,7 @@ where Self.BoundingBox: Boundable<Self.BoundingBox>,
 	/// - Note: This implementation takes into account the angular coordinate system
 	///   (i.e. a cluster around 0°N 180°E will have a bounding box around 0°N 180°E).
 	static func geographicBBox<MultiPoint>(forMultiPoint multiPoint: MultiPoint) -> Self.BoundingBox
-	where MultiPoint: GeodeticGeometry.MultiPoint,
+	where MultiPoint: GeodeticGeometry.MultiPointProtocol,
 				MultiPoint.Point == Self.Point
 
 	// MARK: Center

@@ -8,8 +8,9 @@
 
 import GeodeticGeometry
 
-public protocol Boundable<BoundingBox> {
-	associatedtype BoundingBox: GeodeticGeometry.BoundingBox & Boundable
+public protocol Boundable<GeometricSystem> {
+	associatedtype GeometricSystem: GeodeticGeometry.GeometricSystem
+	typealias BoundingBox = GeodeticGeometry.BoundingBox<GeometricSystem>
 
 	var bbox: BoundingBox { get }
 
@@ -34,7 +35,7 @@ extension GeodeticGeometry.Point where Self.Coordinates: Boundable {
 
 extension Iterable
 where Self.Element: Boundable,
-			Self.Element.BoundingBox.GeometricSystem: GeometricSystemAlgebra,
+			Self.Element.GeometricSystem: GeometricSystemAlgebra,
 			Self.Element.BoundingBox == Self.Element.BoundingBox.GeometricSystem.BoundingBox
 {
 	public var bbox: Self.Element.BoundingBox? {

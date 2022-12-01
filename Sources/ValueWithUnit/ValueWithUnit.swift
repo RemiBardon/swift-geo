@@ -14,8 +14,9 @@ public protocol Unit: Hashable, Sendable {
 
 public protocol Value<Unit>:
 	BinaryFloatingPoint,
-	MultiplicativeArithmetic,
 	Zeroable,
+	AdditiveArithmetic,
+	MultiplicativeArithmetic,
 	SafeRawRepresentable,
 	InitializableByNumber,
 	CustomStringConvertible,
