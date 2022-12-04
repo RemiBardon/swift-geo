@@ -42,7 +42,7 @@ public extension Point {
 	static func + <OtherCRS>(lhs: Self, rhs: Point<OtherCRS>) -> Self
 	where CRS: ConvertibleCRS, OtherCRS: ConvertibleCRS
 	{
-		Self.init(coordinates: lhs.coordinates + rhs.coordinates.to(to: OtherCRS.self))
+		Self.init(coordinates: lhs.coordinates + rhs.coordinates.to(CRS.self))
 	}
 }
 

@@ -45,11 +45,19 @@ func snapshot(
 	assert(points.count == polyline.pointCount)
 	mapView.addOverlay(polyline, level: .aboveRoads)
 
-	while (!delegate.renderingFinished) {
+	while (delegate.renderingStep == .rendering) {
 		// Wait 100ms
 		try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
 	}
-	return mapView.snapshot
+	switch delegate.renderingStep {
+	case .rendered:
+		return mapView.snapshot
+	case .error(let error):
+		throw XCTSkip(String(describing: error))
+	case .rendering:
+		XCTFail("Unexpected code path: `delegate.renderingStep` should not equal `.rendering`", file: file, line: line)
+		throw XCTSkip()
+	}
 }
 
 extension NSView {
@@ -65,7 +73,11 @@ extension NSView {
 
 final class MapDelegate: NSObject, MKMapViewDelegate {
 
-	var renderingFinished = false
+	enum RenderingStep: Equatable {
+		case rendering, rendered, error(MKError)
+	}
+
+	var renderingStep = RenderingStep.rendering
 
 	func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
 		if overlay is MKPolyline {
@@ -77,8 +89,17 @@ final class MapDelegate: NSObject, MKMapViewDelegate {
 		return MKOverlayRenderer()
 	}
 
+	func mapViewDidFailLoadingMap(_ mapView: MKMapView, withError error: Error) {
+		if let error = error as? MKError {
+			self.renderingStep = .error(error)
+		} else {
+			assertionFailure("Error is not a `MKError`: \(error)")
+			self.renderingStep = .error(.init(.unknown, userInfo: [:]))
+		}
+	}
+
 	func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
-		self.renderingFinished = true
+		self.renderingStep = .rendered
 	}
 
 }
