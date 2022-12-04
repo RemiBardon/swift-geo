@@ -20,20 +20,6 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TurfTests"
-               BuildableName = "TurfTests"
-               BlueprintName = "TurfTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -78,16 +64,21 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TurfTests"
-               BuildableName = "TurfTests"
-               BlueprintName = "TurfTests"
+               BlueprintIdentifier = "TurfCoreTests"
+               BuildableName = "TurfCoreTests"
+               BlueprintName = "TurfCoreTests"
                ReferencedContainer = "container:">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "SnapshotTests">
-               </Test>
-            </SkippedTests>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeodeticGeometryTests"
+               BuildableName = "GeodeticGeometryTests"
+               BlueprintName = "GeodeticGeometryTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
          </TestableReference>
       </Testables>
    </TestAction>

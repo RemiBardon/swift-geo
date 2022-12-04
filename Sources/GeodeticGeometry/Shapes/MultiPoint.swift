@@ -11,7 +11,7 @@ import NonEmpty
 
 // MARK: - Protocol
 
-public protocol MultiPointProtocol<CRS>: Hashable {
+public protocol MultiPointProtocol<CRS>: Hashable, Iterable {
 	associatedtype CRS: Geodesy.CoordinateReferenceSystem
 	typealias Point = GeodeticGeometry.Point<CRS>
 	associatedtype Points: NonEmptyProtocol
@@ -37,5 +37,12 @@ where CRS: Geodesy.CoordinateReferenceSystem {
 	public init(coordinates: NonEmpty<[Self.Point.Coordinates]>) {
 		let points: [Self.Point] = coordinates.map(Self.Point.init(coordinates:))
 		self.init(points: try! Self.Points(points))
+	}
+}
+
+extension MultiPoint: Iterable {
+	public typealias Element = Self.Point
+	public func makeIterator() -> NonEmptyIterator<Self.Points> {
+		NonEmptyIterator(base: self.points)
 	}
 }

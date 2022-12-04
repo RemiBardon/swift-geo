@@ -40,3 +40,31 @@ extension Point: MultiplicativeArithmetic {
 		Self.init(coordinates: lhs.coordinates / rhs.coordinates)
 	}
 }
+
+extension Point: CustomStringConvertible {
+	public var description: String {
+		String(describing: self.coordinates)
+	}
+}
+extension Point: CustomDebugStringConvertible {
+	public var debugDescription: String {
+		"<Point | \(CRS.epsgName)>\(String(describing: self.coordinates))"
+	}
+}
+
+extension Point
+where Coordinates: TwoDimensionalCoordinates,
+			Coordinates.Y == Geodesy.Longitude
+{
+	var withPositiveLongitude: Self {
+		Self.init(coordinates: self.coordinates.withPositiveLongitude)
+	}
+}
+extension Point
+where Coordinates: ThreeDimensionalCoordinates,
+			Coordinates.Y == Geodesy.Longitude
+{
+	var withPositiveLongitude: Self {
+		Self.init(coordinates: self.coordinates.withPositiveLongitude)
+	}
+}

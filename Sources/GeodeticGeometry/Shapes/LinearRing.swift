@@ -12,14 +12,11 @@ import NonEmpty
 
 // MARK: - Protocol
 
-public protocol LinearRingProtocol<CRS>: GeodeticGeometry.LineStringProtocol
-//where Lines.Collection: RangeReplaceableCollection
-{}
+public protocol LinearRingProtocol<CRS>: GeodeticGeometry.LineStringProtocol {}
 
 // MARK: - Implementation
 
 public struct LinearRing<CRS>: GeodeticGeometry.LinearRingProtocol
-//where Lines.Collection: RangeReplaceableCollection
 where CRS: CoordinateReferenceSystem
 {
 	public typealias Point = Self.Line.Point
@@ -63,5 +60,12 @@ where CRS: CoordinateReferenceSystem
 
 	public mutating func append(_ point: Point) {
 		self.points.append(point)
+	}
+}
+
+extension LinearRing: Iterable {
+	public typealias Element = Self.Line
+	public func makeIterator() -> NonEmptyIterator<Self.Lines> {
+		NonEmptyIterator(base: self.lines)
 	}
 }

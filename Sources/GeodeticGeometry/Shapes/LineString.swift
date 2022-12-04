@@ -95,3 +95,10 @@ extension LineString: CustomStringConvertible, CustomDebugStringConvertible {
 		return "<LineString | \(CRS.epsgName)>[\(descriptions.joined(separator: ","))]"
 	}
 }
+
+extension LineString: Iterable {
+	public typealias Element = Self.Line
+	public func makeIterator() -> NonEmptyIterator<Self.Lines> {
+		NonEmptyIterator(base: self.lines)
+	}
+}

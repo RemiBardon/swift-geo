@@ -26,12 +26,16 @@ public struct Vector<CRS: Geodesy.CoordinateReferenceSystem>:
 	public init(rawValue: CRS.Coordinates) {
 		self.rawValue = rawValue
 	}
-	init(from: CRS.Coordinates, to: CRS.Coordinates) {
+	public init(from: CRS.Coordinates, to: CRS.Coordinates) {
 		self.init(rawValue: to - from)
 	}
-	init(from: Point<CRS>, to: Point<CRS>) {
+	public init(from: Point<CRS>, to: Point<CRS>) {
 		self.init(from: from.coordinates, to: to.coordinates)
 	}
+}
+
+public extension Vector {
+	var half: Self { self / 2 }
 }
 
 // Zeroable
@@ -71,6 +75,17 @@ public extension Vector {
 	}
 }
 
+extension Vector: CustomStringConvertible {
+	public var description: String {
+		String(describing: self.rawValue)
+	}
+}
+extension Vector: CustomDebugStringConvertible {
+	public var debugDescription: String {
+		"<Vector | \(CRS.epsgName)>\(String(describing: self.rawValue))"
+	}
+}
+
 // MARK: - 2D
 
 public extension Vector where RawValue: AtLeastTwoDimensionalCoordinates {
@@ -90,10 +105,38 @@ public extension Vector where RawValue: AtLeastTwoDimensionalCoordinates {
 	var horizontalDelta: DY { self.dy }
 }
 
+public extension Vector
+where Self.RawValue: TwoDimensionalCoordinates,
+			Self.RawValue.X == Geodesy.Latitude
+{
+	var dLat: Geodesy.Latitude { self.dx }
+}
+
+public extension Vector
+where Self.RawValue: TwoDimensionalCoordinates,
+			Self.RawValue.Y == Geodesy.Longitude
+{
+	var dLong: Geodesy.Longitude { self.dy }
+}
+
+public extension Vector where RawValue: TwoDimensionalCoordinates {
+	init(dx: DX, dy: DY) {
+		self.init(rawValue: .init(x: dx, y: dy))
+	}
+}
+
 // MARK: - 3D
 
 public extension Vector where RawValue: AtLeastThreeDimensionalCoordinates {
-	var dz: RawValue.Z { self.rawValue.z }
+	typealias DZ = Self.RawValue.Z
+
+	var dz: DZ { self.rawValue.z }
+}
+
+public extension Vector where RawValue: ThreeDimensionalCoordinates {
+	init(dx: DX, dy: DY, dz: DZ) {
+		self.init(rawValue: .init(x: dx, y: dy, z: dz))
+	}
 }
 
 // MARK: - Extensions
@@ -101,5 +144,11 @@ public extension Vector where RawValue: AtLeastThreeDimensionalCoordinates {
 public extension Coordinates where CRS.Coordinates == Self {
 	static func + (lhs: Self, rhs: Vector<CRS>) -> Self {
 		lhs + rhs.rawValue
+	}
+}
+
+public extension Point {
+	static func + (lhs: Self, rhs: Vector<CRS>) -> Self {
+		Self.init(coordinates: lhs.coordinates + rhs)
 	}
 }

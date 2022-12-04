@@ -45,3 +45,10 @@ extension Line: GeodeticGeometry.MultiPointProtocol {
 	}
 	
 }
+
+extension Line: Iterable {
+	public typealias Element = Self.Point
+	public func makeIterator() -> NonEmptyIterator<Self.Points> {
+		NonEmptyIterator(base: self.points)
+	}
+}

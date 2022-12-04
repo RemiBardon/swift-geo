@@ -22,6 +22,16 @@ where Points == AtLeast2<[Self.Point]> {
 	init(lines: Self.Lines)
 }
 
+public extension MultiLineProtocol {
+	var points: Self.Points {
+		Points(
+			lines.first.points.first,
+			lines.first.points.second,
+			tail: lines.dropFirst(Lines.minimumCount).flatMap(\.points)
+		)
+	}
+}
+
 // MARK: - Implementation
 
 public struct MultiLine<CRS>: GeodeticGeometry.MultiLineProtocol
@@ -40,12 +50,9 @@ where CRS: Geodesy.CoordinateReferenceSystem {
 	}
 }
 
-public extension MultiLineProtocol {
-	var points: Self.Points {
-		Points(
-			lines.first.points.first,
-			lines.first.points.second,
-			tail: lines.dropFirst(Lines.minimumCount).flatMap(\.points)
-		)
+extension MultiLine: Iterable {
+	public typealias Element = Self.Line
+	public func makeIterator() -> NonEmptyIterator<Self.Lines> {
+		NonEmptyIterator(base: self.lines)
 	}
 }

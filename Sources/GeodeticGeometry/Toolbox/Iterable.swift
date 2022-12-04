@@ -6,7 +6,7 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import protocol NonEmpty.NonEmptyProtocol
+import NonEmpty
 
 public protocol Iterable<Element> {
 	associatedtype Element
@@ -52,3 +52,7 @@ public struct NonEmptyIterator<Base: NonEmptyProtocol>: IteratorProtocol {
 extension Array: Iterable {}
 extension Set: Iterable {}
 extension Slice: Iterable {}
+
+// MARK: - Third-party type conformances
+
+extension NonEmpty: Iterable {}

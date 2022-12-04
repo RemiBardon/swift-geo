@@ -17,7 +17,7 @@ extension CoordinateComponent {
 		formatter.numberStyle = .decimal
 		formatter.maximumFractionDigits = Int(maxDigits)
 		formatter.locale = .en
-		return formatter.string(for: self.rawValue) ?? String(describing: self.rawValue)
+		return formatter.string(for: Double(self.rawValue)) ?? String(describing: self.rawValue)
 	}
 
 }

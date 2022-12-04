@@ -46,6 +46,7 @@ func snapshot(
 	mapView.addOverlay(polyline, level: .aboveRoads)
 
 	while (!delegate.renderingFinished) {
+		// Wait 100ms
 		try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
 	}
 	return mapView.snapshot

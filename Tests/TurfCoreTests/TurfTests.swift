@@ -7,16 +7,26 @@
 //
 
 import Geodesy
+import GeodeticDisplay
+import GeodeticGeometry
 import TurfCore
 import WGS84Core
 import WGS84Geometry
 import XCTest
 
 final class TurfTests: XCTestCase {
-	
+
+	typealias CRS2D = EPSG4326
+
 	func testNaiveBBoxNeverCrosses180thMeridian() throws {
-		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(WGS842D.bbox(forCollection: coordinates))
+		func test(
+			coordinates: [Coordinate2D],
+			crosses: Bool,
+			file: StaticString = #filePath,
+			line: UInt = #line
+		) throws {
+			let multiPoint = MultiPoint<CRS2D>(coordinates: try! .init(coordinates))
+			let bbox = try XCTUnwrap(multiPoint.bbox)
 			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
 		}
 		
@@ -36,11 +46,17 @@ final class TurfTests: XCTestCase {
 	}
 	
 	func testGeographicBBoxCrosses180thMeridian() throws {
-		func test(coordinates: [Coordinate2D], crosses: Bool) throws {
-			let bbox = try XCTUnwrap(WGS842D.geographicBBox(forCollection: coordinates))
-			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox))
+		func test(
+			coordinates: [Coordinate2D],
+			crosses: Bool,
+			_file: StaticString = #filePath,
+			_line: UInt = #line
+		) throws {
+			let multiPoint = MultiPoint<CRS2D>(coordinates: try! .init(coordinates))
+			let bbox = try XCTUnwrap(multiPoint.geographicBBox)
+			XCTAssertEqual(bbox.crosses180thMeridian, crosses, String(reflecting: bbox), file: _file, line: _line)
 		}
-		
+
 		// Green: Across the world
 		try test(coordinates: [
 			.init(latitude: -65, longitude:  175),
@@ -63,16 +79,17 @@ final class TurfTests: XCTestCase {
 			leftLong: Coordinate2D.Y,
 			latDelta: Coordinate2D.X,
 			longDelta: Coordinate2D.Y,
-			file: StaticString = #filePath,
-			line: UInt = #line
+			_file: StaticString = #filePath,
+			_line: UInt = #line
 		) throws {
-			let bbox = try XCTUnwrap(WGS842D.geographicBBox(forCollection: coordinates))
+			let multiPoint = MultiPoint<CRS2D>(coordinates: try! .init(coordinates))
+			let bbox = try XCTUnwrap(multiPoint.geographicBBox, file: _file, line: _line)
 			
 			let expectedOrigin = Coordinate2D(latitude: bottomLat, longitude: leftLong)
 			
-			XCTAssertEqual(bbox.origin, expectedOrigin, "Origin", file: file, line: line)
-			XCTAssertEqual(bbox.dLat, latDelta, "Latitude delta", file: file, line: line)
-			XCTAssertEqual(bbox.dLong, longDelta, "Longitude delta", file: file, line: line)
+			XCTAssertEqual(bbox.origin, expectedOrigin, "Origin", file: _file, line: _line)
+			XCTAssertEqual(bbox.size.dLat, latDelta, "Latitude delta", file: _file, line: _line)
+			XCTAssertEqual(bbox.size.dLong, longDelta, "Longitude delta", file: _file, line: _line)
 		}
 		
 		// Blue: Positive latitudes, positive longitudes
@@ -170,18 +187,23 @@ final class TurfTests: XCTestCase {
 	}
 	
 	func testLineBBox() throws {
-		func test(line: Line2D, bbox expected: BoundingBox2D) throws {
+		func test(
+			line: Line2D,
+			bbox expected: BoundingBox2D,
+			_file: StaticString = #filePath,
+			_line: UInt = #line
+		) throws {
 			let bbox = try XCTUnwrap(line.bbox)
-			XCTAssertEqual(bbox, expected)
+			XCTAssertEqual(bbox, expected, file: _file, line: _line)
 		}
 
 		let line1 = Line2D(
-			start: Point2D(latitude: .min + 30, longitude: .min + 50),
-			end: Point2D(latitude: .max - 10, longitude: .max - 10)
+			start: Point2D(coordinates: .init(latitude: .min + 30, longitude: .min + 50)),
+			end: Point2D(coordinates: .init(latitude: .max - 10, longitude: .max - 10))
 		)
 		try test(line: line1, bbox: BoundingBox2D(
-			southWest: line1.start.coordinates,
-			northEast: line1.end.coordinates
+			min: line1.start.coordinates,
+			max: line1.end.coordinates
 		))
 	}
 

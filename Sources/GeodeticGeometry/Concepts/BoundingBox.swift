@@ -27,14 +27,41 @@ public struct BoundingBox<CRS: Geodesy.CoordinateReferenceSystem> {
 	public init(min: Self.Coordinates, max: Self.Coordinates) {
 		self.init(origin: min, size: .init(from: min, to: max))
 	}
-
-	#warning("TODO: Reimplement `BoundingBox.union(_ other: Self)`")
-	/// The union of bounding boxes gives a new bounding box that encloses the given two.
-//	public func union(_ other: Self) -> Self
 }
 
 extension BoundingBox: Hashable {}
 
 extension BoundingBox: Zeroable {
 	public static var zero: Self { Self.init(origin: .zero, size: .zero) }
+}
+
+extension BoundingBox: CustomStringConvertible {
+	public var description: String {
+		"(origin: \(String(describing: self.origin)), size: \(String(describing: self.size)))"
+	}
+}
+extension BoundingBox: CustomDebugStringConvertible {
+	public var debugDescription: String {
+		"<BBox | \(CRS.epsgName)>(origin: \(String(describing: self.origin)), size: \(String(describing: self.size)))"
+	}
+}
+
+public extension BoundingBox
+where Self.Coordinates: TwoDimensionalCoordinates,
+			Self.Coordinates.X == Geodesy.Latitude
+{
+	var southLatitude: Latitude { origin.latitude }
+	var northLatitude: Latitude { southLatitude + size.dLat }
+	var centerLatitude: Latitude { southLatitude + (size.dLat / 2) }
+}
+
+public extension BoundingBox
+where Self.Coordinates: TwoDimensionalCoordinates,
+			Self.Coordinates.Y == Geodesy.Longitude
+{
+	var westLongitude: Longitude { origin.longitude }
+	var eastLongitude: Longitude { westLongitude + size.dLong }
+	var centerLongitude: Longitude { westLongitude + (size.dLong / 2) }
+
+	var crosses180thMeridian: Bool { !eastLongitude.isValid }
 }

@@ -14,27 +14,24 @@ import SwiftGeoToolbox
 
 public typealias CoordinateComponent = ValueWithUnit.Value
 
-//	// MARK: CustomStringConvertible
-//
-//	var description: String {
-//		let formatter = NumberFormatter()
-//		formatter.numberStyle = .decimal
-//		formatter.maximumFractionDigits = 9
-//		formatter.locale = .en
-//		return formatter.string(for: Double(self))
-//			?? "\(self.rawValue.rawValue)"
-//	}
+// MARK: CustomStringConvertible & CustomDebugStringConvertible
 
-//	// MARK: CustomDebugStringConvertible
-//
-//	var debugDescription: String {
-//		let formatter = NumberFormatter()
-//		formatter.numberStyle = .decimal
-//		formatter.maximumFractionDigits = 99
-//		formatter.locale = .en
-//		return formatter.string(for: Double(self))
-//			?? "\(self.rawValue.rawValue)"
-//	}
+public extension CoordinateComponent {
+	var description: String {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.maximumFractionDigits = 9
+		formatter.locale = .en
+		return formatter.string(for: Double(self.rawValue)) ?? String(describing: self.rawValue)
+	}
+	var debugDescription: String {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .decimal
+		formatter.locale = .en
+		formatter.maximumFractionDigits = 99
+		return formatter.string(for: Double(self.rawValue)) ?? String(reflecting: self.rawValue)
+	}
+}
 
 // MARK: - ValidatableCoordinateComponent
 
