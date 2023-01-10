@@ -17,6 +17,7 @@ let package = Package(
 		.library(name: "WGS84", targets: ["WGS84"]),
 		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
 		.library(name: "Turf", targets: ["Turf"]),
+		.executable(name: "generate-epsg", targets: ["GenerateEPSG"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
@@ -29,6 +30,7 @@ let package = Package(
 			url: "https://github.com/pointfreeco/swift-snapshot-testing",
 			.upToNextMajor(from: "1.9.0")
 		),
+		.package(url: "https://github.com/stencilproject/Stencil", .upToNextMajor(from: "0.15.1")),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package.
@@ -136,6 +138,11 @@ let package = Package(
 		.testTarget(name: "GeodeticConversionsTests", dependencies: [
 			"GeodeticConversions",
 			"WGS84Conversions",
+		]),
+
+		// ⚙️ Generate type definitions for EPSG Coordinate Reference Systems
+		.executableTarget(name: "GenerateEPSG", dependencies: [
+			.product(name: "Stencil", package: "Stencil"),
 		]),
 	]
 )
