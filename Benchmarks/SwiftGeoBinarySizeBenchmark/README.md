@@ -1,0 +1,1 @@
+# SwiftGeo binary size benchmark
