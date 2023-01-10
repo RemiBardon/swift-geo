@@ -15,6 +15,7 @@ Works on client and server sides – it's just Swift.
   - Parsing/printing (using parser-printers)
     - Formats
       - [ ] GeoJSON
+            ([PR #1](https://github.com/RemiBardon/swift-geo/pull/1))
       - [ ] WKT
       - [ ] GPX
       - [ ] Other formats
@@ -22,6 +23,7 @@ Works on client and server sides – it's just Swift.
   - [ ] Full translation of [Turf](https://github.com/Turfjs/turf)
   - [ ] Integration with MapKit
   - [ ] Code generation to support all EPSG Coordinate Reference Systems
+        ([PR #3](https://github.com/RemiBardon/swift-geo/pull/3))
   - [ ] Dynamic Coordinate Reference System (for parsing any CRS)
 - Developer experience
   - [x] Type-safety
@@ -42,6 +44,7 @@ Works on client and server sides – it's just Swift.
   - [ ] Others (open-source `Foundation`…)
 - Benchmarks
   - [ ] Binary size benchmarks (`@inlinable`, optimizations…)
+        ([PR #2](https://github.com/RemiBardon/swift-geo/pull/2))
   - [ ] Performance benchmarks (CPU, RAM…)
 
 ## Development and maintenance
