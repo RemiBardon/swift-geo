@@ -6,18 +6,13 @@
 //  Copyright © 2021 Rémi Bardon. All rights reserved.
 //
 
-import class Foundation.NumberFormatter
-import class Foundation.NSNumber
 import Geodesy
+import SwiftGeoToolbox
 
 extension CoordinateComponent {
 
 	public func decimalNotation(maxDigits: UInt8 = 6) -> String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = Int(maxDigits)
-		formatter.locale = .en
-		return formatter.string(for: Double(self.rawValue)) ?? String(describing: self.rawValue)
+		DecimalNumberFormatter().string(for: self.rawValue, maxDigits: maxDigits)
 	}
 
 }
@@ -30,12 +25,12 @@ extension AngularCoordinateComponent {
 	
 	/// `(dd - deg) * 60`
 	public var minutes: Double {
-		return decimalDegrees.fraction * 60
+		return decimalDegrees.swiftgeo_fraction * 60
 	}
 	
 	/// `(|(dd - deg) * 60| - min) * 60`
 	public var seconds: Double {
-		return minutes.fraction * 60
+		return minutes.swiftgeo_fraction * 60
 	}
 	
 	public init(degrees: Int, minutes: Double) {
@@ -53,49 +48,41 @@ extension AngularCoordinateComponent {
 extension AngularCoordinateComponent {
 	
 	public func ddNotation(maxDigits: UInt8 = 6) -> String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = Int(maxDigits)
-		formatter.locale = .en
-		return formatter.string(for: decimalDegrees) ?? String(decimalDegrees)
+		DecimalNumberFormatter().string(for: self.decimalDegrees, maxDigits: maxDigits)
 	}
 	
 	public func dmNotation(full: Bool = false, maxDigits: UInt8 = 3) -> String {
 		// Degree
-		var parts = ["\(Int(abs(decimalDegrees.whole)))°"]
+		var parts = ["\(Int(abs(decimalDegrees.swiftgeo_whole)))°"]
 		
 		// Minute
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = Int(maxDigits)
-		formatter.locale = .en
-		if full || minutes > 0, let string = formatter.string(for: minutes) {
+		if full || self.minutes > 0 {
+			let formatter = DecimalNumberFormatter()
+			let string = formatter.string(for: self.minutes, maxDigits: maxDigits)
 			parts.append("\(string)'")
 		}
 		
 		// Letter
-		parts.append(String(directionChar))
+		parts.append(String(self.directionChar))
 		return parts.joined(separator: " ")
 	}
 	
 	public func dmsNotation(full: Bool = false, maxDigits: UInt8 = 1) -> String {
 		// Degree
-		var parts = ["\(Int(abs(decimalDegrees.whole)))°"]
+		var parts = ["\(Int(abs(decimalDegrees.swiftgeo_whole)))°"]
 		
 		// Minute
-		if full || minutes > 0 { parts.append("\(Int(minutes.whole))'") }
+		if full || self.minutes > 0 { parts.append("\(Int(self.minutes.swiftgeo_whole))'") }
 		
 		// Second
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = Int(maxDigits)
-		formatter.locale = .en
-		if full || seconds > 0, let string = formatter.string(for: seconds) {
+		if full || self.seconds > 0 {
+			let formatter = DecimalNumberFormatter()
+			let string = formatter.string(for: self.seconds, maxDigits: maxDigits)
 			parts.append("\(string)\"")
 		}
 		
 		// Letter
-		parts.append(String(directionChar))
+		parts.append(String(self.directionChar))
 		return parts.joined(separator: " ")
 	}
 	

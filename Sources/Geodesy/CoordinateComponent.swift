@@ -6,7 +6,6 @@
 //  Copyright © 2022 Rémi Bardon. All rights reserved.
 //
 
-import Foundation
 import ValueWithUnit
 import SwiftGeoToolbox
 
@@ -18,18 +17,10 @@ public typealias CoordinateComponent = ValueWithUnit.Value
 
 public extension CoordinateComponent {
 	var description: String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.maximumFractionDigits = 9
-		formatter.locale = .en
-		return formatter.string(for: Double(self.rawValue)) ?? String(describing: self.rawValue)
+		DecimalNumberFormatter().string(for: self.rawValue, maxDigits: 6)
 	}
 	var debugDescription: String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = .decimal
-		formatter.locale = .en
-		formatter.maximumFractionDigits = 99
-		return formatter.string(for: Double(self.rawValue)) ?? String(reflecting: self.rawValue)
+		DecimalNumberFormatter().string(for: self.rawValue, maxDigits: 8)
 	}
 }
 

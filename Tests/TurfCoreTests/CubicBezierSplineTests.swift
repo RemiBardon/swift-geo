@@ -52,10 +52,10 @@ final class CubicBezierSplineTests: XCTestCase {
 	) -> String {
 		"""
 		(\
-		\(String(describing: controls.0)),\
-		\(String(describing: controls.1)),\
-		\(String(describing: controls.2)),\
-		\(String(describing: controls.3))\
+		(\(controls.0.ddNotation)),\
+		(\(controls.1.ddNotation)),\
+		(\(controls.2.ddNotation)),\
+		(\(controls.3.ddNotation))\
 		)
 		"""
 	}

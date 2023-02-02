@@ -65,26 +65,26 @@ public protocol DynamicGeodeticDatum: DatumEnsembleMember {}
 // MARK: Reference Ellipsoid
 
 public protocol ReferenceEllipsoid: EPSGItem {
-	static var semiMajorAxis: Double { get }
-	static var semiMinorAxis: Double { get }
-	static var inverseFlattening: Double { get }
-	static var flattening: Double { get }
+	@inlinable static var semiMajorAxis: Double { get }
+	@inlinable static var semiMinorAxis: Double { get }
+	@inlinable static var inverseFlattening: Double { get }
+	@inlinable static var flattening: Double { get }
 	/// Eccentricity of the ellipsoid.
-	static var eccentricity: Double { get }
+	@inlinable static var eccentricity: Double { get }
 	/// Eccentricity of the ellipsoid, squared.
 	/// `e^2 = (a^2 -b^2)/a^2 = 2f -f^2`
-	static var e2: Double { get }
+	@inlinable static var e2: Double { get }
 	/// `ε = e^2 / (1 - e^2)`
-	static var ε: Double { get }
+	@inlinable static var ε: Double { get }
 }
 
 public extension ReferenceEllipsoid {
-	static var flattening: Double { 1 / inverseFlattening }
+	@inlinable static var flattening: Double { 1 / inverseFlattening }
 	/// Source: <https://en.wikipedia.org/wiki/World_Geodetic_System#Definition>
-	static var semiMinorAxis: Double { semiMajorAxis * (1 - flattening) }
-	static var eccentricity: Double { sqrt(e2) }
-	static var e2: Double { (2 * flattening) - pow(flattening, 2) }
-	static var ε: Double { e2 / (1 - e2) }
+	@inlinable static var semiMinorAxis: Double { semiMajorAxis * (1 - flattening) }
+	@inlinable static var eccentricity: Double { sqrt(e2) }
+	@inlinable static var e2: Double { (2 * flattening) - pow(flattening, 2) }
+	@inlinable static var ε: Double { e2 / (1 - e2) }
 }
 
 // MARK: Meridian
