@@ -17,6 +17,7 @@ let package = Package(
 		.library(name: "WGS84", targets: ["WGS84"]),
 		.library(name: "GeodeticGeometry", targets: ["GeodeticGeometry"]),
 		.library(name: "Turf", targets: ["Turf"]),
+		.library(name: "GeoJSON", targets: ["GeoJSON"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.0.0")),
@@ -137,5 +138,19 @@ let package = Package(
 			"GeodeticConversions",
 			"WGS84Conversions",
 		]),
+
+		// 📄 GeoJSON representation
+		.target(
+			name: "GeoJSON",
+			dependencies: [
+				.target(name: "GeodeticGeometry"),
+				.target(name: "WGS84Turf"),
+				.product(name: "NonEmpty", package: "swift-nonempty"),
+			]
+		),
+		.testTarget(
+			name: "GeoJSONTests",
+			dependencies: ["GeoJSON"]
+		),
 	]
 )

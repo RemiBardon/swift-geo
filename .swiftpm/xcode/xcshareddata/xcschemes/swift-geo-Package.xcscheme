@@ -202,6 +202,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeoJSON"
+               BuildableName = "GeoJSON"
+               BlueprintName = "GeoJSON"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -307,6 +321,16 @@
                BlueprintIdentifier = "GeodeticConversionsTests"
                BuildableName = "GeodeticConversionsTests"
                BlueprintName = "GeodeticConversionsTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "GeoJSONTests"
+               BuildableName = "GeoJSONTests"
+               BlueprintName = "GeoJSONTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
